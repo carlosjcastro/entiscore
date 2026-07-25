@@ -112,19 +112,23 @@ export default function HistorialPage() {
         </div>
 
         {entries.length === 0 ? (
-          <div className="flex flex-col items-center gap-4 py-20 text-center">
-            <HiDocumentText className="h-12 w-12 text-zinc-300 dark:text-zinc-600" />
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">
-              No hay análisis guardados todavía.
-            </p>
-            <p className="text-[13px] text-zinc-400 dark:text-zinc-500">
-              Los resultados se guardan automáticamente cuando aceptas las cookies.
-            </p>
+          <div className="flex flex-col items-center gap-5 py-24 text-center">
+            <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-indigo-100 dark:bg-indigo-900/30">
+              <HiDocumentText className="h-10 w-10 text-indigo-500 dark:text-indigo-400" />
+            </div>
+            <div className="flex flex-col gap-2 max-w-sm">
+              <h2 className="text-lg font-semibold text-zinc-800 dark:text-zinc-200">
+                Tu historial está vacío
+              </h2>
+              <p className="text-[13px] leading-relaxed text-zinc-500 dark:text-zinc-400">
+                Cada análisis que realices se guardará aquí para que puedas seguir la evolución de tu presencia digital a lo largo del tiempo. Los resultados se registran automáticamente al aceptar las cookies.
+              </p>
+            </div>
             <Link
               href="/"
-              className="mt-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
+              className="mt-2 inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 active:scale-[0.98]"
             >
-              Analizar un sitio
+              Realizar el primer análisis
             </Link>
           </div>
         ) : (
