@@ -5,51 +5,53 @@ interface ScoreDisplayProps {
   maturityLevel: MaturityLevel;
 }
 
-const MATURITY_LEVEL_STYLES: Record<
+const MATURITY_LEVEL_CONFIG: Record<
   MaturityLevel,
-  { bg: string; text: string; ring: string; label: string }
+  { scoreClass: string; badgeClass: string; ringClass: string; label: string }
 > = {
   bajo: {
-    bg: "bg-red-50 dark:bg-red-950",
-    text: "text-red-700 dark:text-red-300",
-    ring: "ring-red-200 dark:ring-red-800",
+    scoreClass: "text-rose-600 dark:text-rose-400",
+    badgeClass: "bg-rose-100 text-rose-700 dark:bg-rose-900/60 dark:text-rose-300",
+    ringClass: "ring-rose-200/60 dark:ring-rose-800/40",
     label: "Bajo",
   },
   medio: {
-    bg: "bg-yellow-50 dark:bg-yellow-950",
-    text: "text-yellow-700 dark:text-yellow-300",
-    ring: "ring-yellow-200 dark:ring-yellow-800",
+    scoreClass: "text-amber-600 dark:text-amber-400",
+    badgeClass: "bg-amber-100 text-amber-700 dark:bg-amber-900/60 dark:text-amber-300",
+    ringClass: "ring-amber-200/60 dark:ring-amber-800/40",
     label: "Medio",
   },
   alto: {
-    bg: "bg-emerald-50 dark:bg-emerald-950",
-    text: "text-emerald-700 dark:text-emerald-300",
-    ring: "ring-emerald-200 dark:ring-emerald-800",
+    scoreClass: "text-emerald-600 dark:text-emerald-400",
+    badgeClass: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/60 dark:text-emerald-300",
+    ringClass: "ring-emerald-200/60 dark:ring-emerald-800/40",
     label: "Alto",
   },
   excelente: {
-    bg: "bg-green-50 dark:bg-green-950",
-    text: "text-green-700 dark:text-green-300",
-    ring: "ring-green-200 dark:ring-green-800",
+    scoreClass: "text-green-600 dark:text-green-400",
+    badgeClass: "bg-green-100 text-green-700 dark:bg-green-900/60 dark:text-green-300",
+    ringClass: "ring-green-200/60 dark:ring-green-800/40",
     label: "Excelente",
   },
 };
 
 export function ScoreDisplay({ overallScore, maturityLevel }: ScoreDisplayProps) {
-  const styles = MATURITY_LEVEL_STYLES[maturityLevel];
+  const config = MATURITY_LEVEL_CONFIG[maturityLevel];
 
   return (
     <div
-      className={`flex flex-col items-center gap-2 rounded-xl p-6 ring-1 ${styles.bg} ${styles.ring}`}
+      className={`flex flex-col items-center gap-1 rounded-2xl bg-white dark:bg-zinc-800/50 p-8 ring-1 shadow-sm ${config.ringClass}`}
     >
-      <span className={`text-5xl font-bold tabular-nums ${styles.text}`}>
+      <span className={`text-6xl sm:text-7xl font-extrabold tabular-nums tracking-tight ${config.scoreClass}`}>
         {overallScore}
       </span>
-      <span className="text-sm text-zinc-500 dark:text-zinc-400">de 100</span>
+      <span className="text-xs font-medium uppercase tracking-widest text-zinc-400 dark:text-zinc-500">
+        de 100
+      </span>
       <span
-        className={`mt-1 rounded-full px-3 py-1 text-sm font-medium ${styles.bg} ${styles.text} ring-1 ${styles.ring}`}
+        className={`mt-3 rounded-full px-3.5 py-1 text-xs font-semibold ${config.badgeClass}`}
       >
-        {styles.label}
+        {config.label}
       </span>
     </div>
   );
