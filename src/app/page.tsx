@@ -9,6 +9,7 @@ import { ScoreDisplay } from "./components/ScoreDisplay";
 import { SummaryStats } from "./components/SummaryStats";
 import { AxisSection } from "./components/AxisSection";
 import { ActionPlan } from "./components/ActionPlan";
+import { ThemeToggle } from "./components/ThemeToggle";
 import { FeaturesSection } from "./components/FeaturesSection";
 import { AnalysisProgress } from "./components/AnalysisProgress";
 import { CookieBanner } from "./components/CookieBanner";
@@ -85,6 +86,9 @@ export default function HomePage() {
   return (
     <>
       <section className="relative flex flex-col items-center justify-center min-h-[520px] sm:min-h-[560px] px-4 py-16 sm:py-20 overflow-hidden bg-zinc-950">
+        <div className="absolute top-4 right-4 z-20">
+          <ThemeToggle variant="hero" />
+        </div>
         <NetworkGraph />
         <div className="relative z-10 w-full max-w-2xl flex flex-col items-center">
           <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-white text-center">

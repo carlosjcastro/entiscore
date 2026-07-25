@@ -13,10 +13,19 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Entiscore - Auditor de Entidad Digital",
+  title: "Entiscore: Auditor de Entidad Digital",
   description:
-    "Analizá tu presencia digital y descubrí qué tan reconocible eres para buscadores e inteligencia artificial.",
+    "Analiza tu presencia digital y descubre qué tan reconocible eres para buscadores e inteligencia artificial.",
 };
+
+const themeInitScript = `
+(function(){
+  var t=localStorage.getItem('entiscore-theme');
+  if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){
+    document.documentElement.classList.add('dark');
+  }
+})();
+`;
 
 export default function RootLayout({
   children,
@@ -27,7 +36,11 @@ export default function RootLayout({
     <html
       lang="es"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );
