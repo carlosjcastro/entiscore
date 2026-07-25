@@ -1,0 +1,16 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "TypeScript Check on Save",
+      "trigger": "PostFileSave",
+      "description": "Validates that the project compiles without TypeScript errors after saving any .ts or .tsx file",
+      "matcher": "\\.(ts|tsx)$",
+      "action": {
+        "type": "command",
+        "command": "npx tsc --noEmit",
+        "timeout": 30
+      }
+    }
+  ]
+}
