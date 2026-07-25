@@ -17,7 +17,7 @@ import { AnalysisProgress } from "./components/AnalysisProgress";
 import { CookieBanner } from "./components/CookieBanner";
 import { Footer } from "./components/Footer";
 import { SplashScreen } from "./components/SplashScreen";
-import { saveAuditToHistory } from "./lib/history-storage";
+import { saveAuditToHistory, getPreviousReportForUrl } from "./lib/history-storage";
 
 const NetworkGraph = dynamic(
   () => import("./components/NetworkGraph").then((mod) => ({ default: mod.NetworkGraph })),
@@ -70,9 +70,11 @@ export default function HomePage() {
   const [pageState, setPageState] = useState<PageState>({ phase: "idle" });
   const [isCopied, setIsCopied] = useState(false);
   const [analysisJustCompleted, setAnalysisJustCompleted] = useState(false);
+  const [previousReport, setPreviousReport] = useState<AuditResponse | null>(null);
 
   async function handleAuditSubmit(url: string) {
     setPageState({ phase: "loading" });
+    setPreviousReport(getPreviousReportForUrl(url));
     setAnalysisJustCompleted(false);
 
     try {
@@ -171,6 +173,7 @@ export default function HomePage() {
                   <ScoreDisplay
                     overallScore={pageState.data.overallScore}
                     maturityLevel={pageState.data.maturityLevel}
+                    previousScore={previousReport?.overallScore}
                   />
                 </div>
                 <div className="lg:col-span-2 flex flex-col justify-center rounded-2xl border border-zinc-200 dark:border-zinc-700/60 bg-white dark:bg-zinc-800/30 p-6 shadow-sm">
@@ -195,6 +198,7 @@ export default function HomePage() {
                       <AxisSection
                         axisName={axisName}
                         result={pageState.data.axes[axisName]}
+                        previousScore={previousReport?.axes[axisName]?.score}
                       />
                     </div>
                   ))}

@@ -1,8 +1,13 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import type { MaturityLevel } from "@/types";
+import { ScoreChange } from "./ScoreChange";
 
 interface ScoreDisplayProps {
   overallScore: number;
   maturityLevel: MaturityLevel;
+  previousScore?: number;
 }
 
 const MATURITY_LEVEL_CONFIG: Record<
@@ -37,10 +42,40 @@ const MATURITY_LEVEL_CONFIG: Record<
 
 const CIRCLE_RADIUS = 54;
 const CIRCLE_CIRCUMFERENCE = 2 * Math.PI * CIRCLE_RADIUS;
+const COUNT_ANIMATION_DURATION_MS = 900;
+const COUNT_ANIMATION_FRAMES = 30;
 
-export function ScoreDisplay({ overallScore, maturityLevel }: ScoreDisplayProps) {
+function useAnimatedCount(targetValue: number): number {
+  const [displayedValue, setDisplayedValue] = useState(0);
+
+  useEffect(() => {
+    setDisplayedValue(0);
+    const frameDuration = COUNT_ANIMATION_DURATION_MS / COUNT_ANIMATION_FRAMES;
+    let currentFrame = 0;
+
+    const interval = setInterval(() => {
+      currentFrame++;
+      const progress = currentFrame / COUNT_ANIMATION_FRAMES;
+      const easedProgress = 1 - Math.pow(1 - progress, 3);
+      const currentValue = Math.round(easedProgress * targetValue);
+      setDisplayedValue(currentValue);
+
+      if (currentFrame >= COUNT_ANIMATION_FRAMES) {
+        clearInterval(interval);
+        setDisplayedValue(targetValue);
+      }
+    }, frameDuration);
+
+    return () => clearInterval(interval);
+  }, [targetValue]);
+
+  return displayedValue;
+}
+
+export function ScoreDisplay({ overallScore, maturityLevel, previousScore }: ScoreDisplayProps) {
   const config = MATURITY_LEVEL_CONFIG[maturityLevel];
   const progressOffset = CIRCLE_CIRCUMFERENCE - (overallScore / 100) * CIRCLE_CIRCUMFERENCE;
+  const animatedScore = useAnimatedCount(overallScore);
 
   return (
     <div className="flex flex-col items-center gap-3">
@@ -68,16 +103,21 @@ export function ScoreDisplay({ overallScore, maturityLevel }: ScoreDisplayProps)
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <span className={`text-4xl sm:text-5xl font-extrabold tabular-nums ${config.textColor}`}>
-            {overallScore}
+            {animatedScore}
           </span>
           <span className="text-[10px] font-medium uppercase tracking-widest text-zinc-400 dark:text-zinc-500">
             de 100
           </span>
         </div>
       </div>
-      <span className={`rounded-full px-3 py-1 text-xs font-semibold ${config.badgeClass}`}>
-        {config.label}
-      </span>
+      <div className="flex items-center gap-2">
+        <span className={`rounded-full px-3 py-1 text-xs font-semibold ${config.badgeClass}`}>
+          {config.label}
+        </span>
+        {previousScore !== undefined && (
+          <ScoreChange currentScore={overallScore} previousScore={previousScore} />
+        )}
+      </div>
     </div>
   );
 }

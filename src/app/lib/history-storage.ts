@@ -82,3 +82,17 @@ export function clearAllHistory() {
   }
   localStorage.removeItem(HISTORY_INDEX_KEY);
 }
+
+export function getPreviousEntryForUrl(url: string, excludeId?: string): HistoryEntry | null {
+  const entries = getHistoryEntries();
+  const matchingEntries = entries.filter(
+    (entry) => entry.url === url && entry.id !== excludeId
+  );
+  return matchingEntries[0] ?? null;
+}
+
+export function getPreviousReportForUrl(url: string, excludeId?: string): AuditResponse | null {
+  const previousEntry = getPreviousEntryForUrl(url, excludeId);
+  if (!previousEntry) return null;
+  return getFullReport(previousEntry.id);
+}

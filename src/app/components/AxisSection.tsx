@@ -5,10 +5,12 @@ import { HiChevronDown, HiClock } from "react-icons/hi2";
 import { HiCodeBracketSquare, HiUser, HiShieldCheck, HiGlobeAlt } from "react-icons/hi2";
 import type { AxisResult, AxisName } from "@/types";
 import { FindingCard } from "./FindingCard";
+import { ScoreChange } from "./ScoreChange";
 
 interface AxisSectionProps {
   axisName: AxisName;
   result: AxisResult;
+  previousScore?: number;
 }
 
 interface AxisConfig {
@@ -74,7 +76,7 @@ function ScoreIndicator({ score, status }: { score: number; status: AxisResult["
   );
 }
 
-export function AxisSection({ axisName, result }: AxisSectionProps) {
+export function AxisSection({ axisName, result, previousScore }: AxisSectionProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const config = AXIS_CONFIG[axisName];
   const Icon = config.icon;
@@ -93,7 +95,12 @@ export function AxisSection({ axisName, result }: AxisSectionProps) {
             {config.label}
           </span>
         </div>
-        <ScoreIndicator score={result.score} status={result.status} />
+        <div className="flex items-center gap-2">
+          <ScoreIndicator score={result.score} status={result.status} />
+          {previousScore !== undefined && result.status === "evaluated" && (
+            <ScoreChange currentScore={result.score} previousScore={previousScore} />
+          )}
+        </div>
         <HiChevronDown
           className={`h-4 w-4 text-zinc-400 transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
         />
