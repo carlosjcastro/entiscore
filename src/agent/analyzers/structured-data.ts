@@ -143,11 +143,11 @@ function buildNoSchemaFindings(): Finding[] {
   return [
     {
       type: "critical",
-      title: "No se encontro schema markup en el sitio",
+      title: "No se encontró schema markup en el sitio",
       description:
         "El sitio no tiene datos estructurados que permitan a buscadores e IA interpretar la identidad de forma precisa.",
       details:
-        "Se recomienda agregar al menos un bloque JSON-LD con el tipo mas adecuado segun el contenido del sitio (Person para portfolios personales, Organization para empresas).",
+        "Se recomienda agregar al menos un bloque JSON-LD con el tipo más adecuado según el contenido del sitio (Person para portfolios personales, Organization para empresas).",
     },
   ];
 }
@@ -160,7 +160,7 @@ function buildSchemaTypeFindings(schemas: DetectedSchema[]): Finding[] {
       findings.push({
         type: "positive",
         title: `Schema de tipo ${schema.type} detectado (${schema.source})`,
-        description: `Se encontro un schema markup de tipo ${schema.type} que es relevante para la identidad digital.`,
+        description: `Se encontró un schema markup de tipo ${schema.type} que es relevante para la identidad digital.`,
       });
     } else {
       findings.push({
@@ -186,7 +186,7 @@ function buildFieldCompletenessFindings(
     findings.push({
       type: "positive",
       title: `Campos completos en ${schema.type}`,
-      description: `Los siguientes campos estan correctamente definidos: ${presentFields.join(", ")}.`,
+      description: `Los siguientes campos están correctamente definidos: ${presentFields.join(", ")}.`,
     });
   }
 
@@ -194,7 +194,7 @@ function buildFieldCompletenessFindings(
     findings.push({
       type: "warning",
       title: `Campos faltantes en ${schema.type}`,
-      description: `Los siguientes campos recomendados no estan presentes: ${missingFields.join(", ")}.`,
+      description: `Los siguientes campos recomendados no están presentes: ${missingFields.join(", ")}.`,
       details: `Agregar estos campos mejora la capacidad de buscadores e IA para entender la entidad representada.`,
     });
   }
@@ -202,8 +202,8 @@ function buildFieldCompletenessFindings(
   if (emptyFields.length > 0) {
     findings.push({
       type: "warning",
-      title: `Campos vacios en ${schema.type}`,
-      description: `Los siguientes campos existen pero tienen valores vacios: ${emptyFields.join(", ")}.`,
+      title: `Campos vacíos en ${schema.type}`,
+      description: `Los siguientes campos existen pero tienen valores vacíos: ${emptyFields.join(", ")}.`,
     });
   }
 

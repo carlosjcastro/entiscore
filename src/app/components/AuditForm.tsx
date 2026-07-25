@@ -31,7 +31,7 @@ export function AuditForm({ onSubmit, isLoading }: AuditFormProps) {
     }
 
     if (!isValidHttpUrl(trimmedUrl)) {
-      setValidationError("La URL debe comenzar con http:// o https:// y tener un formato valido");
+      setValidationError("La URL debe comenzar con http:// o https:// y tener un formato válido");
       return;
     }
 
@@ -57,23 +57,23 @@ export function AuditForm({ onSubmit, isLoading }: AuditFormProps) {
             onChange={handleInputChange}
             placeholder="https://tu-sitio.com"
             disabled={isLoading}
-            className={`w-full rounded-xl border bg-white dark:bg-zinc-800 pl-10 pr-4 py-3 sm:py-3.5 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 disabled:opacity-50 transition-shadow ${
+            className={`w-full rounded-xl border bg-white dark:bg-zinc-900 pl-10 pr-4 py-3 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 disabled:opacity-50 transition-shadow ${
               validationError
                 ? "border-rose-300 dark:border-rose-700 focus:ring-rose-500/30"
-                : "border-zinc-200 dark:border-zinc-600 focus:ring-zinc-900/20 dark:focus:ring-zinc-100/20"
+                : "border-zinc-200 dark:border-zinc-700 focus:ring-zinc-900/20 dark:focus:ring-zinc-100/20"
             }`}
           />
         </div>
         <button
           type="submit"
           disabled={isLoading}
-          className="rounded-xl bg-zinc-900 dark:bg-zinc-100 px-6 py-3 sm:py-3.5 text-sm font-semibold text-white dark:text-zinc-900 transition-all hover:opacity-90 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
+          className="rounded-xl bg-zinc-900 dark:bg-zinc-100 px-6 py-3 text-sm font-semibold text-white dark:text-zinc-900 transition-all hover:opacity-90 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
         >
           {isLoading ? "Analizando..." : "Analizar"}
         </button>
       </div>
       {validationError && (
-        <p className="text-[12px] sm:text-[13px] text-rose-600 dark:text-rose-400 pl-1 animate-in fade-in">
+        <p className="text-[12px] text-rose-600 dark:text-rose-400 pl-1">
           {validationError}
         </p>
       )}

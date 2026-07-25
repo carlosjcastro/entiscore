@@ -13,9 +13,9 @@ const AXIS_WEIGHT_ORDER: AxisName[] = [
 ];
 
 const EFFORT_BY_FINDING_TITLE: Record<string, EffortLevel> = {
-  "No se encontro schema markup en el sitio": "medio",
-  "robots.txt bloquea todo el sitio para crawlers genericos": "bajo",
-  "El sitio no responde con un codigo HTTP exitoso": "alto",
+  "No se encontró schema markup en el sitio": "medio",
+  "robots.txt bloquea todo el sitio para crawlers genéricos": "bajo",
+  "El sitio no responde con un código HTTP exitoso": "alto",
   "El sitio parece depender exclusivamente de JavaScript del lado del cliente": "alto",
 };
 
@@ -29,15 +29,15 @@ const GENERIC_RECOMMENDATIONS: ActionItem[] = [
     priority: 90,
     title: "Agregar schema markup de tipo Person u Organization",
     reason:
-      "Los datos estructurados permiten que buscadores e IA identifiquen con precision quien es el autor o que representa el sitio.",
+      "Los datos estructurados permiten que buscadores e IA identifiquen con precisión quién es el autor o qué representa el sitio.",
     effort: "medio",
     axis: "structuredData",
   },
   {
     priority: 91,
-    title: "Incluir open graph tags en todas las paginas principales",
+    title: "Incluir open graph tags en todas las páginas principales",
     reason:
-      "Los og tags controlan como se muestra el sitio al compartirlo en redes sociales y en resultados enriquecidos.",
+      "Los og tags controlan cómo se muestra el sitio al compartirlo en redes sociales y en resultados enriquecidos.",
     effort: "bajo",
     axis: "technicalAccessibility",
   },
@@ -45,7 +45,7 @@ const GENERIC_RECOMMENDATIONS: ActionItem[] = [
     priority: 92,
     title: "Agregar enlaces a perfiles profesionales en plataformas reconocidas",
     reason:
-      "Los enlaces a GitHub, LinkedIn y otras plataformas refuerzan la identidad cruzada y las senales de autoridad.",
+      "Los enlaces a GitHub, LinkedIn y otras plataformas refuerzan la identidad cruzada y las señales de autoridad.",
     effort: "bajo",
     axis: "authoritySignals",
   },

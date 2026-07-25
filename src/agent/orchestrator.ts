@@ -12,7 +12,7 @@ function buildPartialAxisResult(message: string): AxisResult {
     findings: [
       {
         type: "warning",
-        title: "Eje no evaluado en esta version",
+        title: "Eje no evaluado en esta versión",
         description: message,
       },
     ],
@@ -26,7 +26,7 @@ function buildFailedAxisResult(errorMessage: string): AxisResult {
     findings: [
       {
         type: "critical",
-        title: "Error durante el analisis de este eje",
+        title: "Error durante el análisis de este eje",
         description: errorMessage,
       },
     ],
@@ -93,7 +93,7 @@ async function executeAnalyzerSafely(
     return await analyzerFn();
   } catch (error) {
     const errorMessage =
-      error instanceof Error ? error.message : "Error desconocido durante el analisis";
+      error instanceof Error ? error.message : "Error desconocido durante el análisis";
     return buildFailedAxisResult(errorMessage);
   }
 }
@@ -110,11 +110,11 @@ async function runP0Analyzers(
     structuredData:
       structuredDataResult.status === "fulfilled"
         ? structuredDataResult.value
-        : buildFailedAxisResult("El analizador de datos estructurados fallo inesperadamente"),
+        : buildFailedAxisResult("El analizador de datos estructurados falló inesperadamente"),
     technicalAccessibility:
       technicalAccessibilityResult.status === "fulfilled"
         ? technicalAccessibilityResult.value
-        : buildFailedAxisResult("El analizador de accesibilidad tecnica fallo inesperadamente"),
+        : buildFailedAxisResult("El analizador de accesibilidad técnica falló inesperadamente"),
   };
 }
 
@@ -124,10 +124,10 @@ function buildP1PlaceholderResults(): {
 } {
   return {
     identityConsistency: buildPartialAxisResult(
-      "El analisis de consistencia de identidad se agregara en una fase posterior del desarrollo."
+      "El análisis de consistencia de identidad se agregará en una fase posterior del desarrollo."
     ),
     authoritySignals: buildPartialAxisResult(
-      "El analisis de senales de autoridad se agregara en una fase posterior del desarrollo."
+      "El análisis de señales de autoridad se agregará en una fase posterior del desarrollo."
     ),
   };
 }

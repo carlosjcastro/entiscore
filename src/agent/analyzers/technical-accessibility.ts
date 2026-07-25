@@ -27,14 +27,14 @@ function evaluateHttpResponse(
   if (statusCode < 200 || statusCode >= 300) {
     findings.push({
       type: "critical",
-      title: "El sitio no responde con un codigo HTTP exitoso",
-      description: `El servidor respondio con codigo ${statusCode}, lo cual impide que crawlers indexen el contenido correctamente.`,
+      title: "El sitio no responde con un código HTTP exitoso",
+      description: `El servidor respondió con código ${statusCode}, lo cual impide que crawlers indexen el contenido correctamente.`,
     });
   } else {
     findings.push({
       type: "positive",
       title: "Respuesta HTTP exitosa",
-      description: `El servidor respondio con codigo ${statusCode}.`,
+      description: `El servidor respondió con código ${statusCode}.`,
     });
   }
 
@@ -42,13 +42,13 @@ function evaluateHttpResponse(
     findings.push({
       type: "warning",
       title: "Tiempo de respuesta elevado",
-      description: `El sitio tardo ${responseTimeMs}ms en responder, lo cual supera el umbral recomendado de ${MAX_ACCEPTABLE_RESPONSE_TIME_MS}ms. Esto puede afectar la experiencia de crawlers con timeouts ajustados.`,
+      description: `El sitio tardó ${responseTimeMs}ms en responder, lo cual supera el umbral recomendado de ${MAX_ACCEPTABLE_RESPONSE_TIME_MS}ms. Esto puede afectar la experiencia de crawlers con timeouts ajustados.`,
     });
   } else {
     findings.push({
       type: "positive",
       title: "Tiempo de respuesta aceptable",
-      description: `El sitio respondio en ${responseTimeMs}ms.`,
+      description: `El sitio respondió en ${responseTimeMs}ms.`,
     });
   }
 
@@ -69,13 +69,13 @@ function evaluateEssentialMetadata(html: string): Finding[] {
       findings.push({
         type: "warning",
         title: `Metadato faltante: ${metaName}`,
-        description: `No se encontro ${metaName} o su valor esta vacio. Este metadato es importante para que buscadores e IA muestren informacion correcta sobre el sitio.`,
+        description: `No se encontró ${metaName} o su valor está vacío. Este metadato es importante para que buscadores e IA muestren información correcta sobre el sitio.`,
       });
     } else {
       findings.push({
         type: "positive",
         title: `Metadato presente: ${metaName}`,
-        description: `El metadato ${metaName} esta correctamente definido.`,
+        description: `El metadato ${metaName} está correctamente definido.`,
       });
     }
   }
@@ -90,7 +90,7 @@ function robotsTxtBlocksRelevantContent(robotsTxt: string | null): Finding[] {
         type: "positive",
         title: "Sin restricciones en robots.txt",
         description:
-          "No se encontro un archivo robots.txt, lo cual significa que no hay restricciones declaradas para crawlers.",
+          "No se encontró un archivo robots.txt, lo cual significa que no hay restricciones declaradas para crawlers.",
       },
     ];
   }
@@ -115,7 +115,7 @@ function robotsTxtBlocksRelevantContent(robotsTxt: string | null): Finding[] {
     return [
       {
         type: "critical",
-        title: "robots.txt bloquea todo el sitio para crawlers genericos",
+        title: "robots.txt bloquea todo el sitio para crawlers genéricos",
         description:
           "La directiva Disallow: / para User-agent: * impide que buscadores e IA accedan al contenido del sitio. Esto bloquea completamente la visibilidad.",
       },
@@ -171,14 +171,14 @@ function calculateScore(findings: Finding[]): number {
   if (hasSlowResponse) score -= SCORE_PENALTY_SLOW_RESPONSE;
 
   const hasNonSuccessStatus = findings.some(
-    (f) => f.type === "critical" && f.title === "El sitio no responde con un codigo HTTP exitoso"
+    (f) => f.type === "critical" && f.title === "El sitio no responde con un código HTTP exitoso"
   );
   if (hasNonSuccessStatus) score -= SCORE_PENALTY_NON_SUCCESS_STATUS;
 
   const hasRobotsBlock = findings.some(
     (f) =>
       f.type === "critical" &&
-      f.title === "robots.txt bloquea todo el sitio para crawlers genericos"
+      f.title === "robots.txt bloquea todo el sitio para crawlers genéricos"
   );
   if (hasRobotsBlock) score -= SCORE_PENALTY_ROBOTS_BLOCKS_ALL;
 
