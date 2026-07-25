@@ -1,25 +1,6 @@
 import * as cheerio from "cheerio";
 import type { Analyzer, AnalysisContext, AxisResult, Finding } from "@/types";
-
-const RECOGNIZED_PLATFORM_DOMAINS = [
-  "github.com",
-  "linkedin.com",
-  "twitter.com",
-  "x.com",
-  "medium.com",
-  "dev.to",
-  "stackoverflow.com",
-  "dribbble.com",
-  "behance.net",
-  "youtube.com",
-  "speakerdeck.com",
-  "gitlab.com",
-  "bitbucket.org",
-  "codepen.io",
-  "instagram.com",
-  "facebook.com",
-  "mastodon.social",
-];
+import { RECOGNIZED_PLATFORM_DOMAINS } from "@/agent/shared-platforms";
 
 const SCORE_BASE = 50;
 const SCORE_BONUS_PER_VALID_LINK = 10;
