@@ -67,7 +67,7 @@ export function AuditForm({ onSubmit, isLoading }: AuditFormProps) {
         <button
           type="submit"
           disabled={isLoading}
-          className="rounded-xl bg-zinc-900 dark:bg-zinc-100 px-6 py-3 text-sm font-semibold text-white dark:text-zinc-900 transition-all hover:opacity-90 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
+          className="rounded-xl bg-indigo-600 dark:bg-indigo-500 px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-indigo-700 dark:hover:bg-indigo-400 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
         >
           {isLoading ? "Analizando..." : "Analizar"}
         </button>

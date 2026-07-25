@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { HiDocumentDuplicate, HiCheck } from "react-icons/hi2";
 import type { AuditResponse, AuditErrorResponse, AxisName } from "@/types";
 import { AuditForm } from "./components/AuditForm";
@@ -8,6 +9,13 @@ import { ScoreDisplay } from "./components/ScoreDisplay";
 import { SummaryStats } from "./components/SummaryStats";
 import { AxisSection } from "./components/AxisSection";
 import { ActionPlan } from "./components/ActionPlan";
+import { CookieBanner } from "./components/CookieBanner";
+import { Footer } from "./components/Footer";
+
+const NetworkGraph = dynamic(
+  () => import("./components/NetworkGraph").then((mod) => ({ default: mod.NetworkGraph })),
+  { ssr: false, loading: () => <div className="absolute inset-0 -z-10 bg-zinc-950" /> }
+);
 
 type PageState =
   | { phase: "idle" }
@@ -68,106 +76,129 @@ export default function HomePage() {
   }
 
   return (
-    <main className="flex flex-1 flex-col items-center px-4 py-10 sm:py-14 sm:px-6 lg:px-8">
-      <div className="w-full max-w-5xl">
-        <header className="mb-8 text-center">
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-50">
+    <>
+      <section className="relative flex flex-col items-center justify-center min-h-[420px] sm:min-h-[480px] px-4 py-16 sm:py-20 overflow-hidden bg-zinc-950">
+        <NetworkGraph />
+        <div className="relative z-10 w-full max-w-2xl flex flex-col items-center">
+          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-white text-center">
             Entiscore
           </h1>
-          <p className="mt-2 text-sm sm:text-base text-zinc-500 dark:text-zinc-400 max-w-lg mx-auto leading-relaxed">
+          <p className="mt-3 text-sm sm:text-base text-zinc-300 max-w-lg mx-auto text-center leading-relaxed">
             Analiza tu presencia digital y descubre qué tan reconocible eres
             para buscadores e inteligencia artificial.
           </p>
-        </header>
-
-        <div className="max-w-2xl mx-auto">
-          <AuditForm
-            onSubmit={handleAuditSubmit}
-            isLoading={pageState.phase === "loading"}
-          />
+          <div className="mt-8 w-full">
+            <AuditForm
+              onSubmit={handleAuditSubmit}
+              isLoading={pageState.phase === "loading"}
+            />
+          </div>
         </div>
+      </section>
 
-        {pageState.phase === "loading" && (
-          <div className="mt-16 flex flex-col items-center gap-4">
-            <div className="relative h-10 w-10">
-              <div className="absolute inset-0 animate-spin rounded-full border-[3px] border-zinc-200 dark:border-zinc-700 border-t-zinc-800 dark:border-t-zinc-200" />
-            </div>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">
-              Analizando el sitio. Esto puede tomar hasta 60 segundos.
-            </p>
-          </div>
-        )}
-
-        {pageState.phase === "error" && (
-          <div className="mt-8 max-w-2xl mx-auto rounded-xl border border-rose-200 dark:border-rose-800/50 bg-rose-50/80 dark:bg-rose-950/30 p-4">
-            <p className="text-sm font-medium text-rose-700 dark:text-rose-300">
-              {pageState.errorData.error}
-            </p>
-            {pageState.errorData.details && (
-              <p className="mt-1 text-[13px] text-rose-600/80 dark:text-rose-400/80">
-                {pageState.errorData.details}
+      <main className="flex-1 px-4 py-8 sm:py-12 sm:px-6 lg:px-8 bg-zinc-50 dark:bg-zinc-900">
+        <div className="mx-auto w-full max-w-6xl">
+          {pageState.phase === "loading" && (
+            <div className="flex flex-col items-center gap-4 py-20">
+              <div className="relative h-10 w-10">
+                <div className="absolute inset-0 animate-spin rounded-full border-[3px] border-zinc-200 dark:border-zinc-700 border-t-indigo-600 dark:border-t-indigo-400" />
+              </div>
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                Analizando el sitio. Esto puede tomar hasta 60 segundos.
               </p>
-            )}
-          </div>
-        )}
+            </div>
+          )}
 
-        {pageState.phase === "result" && (
-          <div className="mt-10 flex flex-col gap-8">
-            <div className="flex flex-col lg:flex-row gap-6 items-center lg:items-start lg:justify-center">
-              <div className="flex flex-col items-center gap-4">
-                <p className="text-[11px] font-medium uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
-                  {pageState.data.url}
+          {pageState.phase === "error" && (
+            <div className="max-w-2xl mx-auto rounded-xl border border-rose-200 dark:border-rose-800/50 bg-rose-50/80 dark:bg-rose-950/30 p-4 sm:p-5">
+              <p className="text-sm font-medium text-rose-700 dark:text-rose-300">
+                {pageState.errorData.error}
+              </p>
+              {pageState.errorData.details && (
+                <p className="mt-1.5 text-[13px] text-rose-600/80 dark:text-rose-400/80">
+                  {pageState.errorData.details}
                 </p>
-                <ScoreDisplay
-                  overallScore={pageState.data.overallScore}
-                  maturityLevel={pageState.data.maturityLevel}
-                />
-              </div>
-              <div className="w-full max-w-xs lg:mt-8">
-                <SummaryStats data={pageState.data} />
-              </div>
+              )}
             </div>
+          )}
 
-            <section>
-              <h2 className="text-lg font-semibold text-zinc-800 dark:text-zinc-100 mb-4">
-                Evaluación por eje
-              </h2>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-                {AXIS_ORDER.map((axisName) => (
-                  <AxisSection
-                    key={axisName}
-                    axisName={axisName}
-                    result={pageState.data.axes[axisName]}
+          {pageState.phase === "result" && (
+            <div className="flex flex-col gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <div className="lg:col-span-1 flex flex-col items-center justify-center rounded-2xl border border-zinc-200 dark:border-zinc-700/60 bg-white dark:bg-zinc-800/30 p-6 shadow-sm">
+                  <p className="text-[10px] font-medium uppercase tracking-wider text-zinc-400 dark:text-zinc-500 mb-3 truncate max-w-full">
+                    {pageState.data.url}
+                  </p>
+                  <ScoreDisplay
+                    overallScore={pageState.data.overallScore}
+                    maturityLevel={pageState.data.maturityLevel}
                   />
-                ))}
+                </div>
+                <div className="lg:col-span-2 flex flex-col justify-center rounded-2xl border border-zinc-200 dark:border-zinc-700/60 bg-white dark:bg-zinc-800/30 p-6 shadow-sm">
+                  <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-4">
+                    Resumen del análisis
+                  </h3>
+                  <SummaryStats data={pageState.data} />
+                </div>
               </div>
-            </section>
 
-            <section>
-              <ActionPlan items={pageState.data.actionPlan} />
-            </section>
+              <div className="rounded-2xl border border-zinc-200 dark:border-zinc-700/60 bg-white dark:bg-zinc-800/30 p-5 sm:p-6 shadow-sm">
+                <h2 className="text-base sm:text-lg font-semibold text-zinc-800 dark:text-zinc-100 mb-4">
+                  Evaluación por eje
+                </h2>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                  {AXIS_ORDER.map((axisName, index) => (
+                    <div
+                      key={axisName}
+                      className="animate-in fade-in slide-in-from-bottom-2"
+                      style={{ animationDelay: `${index * 80}ms`, animationFillMode: "both" }}
+                    >
+                      <AxisSection
+                        axisName={axisName}
+                        result={pageState.data.axes[axisName]}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
 
-            <div className="flex justify-center border-t border-zinc-200/80 dark:border-zinc-700/50 pt-5">
-              <button
-                onClick={handleCopyReport}
-                className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 dark:border-zinc-600 px-4 py-2 text-[13px] font-medium text-zinc-600 dark:text-zinc-300 transition-all hover:bg-zinc-100 dark:hover:bg-zinc-800 active:scale-[0.98]"
-              >
-                {isCopied ? (
-                  <>
-                    <HiCheck className="h-4 w-4 text-emerald-500" />
-                    Copiado
-                  </>
-                ) : (
-                  <>
-                    <HiDocumentDuplicate className="h-4 w-4" />
-                    Copiar reporte JSON
-                  </>
-                )}
-              </button>
+              <div className="rounded-2xl border border-zinc-200 dark:border-zinc-700/60 bg-white dark:bg-zinc-800/30 p-5 sm:p-6 shadow-sm">
+                <ActionPlan items={pageState.data.actionPlan} />
+              </div>
+
+              <div className="flex justify-center pt-2 pb-4">
+                <button
+                  onClick={handleCopyReport}
+                  className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 dark:border-zinc-600 bg-white dark:bg-zinc-800 px-4 py-2 text-[13px] font-medium text-zinc-600 dark:text-zinc-300 shadow-sm transition-all hover:shadow-md hover:bg-zinc-50 dark:hover:bg-zinc-700 active:scale-[0.98]"
+                >
+                  {isCopied ? (
+                    <>
+                      <HiCheck className="h-4 w-4 text-emerald-500" />
+                      Copiado
+                    </>
+                  ) : (
+                    <>
+                      <HiDocumentDuplicate className="h-4 w-4" />
+                      Copiar reporte JSON
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
-          </div>
-        )}
-      </div>
-    </main>
+          )}
+
+          {pageState.phase === "idle" && (
+            <div className="flex flex-col items-center py-16 text-center">
+              <p className="text-sm text-zinc-400 dark:text-zinc-500">
+                Ingresa una URL arriba para iniciar el análisis de tu entidad digital.
+              </p>
+            </div>
+          )}
+        </div>
+      </main>
+
+      <Footer />
+      <CookieBanner />
+    </>
   );
 }
