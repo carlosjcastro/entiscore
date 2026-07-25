@@ -5,7 +5,7 @@ import { technicalAccessibilityAnalyzer } from "@/agent/analyzers/technical-acce
 import { identityConsistencyAnalyzer } from "@/agent/analyzers/identity-consistency";
 import { authoritySignalsAnalyzer } from "@/agent/analyzers/authority-signals";
 import { calculateOverallScore } from "@/agent/scoring";
-import { generateActionPlan } from "@/agent/action-plan";
+import { generateSmartActionPlan } from "@/agent/action-plan-ai";
 
 function buildFailedAxisResult(errorMessage: string): AxisResult {
   return {
@@ -126,9 +126,9 @@ async function runAllAnalyzers(context: AnalysisContext): Promise<AllAxesResults
   };
 }
 
-function buildAuditResponse(url: string, axes: AllAxesResults): AuditResponse {
+async function buildAuditResponse(url: string, axes: AllAxesResults): Promise<AuditResponse> {
   const { overallScore, maturityLevel } = calculateOverallScore(axes);
-  const actionPlan = generateActionPlan(axes);
+  const actionPlan = await generateSmartActionPlan(axes);
 
   return {
     url,
@@ -144,5 +144,5 @@ export async function runAudit(url: string): Promise<AuditResponse> {
   const siteData = await fetchSiteData(url);
   const context = buildAnalysisContext(url, siteData);
   const axesResults = await runAllAnalyzers(context);
-  return buildAuditResponse(url, axesResults);
+  return await buildAuditResponse(url, axesResults);
 }
