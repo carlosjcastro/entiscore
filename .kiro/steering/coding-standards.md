@@ -37,3 +37,19 @@ No se usan guiones medios ni em dash en textos visibles de la interfaz, del READ
 ## Formato de código
 
 Se usa el formato estándar de Prettier con la configuración por defecto de Next.js. Imports organizados: primeros los de librerías externas, luego los internos del proyecto agrupados por capa.
+
+## Convención de commits
+
+Todos los commits se escriben en español. El formato es: `prefijo: descripción breve en minúscula`.
+
+Prefijos válidos:
+
+- `feat`: funcionalidad nueva
+- `fix`: corrección de errores
+- `chore`: tareas de configuración o mantenimiento
+- `refactor`: cambios de estructura sin alterar comportamiento
+- `docs`: cambios de documentación (README, specs)
+
+La descripción debe sonar humana y natural. Debe explicar qué se hizo con claridad, no ser un resumen genérico ni una lista de archivos. Ejemplo correcto: `feat: agrega el formulario de ingreso de URL con validación de estado de carga`. Ejemplo incorrecto: `feat: agregar componente`.
+
+Al completar una tarea del documento tasks.md, o un paso significativo dentro de una tarea, se hace commit automáticamente sin esperar indicación explícita. Si un cambio toca varias cosas, se divide en commits separados y coherentes.
