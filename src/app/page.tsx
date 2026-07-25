@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { HiDocumentDuplicate, HiCheck } from "react-icons/hi2";
 import type { AuditResponse, AuditErrorResponse, AxisName } from "@/types";
 import { AuditForm } from "./components/AuditForm";
@@ -15,6 +17,7 @@ import { AnalysisProgress } from "./components/AnalysisProgress";
 import { CookieBanner } from "./components/CookieBanner";
 import { Footer } from "./components/Footer";
 import { SplashScreen } from "./components/SplashScreen";
+import { saveAuditToHistory } from "./lib/history-storage";
 
 const NetworkGraph = dynamic(
   () => import("./components/NetworkGraph").then((mod) => ({ default: mod.NetworkGraph })),
@@ -54,6 +57,14 @@ export default function HomePage() {
   const [pageState, setPageState] = useState<PageState>({ phase: "idle" });
   const [isCopied, setIsCopied] = useState(false);
   const [analysisJustCompleted, setAnalysisJustCompleted] = useState(false);
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const auditUrl = searchParams.get("audit");
+    if (auditUrl) {
+      handleAuditSubmit(auditUrl);
+    }
+  }, []);
 
   async function handleAuditSubmit(url: string) {
     setPageState({ phase: "loading" });
@@ -61,6 +72,7 @@ export default function HomePage() {
 
     try {
       const data = await requestAudit(url);
+      saveAuditToHistory(data);
       setAnalysisJustCompleted(true);
       setTimeout(() => {
         setPageState({ phase: "result", data });
@@ -88,7 +100,13 @@ export default function HomePage() {
     <>
       <SplashScreen />
       <section className="relative flex flex-col items-center justify-center min-h-[520px] sm:min-h-[560px] px-4 py-16 sm:py-20 overflow-hidden bg-zinc-950">
-        <div className="absolute top-4 right-4 z-20">
+        <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
+          <Link
+            href="/historial"
+            className="flex h-8 items-center gap-1.5 rounded-lg border border-white/20 bg-white/10 px-3 text-[12px] font-medium text-white/80 backdrop-blur-sm transition-colors hover:bg-white/20"
+          >
+            Historial
+          </Link>
           <ThemeToggle variant="hero" />
         </div>
         <NetworkGraph />

@@ -59,6 +59,12 @@ export function Footer() {
                 Ejes de evaluación
               </button>
               <a
+                href="/historial"
+                className="text-[13px] text-zinc-600 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors w-fit"
+              >
+                Historial de análisis
+              </a>
+              <a
                 href={GITHUB_REPO_URL}
                 target="_blank"
                 rel="noopener noreferrer"
