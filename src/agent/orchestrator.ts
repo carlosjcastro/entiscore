@@ -2,22 +2,10 @@ import type { AnalysisContext, AuditResponse, AxisResult, McpTools } from "@/typ
 import { fetchPage, fetchRobotsTxt, checkUrlAccessibility } from "@/mcp-server/tools";
 import { structuredDataAnalyzer } from "@/agent/analyzers/structured-data";
 import { technicalAccessibilityAnalyzer } from "@/agent/analyzers/technical-accessibility";
+import { identityConsistencyAnalyzer } from "@/agent/analyzers/identity-consistency";
+import { authoritySignalsAnalyzer } from "@/agent/analyzers/authority-signals";
 import { calculateOverallScore } from "@/agent/scoring";
 import { generateActionPlan } from "@/agent/action-plan";
-
-function buildPartialAxisResult(message: string): AxisResult {
-  return {
-    score: 0,
-    status: "partial",
-    findings: [
-      {
-        type: "warning",
-        title: "Eje no evaluado en esta versión",
-        description: message,
-      },
-    ],
-  };
-}
 
 function buildFailedAxisResult(errorMessage: string): AxisResult {
   return {
@@ -98,12 +86,24 @@ async function executeAnalyzerSafely(
   }
 }
 
-async function runP0Analyzers(
-  context: AnalysisContext
-): Promise<{ structuredData: AxisResult; technicalAccessibility: AxisResult }> {
-  const [structuredDataResult, technicalAccessibilityResult] = await Promise.allSettled([
+interface AllAxesResults {
+  structuredData: AxisResult;
+  identityConsistency: AxisResult;
+  authoritySignals: AxisResult;
+  technicalAccessibility: AxisResult;
+}
+
+async function runAllAnalyzers(context: AnalysisContext): Promise<AllAxesResults> {
+  const [
+    structuredDataResult,
+    technicalAccessibilityResult,
+    identityConsistencyResult,
+    authoritySignalsResult,
+  ] = await Promise.allSettled([
     executeAnalyzerSafely(() => structuredDataAnalyzer.analyze(context)),
     executeAnalyzerSafely(() => technicalAccessibilityAnalyzer.analyze(context)),
+    executeAnalyzerSafely(() => identityConsistencyAnalyzer.analyze(context)),
+    executeAnalyzerSafely(() => authoritySignalsAnalyzer.analyze(context)),
   ]);
 
   return {
@@ -115,32 +115,18 @@ async function runP0Analyzers(
       technicalAccessibilityResult.status === "fulfilled"
         ? technicalAccessibilityResult.value
         : buildFailedAxisResult("El analizador de accesibilidad técnica falló inesperadamente"),
+    identityConsistency:
+      identityConsistencyResult.status === "fulfilled"
+        ? identityConsistencyResult.value
+        : buildFailedAxisResult("El analizador de consistencia de identidad falló inesperadamente"),
+    authoritySignals:
+      authoritySignalsResult.status === "fulfilled"
+        ? authoritySignalsResult.value
+        : buildFailedAxisResult("El analizador de señales de autoridad falló inesperadamente"),
   };
 }
 
-function buildP1PlaceholderResults(): {
-  identityConsistency: AxisResult;
-  authoritySignals: AxisResult;
-} {
-  return {
-    identityConsistency: buildPartialAxisResult(
-      "El análisis de consistencia de identidad se agregará en una fase posterior del desarrollo."
-    ),
-    authoritySignals: buildPartialAxisResult(
-      "El análisis de señales de autoridad se agregará en una fase posterior del desarrollo."
-    ),
-  };
-}
-
-function buildAuditResponse(
-  url: string,
-  axes: {
-    structuredData: AxisResult;
-    identityConsistency: AxisResult;
-    authoritySignals: AxisResult;
-    technicalAccessibility: AxisResult;
-  }
-): AuditResponse {
+function buildAuditResponse(url: string, axes: AllAxesResults): AuditResponse {
   const { overallScore, maturityLevel } = calculateOverallScore(axes);
   const actionPlan = generateActionPlan(axes);
 
@@ -157,16 +143,6 @@ function buildAuditResponse(
 export async function runAudit(url: string): Promise<AuditResponse> {
   const siteData = await fetchSiteData(url);
   const context = buildAnalysisContext(url, siteData);
-
-  const p0Results = await runP0Analyzers(context);
-  const p1Results = buildP1PlaceholderResults();
-
-  const allAxes = {
-    structuredData: p0Results.structuredData,
-    identityConsistency: p1Results.identityConsistency,
-    authoritySignals: p1Results.authoritySignals,
-    technicalAccessibility: p0Results.technicalAccessibility,
-  };
-
-  return buildAuditResponse(url, allAxes);
+  const axesResults = await runAllAnalyzers(context);
+  return buildAuditResponse(url, axesResults);
 }
