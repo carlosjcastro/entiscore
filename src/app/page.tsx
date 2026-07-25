@@ -14,7 +14,7 @@ import { Footer } from "./components/Footer";
 
 const NetworkGraph = dynamic(
   () => import("./components/NetworkGraph").then((mod) => ({ default: mod.NetworkGraph })),
-  { ssr: false, loading: () => <div className="absolute inset-0 -z-10 bg-zinc-950" /> }
+  { ssr: false, loading: () => <div className="absolute inset-0 bg-zinc-950" style={{ zIndex: 0 }} /> }
 );
 
 type PageState =
@@ -77,7 +77,7 @@ export default function HomePage() {
 
   return (
     <>
-      <section className="relative flex flex-col items-center justify-center min-h-[420px] sm:min-h-[480px] px-4 py-16 sm:py-20 overflow-hidden bg-zinc-950">
+      <section className="relative flex flex-col items-center justify-center min-h-[520px] sm:min-h-[560px] px-4 py-16 sm:py-20 overflow-hidden bg-zinc-950">
         <NetworkGraph />
         <div className="relative z-10 w-full max-w-2xl flex flex-col items-center">
           <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-white text-center">
