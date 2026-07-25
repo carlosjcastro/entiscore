@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -53,18 +53,23 @@ async function requestAudit(url: string): Promise<AuditResponse> {
   return body as AuditResponse;
 }
 
-export default function HomePage() {
-  const [pageState, setPageState] = useState<PageState>({ phase: "idle" });
-  const [isCopied, setIsCopied] = useState(false);
-  const [analysisJustCompleted, setAnalysisJustCompleted] = useState(false);
+function AutoAuditTrigger({ onAudit }: { onAudit: (url: string) => void }) {
   const searchParams = useSearchParams();
 
   useEffect(() => {
     const auditUrl = searchParams.get("audit");
     if (auditUrl) {
-      handleAuditSubmit(auditUrl);
+      onAudit(auditUrl);
     }
-  }, []);
+  }, [searchParams, onAudit]);
+
+  return null;
+}
+
+export default function HomePage() {
+  const [pageState, setPageState] = useState<PageState>({ phase: "idle" });
+  const [isCopied, setIsCopied] = useState(false);
+  const [analysisJustCompleted, setAnalysisJustCompleted] = useState(false);
 
   async function handleAuditSubmit(url: string) {
     setPageState({ phase: "loading" });
@@ -99,6 +104,9 @@ export default function HomePage() {
   return (
     <>
       <SplashScreen />
+      <Suspense fallback={null}>
+        <AutoAuditTrigger onAudit={handleAuditSubmit} />
+      </Suspense>
       <section className="relative flex flex-col items-center justify-center min-h-[520px] sm:min-h-[560px] px-4 py-16 sm:py-20 overflow-hidden bg-zinc-950">
         <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
           <Link
