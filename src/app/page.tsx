@@ -9,6 +9,8 @@ import { ScoreDisplay } from "./components/ScoreDisplay";
 import { SummaryStats } from "./components/SummaryStats";
 import { AxisSection } from "./components/AxisSection";
 import { ActionPlan } from "./components/ActionPlan";
+import { FeaturesSection } from "./components/FeaturesSection";
+import { AnalysisProgress } from "./components/AnalysisProgress";
 import { CookieBanner } from "./components/CookieBanner";
 import { Footer } from "./components/Footer";
 
@@ -49,13 +51,18 @@ async function requestAudit(url: string): Promise<AuditResponse> {
 export default function HomePage() {
   const [pageState, setPageState] = useState<PageState>({ phase: "idle" });
   const [isCopied, setIsCopied] = useState(false);
+  const [analysisJustCompleted, setAnalysisJustCompleted] = useState(false);
 
   async function handleAuditSubmit(url: string) {
     setPageState({ phase: "loading" });
+    setAnalysisJustCompleted(false);
 
     try {
       const data = await requestAudit(url);
-      setPageState({ phase: "result", data });
+      setAnalysisJustCompleted(true);
+      setTimeout(() => {
+        setPageState({ phase: "result", data });
+      }, 600);
     } catch (error) {
       const errorData = error as AuditErrorResponse;
       setPageState({
@@ -98,19 +105,19 @@ export default function HomePage() {
 
       <main className="flex-1 px-4 py-8 sm:py-12 sm:px-6 lg:px-8 bg-zinc-50 dark:bg-zinc-900">
         <div className="mx-auto w-full max-w-6xl">
+          {pageState.phase === "idle" && (
+            <FeaturesSection
+              onQuickAudit={handleAuditSubmit}
+              isLoading={false}
+            />
+          )}
+
           {pageState.phase === "loading" && (
-            <div className="flex flex-col items-center gap-4 py-20">
-              <div className="relative h-10 w-10">
-                <div className="absolute inset-0 animate-spin rounded-full border-[3px] border-zinc-200 dark:border-zinc-700 border-t-indigo-600 dark:border-t-indigo-400" />
-              </div>
-              <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                Analizando el sitio. Esto puede tomar hasta 60 segundos.
-              </p>
-            </div>
+            <AnalysisProgress isComplete={analysisJustCompleted} />
           )}
 
           {pageState.phase === "error" && (
-            <div className="max-w-2xl mx-auto rounded-xl border border-rose-200 dark:border-rose-800/50 bg-rose-50/80 dark:bg-rose-950/30 p-4 sm:p-5">
+            <div className="max-w-2xl mx-auto py-8 rounded-xl border border-rose-200 dark:border-rose-800/50 bg-rose-50/80 dark:bg-rose-950/30 p-4 sm:p-5">
               <p className="text-sm font-medium text-rose-700 dark:text-rose-300">
                 {pageState.errorData.error}
               </p>
@@ -184,14 +191,6 @@ export default function HomePage() {
                   )}
                 </button>
               </div>
-            </div>
-          )}
-
-          {pageState.phase === "idle" && (
-            <div className="flex flex-col items-center py-16 text-center">
-              <p className="text-sm text-zinc-400 dark:text-zinc-500">
-                Ingresa una URL arriba para iniciar el análisis de tu entidad digital.
-              </p>
             </div>
           )}
         </div>
