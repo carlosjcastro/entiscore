@@ -11,6 +11,7 @@ import { ScoreDisplay } from "./components/ScoreDisplay";
 import { SummaryStats } from "./components/SummaryStats";
 import { AxisSection } from "./components/AxisSection";
 import { ActionPlan } from "./components/ActionPlan";
+import { ScoreBadge } from "./components/ScoreBadge";
 import { ThemeToggle } from "./components/ThemeToggle";
 import { FeaturesSection } from "./components/FeaturesSection";
 import { AnalysisProgress } from "./components/AnalysisProgress";
@@ -213,6 +214,13 @@ export default function HomePage() {
 
               <div className="rounded-2xl border border-zinc-200 dark:border-zinc-700/60 bg-white dark:bg-zinc-800/30 p-5 sm:p-6 shadow-sm">
                 <ActionPlan items={pageState.data.actionPlan} />
+              </div>
+
+              <div className="rounded-2xl border border-zinc-200 dark:border-zinc-700/60 bg-white dark:bg-zinc-800/30 p-5 sm:p-6 shadow-sm">
+                <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-4 text-center">
+                  Insignia de tu resultado
+                </h3>
+                <ScoreBadge report={pageState.data} />
               </div>
 
               <div className="flex justify-center pt-2 pb-4">
