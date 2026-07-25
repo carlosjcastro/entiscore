@@ -14,6 +14,7 @@ import { FeaturesSection } from "./components/FeaturesSection";
 import { AnalysisProgress } from "./components/AnalysisProgress";
 import { CookieBanner } from "./components/CookieBanner";
 import { Footer } from "./components/Footer";
+import { SplashScreen } from "./components/SplashScreen";
 
 const NetworkGraph = dynamic(
   () => import("./components/NetworkGraph").then((mod) => ({ default: mod.NetworkGraph })),
@@ -85,6 +86,7 @@ export default function HomePage() {
 
   return (
     <>
+      <SplashScreen />
       <section className="relative flex flex-col items-center justify-center min-h-[520px] sm:min-h-[560px] px-4 py-16 sm:py-20 overflow-hidden bg-zinc-950">
         <div className="absolute top-4 right-4 z-20">
           <ThemeToggle variant="hero" />
