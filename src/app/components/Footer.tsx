@@ -65,6 +65,12 @@ export function Footer() {
                 Historial de análisis
               </a>
               <a
+                href="/comparar"
+                className="text-[13px] text-zinc-600 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors w-fit"
+              >
+                Comparar dos sitios
+              </a>
+              <a
                 href={GITHUB_REPO_URL}
                 target="_blank"
                 rel="noopener noreferrer"

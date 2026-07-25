@@ -112,6 +112,12 @@ export default function HomePage() {
       <section className="relative flex flex-col items-center justify-center min-h-[520px] sm:min-h-[560px] px-4 py-16 sm:py-20 overflow-hidden bg-zinc-950">
         <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
           <Link
+            href="/comparar"
+            className="flex h-8 items-center gap-1.5 rounded-lg border border-white/20 bg-white/10 px-3 text-[12px] font-medium text-white/80 backdrop-blur-sm transition-colors hover:bg-white/20"
+          >
+            Comparar
+          </Link>
+          <Link
             href="/historial"
             className="flex h-8 items-center gap-1.5 rounded-lg border border-white/20 bg-white/10 px-3 text-[12px] font-medium text-white/80 backdrop-blur-sm transition-colors hover:bg-white/20"
           >

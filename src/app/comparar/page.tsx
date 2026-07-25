@@ -1,0 +1,318 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { HiArrowLeft, HiArrowTrendingUp, HiArrowTrendingDown } from "react-icons/hi2";
+import type { AuditResponse, AuditErrorResponse, AxisName } from "@/types";
+import { ScoreDisplay } from "@/app/components/ScoreDisplay";
+import { AxisSection } from "@/app/components/AxisSection";
+import { ActionPlan } from "@/app/components/ActionPlan";
+import { ThemeToggle } from "@/app/components/ThemeToggle";
+import { AnalysisProgress } from "@/app/components/AnalysisProgress";
+
+type CompareState =
+  | { phase: "idle" }
+  | { phase: "loading"; urlA: string; urlB: string }
+  | { phase: "result"; reportA: AuditResponse; reportB: AuditResponse }
+  | { phase: "error"; errorMessage: string };
+
+const AXIS_ORDER: AxisName[] = [
+  "structuredData",
+  "technicalAccessibility",
+  "identityConsistency",
+  "authoritySignals",
+];
+
+const AXIS_LABELS: Record<AxisName, string> = {
+  structuredData: "Datos estructurados",
+  identityConsistency: "Consistencia de identidad",
+  authoritySignals: "Señales de autoridad",
+  technicalAccessibility: "Accesibilidad técnica",
+};
+
+async function requestAudit(url: string): Promise<AuditResponse> {
+  const response = await fetch("/api/audit", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ url }),
+  });
+
+  const body: unknown = await response.json();
+
+  if (!response.ok) {
+    const errorData = body as AuditErrorResponse;
+    throw new Error(errorData.error ?? "Error al analizar la URL");
+  }
+
+  return body as AuditResponse;
+}
+
+function isValidHttpUrl(value: string): boolean {
+  try {
+    const url = new URL(value);
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
+function ComparisonSummary({ reportA, reportB }: { reportA: AuditResponse; reportB: AuditResponse }) {
+  const scoreDifference = reportA.overallScore - reportB.overallScore;
+  const winnerUrl = scoreDifference > 0 ? reportA.url : scoreDifference < 0 ? reportB.url : null;
+  const absoluteDifference = Math.abs(scoreDifference);
+
+  return (
+    <div className="rounded-2xl border border-zinc-200 dark:border-zinc-700/60 bg-white dark:bg-zinc-800/30 p-5 sm:p-6 shadow-sm">
+      <h2 className="text-base font-semibold text-zinc-800 dark:text-zinc-100 mb-4">
+        Resumen comparativo
+      </h2>
+
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+          <span className="text-[13px] font-medium text-zinc-600 dark:text-zinc-300">
+            Score general:
+          </span>
+          {winnerUrl ? (
+            <span className="text-[13px] text-zinc-700 dark:text-zinc-200">
+              <span className="font-semibold">{new URL(winnerUrl).hostname}</span> supera por {absoluteDifference} puntos
+            </span>
+          ) : (
+            <span className="text-[13px] text-zinc-500 dark:text-zinc-400">Ambos sitios tienen el mismo puntaje</span>
+          )}
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {AXIS_ORDER.map((axisName) => {
+            const scoreA = reportA.axes[axisName].score;
+            const scoreB = reportB.axes[axisName].score;
+            const diff = scoreA - scoreB;
+
+            return (
+              <div key={axisName} className="flex items-center gap-2 rounded-lg bg-zinc-50 dark:bg-zinc-800/50 px-3 py-2">
+                <span className="text-[12px] text-zinc-500 dark:text-zinc-400 flex-1">
+                  {AXIS_LABELS[axisName]}
+                </span>
+                {diff > 0 && (
+                  <span className="inline-flex items-center gap-0.5 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
+                    <HiArrowTrendingUp className="h-3 w-3" />
+                    A +{diff}
+                  </span>
+                )}
+                {diff < 0 && (
+                  <span className="inline-flex items-center gap-0.5 text-[11px] font-semibold text-indigo-600 dark:text-indigo-400">
+                    <HiArrowTrendingDown className="h-3 w-3" />
+                    B +{Math.abs(diff)}
+                  </span>
+                )}
+                {diff === 0 && (
+                  <span className="text-[11px] text-zinc-400 dark:text-zinc-500">Igual</span>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CompareForm({ onSubmit, isLoading }: { onSubmit: (urlA: string, urlB: string) => void; isLoading: boolean }) {
+  const [urlA, setUrlA] = useState("");
+  const [urlB, setUrlB] = useState("");
+  const [validationError, setValidationError] = useState<string | null>(null);
+
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const trimmedA = urlA.trim();
+    const trimmedB = urlB.trim();
+
+    if (trimmedA.length === 0 || trimmedB.length === 0) {
+      setValidationError("Ingresa ambas URLs para comparar");
+      return;
+    }
+
+    if (!isValidHttpUrl(trimmedA) || !isValidHttpUrl(trimmedB)) {
+      setValidationError("Ambas URLs deben comenzar con http:// o https:// y tener un formato válido");
+      return;
+    }
+
+    setValidationError(null);
+    onSubmit(trimmedA, trimmedB);
+  }
+
+  function handleInputChange(setter: (value: string) => void) {
+    return (event: React.ChangeEvent<HTMLInputElement>) => {
+      setter(event.target.value);
+      if (validationError) setValidationError(null);
+    };
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="flex flex-col gap-1">
+          <label className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+            Sitio A
+          </label>
+          <input
+            type="text"
+            value={urlA}
+            onChange={handleInputChange(setUrlA)}
+            placeholder="https://primer-sitio.com"
+            disabled={isLoading}
+            className="rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-4 py-3 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 disabled:opacity-50 transition-shadow"
+          />
+        </div>
+        <div className="flex flex-col gap-1">
+          <label className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+            Sitio B
+          </label>
+          <input
+            type="text"
+            value={urlB}
+            onChange={handleInputChange(setUrlB)}
+            placeholder="https://segundo-sitio.com"
+            disabled={isLoading}
+            className="rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-4 py-3 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 disabled:opacity-50 transition-shadow"
+          />
+        </div>
+      </div>
+      <button
+        type="submit"
+        disabled={isLoading}
+        className="w-full sm:w-auto sm:self-center rounded-xl bg-indigo-600 px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-indigo-700 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
+      >
+        {isLoading ? "Comparando..." : "Comparar ambos"}
+      </button>
+      {validationError && (
+        <p className="text-[12px] text-rose-600 dark:text-rose-400 text-center">
+          {validationError}
+        </p>
+      )}
+    </form>
+  );
+}
+
+function ReportColumn({ report, label }: { report: AuditResponse; label: string }) {
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="rounded-xl border border-zinc-200 dark:border-zinc-700/60 bg-white dark:bg-zinc-800/30 p-4 shadow-sm">
+        <p className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 mb-1">
+          {label}
+        </p>
+        <p className="text-sm font-medium text-zinc-800 dark:text-zinc-200 truncate mb-4">
+          {report.url}
+        </p>
+        <div className="flex justify-center">
+          <ScoreDisplay overallScore={report.overallScore} maturityLevel={report.maturityLevel} />
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        {AXIS_ORDER.map((axisName) => (
+          <AxisSection key={axisName} axisName={axisName} result={report.axes[axisName]} />
+        ))}
+      </div>
+
+      <div className="rounded-xl border border-zinc-200 dark:border-zinc-700/60 bg-white dark:bg-zinc-800/30 p-4 shadow-sm">
+        <ActionPlan items={report.actionPlan} />
+      </div>
+    </div>
+  );
+}
+
+export default function CompararPage() {
+  const [state, setState] = useState<CompareState>({ phase: "idle" });
+  const [analysisComplete, setAnalysisComplete] = useState(false);
+
+  async function handleCompare(urlA: string, urlB: string) {
+    setState({ phase: "loading", urlA, urlB });
+    setAnalysisComplete(false);
+
+    try {
+      const [reportA, reportB] = await Promise.all([
+        requestAudit(urlA),
+        requestAudit(urlB),
+      ]);
+      setAnalysisComplete(true);
+      setTimeout(() => {
+        setState({ phase: "result", reportA, reportB });
+      }, 600);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Error desconocido al comparar";
+      setState({ phase: "error", errorMessage });
+    }
+  }
+
+  return (
+    <main className="flex-1 px-4 py-8 sm:py-12 sm:px-6 lg:px-8 bg-zinc-50 dark:bg-zinc-900 min-h-screen">
+      <div className="mx-auto w-full max-w-6xl">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-3">
+            <Link
+              href="/"
+              className="flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-700"
+            >
+              <HiArrowLeft className="h-4 w-4" />
+            </Link>
+            <h1 className="text-xl sm:text-2xl font-bold text-zinc-800 dark:text-zinc-100">
+              Comparar dos sitios
+            </h1>
+          </div>
+          <ThemeToggle />
+        </div>
+
+        <div className="mb-8">
+          <CompareForm
+            onSubmit={handleCompare}
+            isLoading={state.phase === "loading"}
+          />
+        </div>
+
+        {state.phase === "loading" && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="flex flex-col items-center">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 mb-3">
+                {new URL(state.urlA).hostname}
+              </p>
+              <AnalysisProgress isComplete={analysisComplete} />
+            </div>
+            <div className="flex flex-col items-center">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 mb-3">
+                {new URL(state.urlB).hostname}
+              </p>
+              <AnalysisProgress isComplete={analysisComplete} />
+            </div>
+          </div>
+        )}
+
+        {state.phase === "error" && (
+          <div className="max-w-2xl mx-auto rounded-xl border border-rose-200 dark:border-rose-800/50 bg-rose-50/80 dark:bg-rose-950/30 p-4 sm:p-5">
+            <p className="text-sm font-medium text-rose-700 dark:text-rose-300">
+              {state.errorMessage}
+            </p>
+          </div>
+        )}
+
+        {state.phase === "result" && (
+          <div className="flex flex-col gap-6">
+            <ComparisonSummary reportA={state.reportA} reportB={state.reportB} />
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <ReportColumn report={state.reportA} label="Sitio A" />
+              <ReportColumn report={state.reportB} label="Sitio B" />
+            </div>
+          </div>
+        )}
+
+        {state.phase === "idle" && (
+          <div className="flex flex-col items-center py-16 text-center">
+            <p className="text-sm text-zinc-400 dark:text-zinc-500 max-w-md">
+              Ingresa dos URLs arriba para comparar su madurez de entidad digital lado a lado y descubrir cuál tiene mejor presencia ante buscadores e IA.
+            </p>
+          </div>
+        )}
+      </div>
+    </main>
+  );
+}
