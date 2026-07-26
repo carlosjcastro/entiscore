@@ -5,6 +5,7 @@ import { runAuditWithMetadata } from "@/agent/orchestrator";
 import { extractSiteMetadata } from "@/lib/site-metadata";
 import { saveComparison } from "@/lib/persistence";
 import { isStrictlyValidUrl } from "@/lib/url-validation";
+import { isRateLimited } from "@/lib/rate-limiter";
 
 const GLOBAL_TIMEOUT_MS = 55_000;
 
@@ -39,6 +40,15 @@ export async function OPTIONS(): Promise<Response> {
 }
 
 export async function POST(request: NextRequest): Promise<Response> {
+  const clientIp = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+
+  if (isRateLimited(clientIp)) {
+    return Response.json(
+      { error: "Too many requests. Please wait a moment before trying again.", code: "RATE_LIMITED" },
+      { status: 429, headers: CORS_HEADERS }
+    );
+  }
+
   let body: unknown;
   try {
     body = await request.json();

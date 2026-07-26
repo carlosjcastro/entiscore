@@ -62,7 +62,8 @@ export type AuditErrorCode =
   | "FORBIDDEN_URL"
   | "SITE_UNREACHABLE"
   | "TIMEOUT"
-  | "INTERNAL_ERROR";
+  | "INTERNAL_ERROR"
+  | "RATE_LIMITED";
 
 export interface AuditErrorResponse {
   error: string;

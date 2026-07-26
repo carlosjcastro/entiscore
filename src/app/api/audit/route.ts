@@ -4,6 +4,7 @@ import { AuditRequestSchema, validateUrlSafety } from "./validation";
 import { runAuditWithMetadata } from "@/agent/orchestrator";
 import { extractSiteMetadata } from "@/lib/site-metadata";
 import { saveAnalysis } from "@/lib/persistence";
+import { isRateLimited } from "@/lib/rate-limiter";
 import type { AuditErrorResponse } from "@/types";
 
 const GLOBAL_TIMEOUT_MS = 55_000;
@@ -46,6 +47,15 @@ export async function OPTIONS(): Promise<Response> {
 }
 
 export async function POST(request: NextRequest): Promise<Response> {
+  const clientIp = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+
+  if (isRateLimited(clientIp)) {
+    return buildErrorResponse(429, {
+      error: "Too many requests. Please wait a moment before trying again.",
+      code: "RATE_LIMITED",
+    });
+  }
+
   let body: unknown;
   try {
     body = await request.json();
