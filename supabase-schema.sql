@@ -29,11 +29,5 @@ alter table comparisons enable row level security;
 create policy "Lectura pública por código" on analyses
   for select using (true);
 
-create policy "Inserción desde el servidor" on analyses
-  for insert with check (true);
-
 create policy "Lectura pública por código" on comparisons
   for select using (true);
-
-create policy "Inserción desde el servidor" on comparisons
-  for insert with check (true);

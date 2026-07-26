@@ -1,4 +1,5 @@
-import { getSupabase, isSupabaseConfigured } from "@/lib/supabase";
+import { getPublicSupabase, isSupabaseConfigured } from "@/lib/supabase";
+import { getServerSupabase, isServerSupabaseConfigured } from "@/lib/supabase-server";
 import { generateUniqueCode } from "@/lib/code-generator";
 import type { AuditResponse } from "@/types";
 
@@ -30,7 +31,7 @@ export interface SavedComparison {
 const MAX_CODE_GENERATION_ATTEMPTS = 5;
 
 async function generateNonCollidingCode(): Promise<string> {
-  const supabase = getSupabase();
+  const supabase = getServerSupabase() ?? getPublicSupabase();
   for (let attempt = 0; attempt < MAX_CODE_GENERATION_ATTEMPTS; attempt++) {
     const code = generateUniqueCode();
 
@@ -63,10 +64,11 @@ export async function saveAnalysis(
   report: AuditResponse,
   metadata: SiteMetadata
 ): Promise<string | null> {
-  if (!isSupabaseConfigured()) return null;
+  if (!isServerSupabaseConfigured()) return null;
 
   try {
     const code = await generateNonCollidingCode();
+    const supabase = getServerSupabase()!;
 
     const insertData = {
       code,
@@ -76,7 +78,7 @@ export async function saveAnalysis(
       report: report as unknown as Record<string, unknown>,
     };
 
-    const { error } = await getSupabase()!.from("analyses").insert(insertData);
+    const { error } = await supabase.from("analyses").insert(insertData);
 
     if (error) {
       console.error("[Entiscore] Error al guardar análisis en Supabase:", error.message);
@@ -96,10 +98,11 @@ export async function saveComparison(
   metadataA: SiteMetadata,
   metadataB: SiteMetadata
 ): Promise<string | null> {
-  if (!isSupabaseConfigured()) return null;
+  if (!isServerSupabaseConfigured()) return null;
 
   try {
     const code = await generateNonCollidingCode();
+    const supabase = getServerSupabase()!;
 
     const insertData = {
       code,
@@ -111,7 +114,7 @@ export async function saveComparison(
       favicon_url_b: metadataB.faviconUrl,
     };
 
-    const { error } = await getSupabase()!.from("comparisons").insert(insertData);
+    const { error } = await supabase.from("comparisons").insert(insertData);
 
     if (error) {
       console.error("[Entiscore] Error al guardar comparación en Supabase:", error.message);
@@ -127,7 +130,7 @@ export async function saveComparison(
 
 export async function getAnalysisByCode(code: string): Promise<SavedAnalysis | null> {
   if (!isSupabaseConfigured()) return null;
-  const supabase = getSupabase()!;
+  const supabase = getPublicSupabase()!;
 
   const { data, error } = await supabase
     .from("analyses")
@@ -150,7 +153,7 @@ export async function getAnalysisByCode(code: string): Promise<SavedAnalysis | n
 
 export async function getComparisonByCode(code: string): Promise<SavedComparison | null> {
   if (!isSupabaseConfigured()) return null;
-  const supabase = getSupabase()!;
+  const supabase = getPublicSupabase()!;
 
   const { data, error } = await supabase
     .from("comparisons")
