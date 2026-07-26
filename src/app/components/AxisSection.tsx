@@ -82,13 +82,13 @@ export function AxisSection({ axisName, result, previousScore }: AxisSectionProp
   const Icon = config.icon;
 
   return (
-    <div className={`rounded-xl border border-zinc-200 dark:border-zinc-700/60 border-l-4 ${config.borderAccent} bg-white dark:bg-zinc-800/20 overflow-hidden transition-shadow hover:shadow-sm`}>
+    <div className={`border-l-[3px] ${config.borderAccent} pl-4`}>
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-zinc-50/60 dark:hover:bg-zinc-800/40"
+        className="flex w-full items-center gap-3 py-3 text-left"
       >
-        <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${config.iconBgClass}`}>
-          <Icon className={`h-4 w-4 ${config.accentColor}`} />
+        <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded ${config.iconBgClass}`}>
+          <Icon className={`h-3.5 w-3.5 ${config.accentColor}`} />
         </div>
         <div className="flex-1 min-w-0">
           <span className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">
@@ -110,7 +110,7 @@ export function AxisSection({ axisName, result, previousScore }: AxisSectionProp
         className={`grid transition-all duration-250 ease-in-out ${isExpanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
       >
         <div className="overflow-hidden">
-          <div className="border-t border-zinc-100 dark:border-zinc-700/40 px-4 py-3 space-y-2">
+          <div className="pb-3">
             {result.status === "partial" ? (
               <p className="text-[13px] text-zinc-500 dark:text-zinc-400 italic py-2">
                 Este eje se evaluará en una fase posterior del desarrollo.

@@ -15,7 +15,7 @@ const EFFORT_BADGE_CONFIG: Record<EffortLevel, string> = {
 function EffortBadge({ effort }: { effort: EffortLevel }) {
   return (
     <span
-      className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${EFFORT_BADGE_CONFIG[effort]}`}
+      className={`inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${EFFORT_BADGE_CONFIG[effort]}`}
     >
       {effort}
     </span>
@@ -36,48 +36,43 @@ export function ActionPlan({ items }: ActionPlanProps) {
   const groupedItems = groupItemsByAxis(items);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-5">
       <div className="flex items-center gap-2">
         <HiLightBulb className="h-5 w-5 text-amber-500" />
         <h3 className="text-base font-semibold text-zinc-800 dark:text-zinc-100">
           Plan de acción
         </h3>
       </div>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-6">
         {Array.from(groupedItems.entries()).map(([axisName, axisItems]) => {
           const axisConfig = AXIS_CONFIG[axisName];
           const Icon = axisConfig.icon;
           return (
             <div key={axisName} className="flex flex-col gap-2">
               <div className="flex items-center gap-2">
-                <div className={`flex h-5 w-5 items-center justify-center rounded ${axisConfig.iconBgClass}`}>
-                  <Icon className={`h-3 w-3 ${axisConfig.accentColor}`} />
-                </div>
+                <Icon className={`h-4 w-4 ${axisConfig.accentColor}`} />
                 <span className="text-[12px] font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
                   {axisConfig.label}
                 </span>
               </div>
-              <ol className="flex flex-col gap-1.5 pl-7">
+              <div className="flex flex-col gap-0 pl-6 border-l border-zinc-200 dark:border-zinc-700">
                 {axisItems.map((item) => (
-                  <li
-                    key={item.priority}
-                    className={`rounded-lg border border-l-[3px] border-zinc-200 dark:border-zinc-700/60 bg-white dark:bg-zinc-800/20 p-3 ${axisConfig.borderAccent}`}
-                  >
+                  <div key={item.priority} className="py-2.5 border-b border-zinc-100 dark:border-zinc-800 last:border-b-0">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-[11px] font-bold text-zinc-400 dark:text-zinc-500 tabular-nums">
-                        #{item.priority}
+                      <span className="text-[11px] font-bold text-zinc-300 dark:text-zinc-600 tabular-nums">
+                        {item.priority}
                       </span>
                       <p className="text-[13px] font-medium text-zinc-800 dark:text-zinc-200">
                         {item.title}
                       </p>
                       <EffortBadge effort={item.effort} />
                     </div>
-                    <p className="mt-1 text-[12px] leading-relaxed text-zinc-500 dark:text-zinc-400">
+                    <p className="mt-1 text-[12px] leading-relaxed text-zinc-500 dark:text-zinc-400 pl-5">
                       {item.reason}
                     </p>
-                  </li>
+                  </div>
                 ))}
-              </ol>
+              </div>
             </div>
           );
         })}

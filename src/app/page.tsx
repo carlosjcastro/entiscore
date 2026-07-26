@@ -165,7 +165,7 @@ export default function HomePage() {
           )}
 
           {pageState.phase === "error" && (
-            <div className="max-w-2xl mx-auto py-8 rounded-xl border border-rose-200 dark:border-rose-800/50 bg-rose-50/80 dark:bg-rose-950/30 p-4 sm:p-5">
+            <div className="max-w-2xl mx-auto py-8 border-l-[3px] border-rose-500 pl-4">
               <p className="text-sm font-medium text-rose-700 dark:text-rose-300">
                 {pageState.errorData.error}
               </p>
@@ -178,10 +178,10 @@ export default function HomePage() {
           )}
 
           {pageState.phase === "result" && (
-            <div className="flex flex-col gap-6">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                <div className="lg:col-span-1 flex flex-col items-center justify-center rounded-2xl border border-zinc-200 dark:border-zinc-700/60 bg-white dark:bg-zinc-800/30 p-6 shadow-sm">
-                  <p className="text-[10px] font-medium uppercase tracking-wider text-zinc-400 dark:text-zinc-500 mb-3 truncate max-w-full">
+            <div className="flex flex-col gap-10">
+              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 pb-6 border-b border-zinc-200 dark:border-zinc-700">
+                <div className="flex flex-col items-center lg:items-start gap-1">
+                  <p className="text-[11px] font-medium uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
                     {pageState.data.url}
                   </p>
                   <ScoreDisplay
@@ -190,19 +190,14 @@ export default function HomePage() {
                     previousScore={previousReport?.overallScore}
                   />
                 </div>
-                <div className="lg:col-span-2 flex flex-col justify-center rounded-2xl border border-zinc-200 dark:border-zinc-700/60 bg-white dark:bg-zinc-800/30 p-6 shadow-sm">
-                  <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-4">
-                    Resumen del análisis
-                  </h3>
-                  <SummaryStats data={pageState.data} />
-                </div>
+                <SummaryStats data={pageState.data} />
               </div>
 
-              <div className="rounded-2xl border border-zinc-200 dark:border-zinc-700/60 bg-white dark:bg-zinc-800/30 p-5 sm:p-6 shadow-sm">
-                <h2 className="text-base sm:text-lg font-semibold text-zinc-800 dark:text-zinc-100 mb-4">
+              <div>
+                <h2 className="text-base font-semibold text-zinc-800 dark:text-zinc-100 mb-5">
                   Evaluación por eje
                 </h2>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {AXIS_ORDER.map((axisName, index) => (
                     <div
                       key={axisName}
@@ -219,18 +214,18 @@ export default function HomePage() {
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-zinc-200 dark:border-zinc-700/60 bg-white dark:bg-zinc-800/30 p-5 sm:p-6 shadow-sm">
+              <div className="border-t border-zinc-200 dark:border-zinc-700 pt-8">
                 <ActionPlan items={pageState.data.actionPlan} />
               </div>
 
-              <div className="rounded-2xl border border-zinc-200 dark:border-zinc-700/60 bg-white dark:bg-zinc-800/30 p-5 sm:p-6 shadow-sm">
+              <div className="border-t border-zinc-200 dark:border-zinc-700 pt-6">
                 <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-4 text-center">
                   Insignia de tu resultado
                 </h3>
                 <ScoreBadge report={pageState.data} />
               </div>
 
-              <div className="flex justify-center gap-2 pt-2 pb-4">
+              <div className="flex justify-center gap-2 pt-4 border-t border-zinc-200 dark:border-zinc-700">
                 {shareCode && siteName && (
                   <ShareMenu
                     code={shareCode}
