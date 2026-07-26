@@ -4,6 +4,7 @@ import Link from "next/link";
 import { HiGlobeAlt } from "react-icons/hi2";
 import { FaGithub } from "react-icons/fa";
 import { useI18n } from "@/i18n";
+import Image from "next/image";
 
 const GITHUB_REPO_URL = "https://github.com/carlosjcastro/entiscore";
 
@@ -19,7 +20,12 @@ export function Footer() {
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-2">
-              <HiGlobeAlt className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+              <Image
+                src="/logo/entiscore.png"
+                alt="Entiscore"
+                width={40}
+                height={40}
+              />
               <span className="text-sm font-bold text-zinc-800 dark:text-zinc-200">
                 Entiscore
               </span>

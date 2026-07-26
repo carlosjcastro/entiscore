@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useI18n } from "@/i18n";
 import { ThemeToggle } from "./ThemeToggle";
 import { LocaleSelector } from "./LocaleSelector";
+import Image from "next/image";
 
 interface NavLink {
   labelKey: "analyze" | "compare" | "history" | "about";
@@ -47,8 +48,15 @@ export function Navbar() {
         <div className="flex h-14 items-center justify-between">
           <Link
             href="/"
-            className="text-[15px] font-bold tracking-tight text-zinc-900 dark:text-zinc-100"
+            className="flex items-center gap-2 text-[15px] font-bold tracking-tight text-zinc-900 dark:text-zinc-100"
           >
+            <Image
+              src="/logo/entiscore.png"
+              alt="Entiscore"
+              width={24}
+              height={24}
+              priority
+            />
             Entiscore
           </Link>
 
