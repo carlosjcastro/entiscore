@@ -83,13 +83,34 @@ export function Footer() {
 
           <div className="flex flex-col gap-3">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
-              Sobre el proyecto
+              Información
             </span>
-            <p className="text-[13px] leading-relaxed text-zinc-500 dark:text-zinc-400">
-              Construido para el hackathon de Código Facilito, Kiro powered by AWS,
-              usando Kiro como herramienta central de desarrollo con Spec Driven Development,
-              steering de estándares y MCP tools.
-            </p>
+            <nav className="flex flex-col gap-2">
+              <a
+                href="/acerca-de"
+                className="text-[13px] text-zinc-600 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors w-fit"
+              >
+                Acerca de Entiscore
+              </a>
+              <a
+                href="/equipo"
+                className="text-[13px] text-zinc-600 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors w-fit"
+              >
+                Equipo
+              </a>
+              <a
+                href="/derechos-de-autor"
+                className="text-[13px] text-zinc-600 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors w-fit"
+              >
+                Derechos de autor
+              </a>
+              <a
+                href="/terminos-de-uso"
+                className="text-[13px] text-zinc-600 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors w-fit"
+              >
+                Términos de uso
+              </a>
+            </nav>
           </div>
         </div>
       </div>
