@@ -9,6 +9,7 @@ export const AuditRequestSchema = z.object({
       (value) => value.startsWith("http://") || value.startsWith("https://"),
       { message: "Solo se permiten protocolos http o https" }
     ),
+  locale: z.enum(["es", "en"]).optional().default("es"),
 });
 
 export type AuditRequest = z.infer<typeof AuditRequestSchema>;

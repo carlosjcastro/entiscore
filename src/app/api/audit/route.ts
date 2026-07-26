@@ -65,7 +65,7 @@ export async function POST(request: NextRequest): Promise<Response> {
     });
   }
 
-  const { url } = parseResult.data;
+  const { url, locale } = parseResult.data;
 
   const safetyResult = await validateUrlSafety(url);
   if (!safetyResult.valid) {
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest): Promise<Response> {
 
   try {
     const { report, html } = await executeWithTimeout(
-      runAuditWithMetadata(url),
+      runAuditWithMetadata(url, locale),
       GLOBAL_TIMEOUT_MS
     );
 

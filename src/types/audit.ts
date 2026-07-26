@@ -86,6 +86,7 @@ export interface AnalysisContext {
   headers: Record<string, string>;
   robotsTxt: string | null;
   tools: McpTools;
+  locale: "es" | "en";
 }
 
 export interface Analyzer {

@@ -39,11 +39,11 @@ const AXIS_ORDER: AxisName[] = [
   "authoritySignals",
 ];
 
-async function requestAudit(url: string): Promise<AuditResponse> {
+async function requestAudit(url: string, locale: string): Promise<AuditResponse> {
   const response = await fetch("/api/audit", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ url }),
+    body: JSON.stringify({ url, locale }),
   });
 
   const body: unknown = await response.json();
@@ -84,7 +84,7 @@ export default function HomePage() {
     setAnalysisJustCompleted(false);
 
     try {
-      const rawData = await requestAudit(url);
+      const rawData = await requestAudit(url, locale);
       const responseWithExtras = rawData as AuditResponse & { code?: string; siteName?: string };
       setShareCode(responseWithExtras.code ?? null);
       setSiteName(responseWithExtras.siteName ?? null);

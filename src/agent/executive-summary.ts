@@ -51,18 +51,20 @@ async function executeWithTimeout<T>(promise: Promise<T>, timeoutMs: number): Pr
 export async function generateExecutiveSummary(
   url: string,
   overallScore: number,
-  axes: AxesForSummary
+  axes: AxesForSummary,
+  locale: "es" | "en" = "es"
 ): Promise<string | undefined> {
   if (!isAnthropicKeyConfigured()) return undefined;
 
   try {
     const client = new Anthropic();
     const prompt = buildSummaryPrompt(url, overallScore, axes);
+    const languageInstruction = locale === "en" ? "\n\nIMPORTANT: Write the summary in English." : "";
 
     const responsePromise = client.messages.create({
       model: CLAUDE_MODEL,
       max_tokens: CLAUDE_MAX_TOKENS,
-      messages: [{ role: "user", content: prompt }],
+      messages: [{ role: "user", content: prompt + languageInstruction }],
     });
 
     const response = await executeWithTimeout(responsePromise, CLAUDE_TIMEOUT_MS);

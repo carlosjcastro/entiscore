@@ -112,7 +112,7 @@ async function executeWithTimeout<T>(promise: Promise<T>, timeoutMs: number): Pr
   return Promise.race([promise, timeoutPromise]);
 }
 
-export async function generateSmartActionPlan(axes: AxesForPlan): Promise<ActionItem[]> {
+export async function generateSmartActionPlan(axes: AxesForPlan, locale: "es" | "en" = "es"): Promise<ActionItem[]> {
   if (!isAnthropicKeyConfigured()) {
     return generateRuleBasedActionPlan(axes);
   }
@@ -125,7 +125,8 @@ export async function generateSmartActionPlan(axes: AxesForPlan): Promise<Action
 
   try {
     const prompt = buildPromptForClaude(actionableFindings);
-    const aiPlan = await executeWithTimeout(callClaudeForActionPlan(prompt), CLAUDE_TIMEOUT_MS);
+    const languageInstruction = locale === "en" ? "\n\nIMPORTANT: Write all content in English." : "";
+    const aiPlan = await executeWithTimeout(callClaudeForActionPlan(prompt + languageInstruction), CLAUDE_TIMEOUT_MS);
     return aiPlan;
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "Error desconocido";

@@ -56,7 +56,8 @@ function buildAnalysisContext(
     responseTimeMs: number;
     headers: Record<string, string>;
     robotsTxt: string | null;
-  }
+  },
+  locale: "es" | "en"
 ): AnalysisContext {
   const tools: McpTools = {
     fetchPage,
@@ -72,6 +73,7 @@ function buildAnalysisContext(
     headers: siteData.headers,
     robotsTxt: siteData.robotsTxt,
     tools,
+    locale,
   };
 }
 
@@ -127,11 +129,11 @@ async function runAllAnalyzers(context: AnalysisContext): Promise<AllAxesResults
   };
 }
 
-async function buildAuditResponse(url: string, axes: AllAxesResults): Promise<AuditResponse> {
+async function buildAuditResponse(url: string, axes: AllAxesResults, locale: "es" | "en"): Promise<AuditResponse> {
   const { overallScore, maturityLevel } = calculateOverallScore(axes);
   const [actionPlan, executiveSummary] = await Promise.all([
-    generateSmartActionPlan(axes),
-    generateExecutiveSummary(url, overallScore, axes),
+    generateSmartActionPlan(axes, locale),
+    generateExecutiveSummary(url, overallScore, axes, locale),
   ]);
 
   return {
@@ -150,15 +152,15 @@ export interface AuditResult {
   html: string;
 }
 
-export async function runAudit(url: string): Promise<AuditResponse> {
-  const result = await runAuditWithMetadata(url);
+export async function runAudit(url: string, locale: "es" | "en" = "es"): Promise<AuditResponse> {
+  const result = await runAuditWithMetadata(url, locale);
   return result.report;
 }
 
-export async function runAuditWithMetadata(url: string): Promise<AuditResult> {
+export async function runAuditWithMetadata(url: string, locale: "es" | "en" = "es"): Promise<AuditResult> {
   const siteData = await fetchSiteData(url);
-  const context = buildAnalysisContext(url, siteData);
+  const context = buildAnalysisContext(url, siteData, locale);
   const axesResults = await runAllAnalyzers(context);
-  const report = await buildAuditResponse(url, axesResults);
+  const report = await buildAuditResponse(url, axesResults, locale);
   return { report, html: siteData.html };
 }
