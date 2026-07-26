@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { connection } from "next/server";
 import type { Metadata } from "next";
 import { getAnalysisByCode, getComparisonByCode } from "@/lib/persistence";
 import { SharedReportView } from "./SharedReportView";
@@ -11,6 +12,7 @@ interface PageProps {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  await connection();
   const { codigo } = await params;
   const baseUrl = "https://entiscore.vercel.app";
 
@@ -44,6 +46,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function SharedResultPage({ params }: PageProps) {
+  await connection();
   const { codigo } = await params;
 
   const analysis = await getAnalysisByCode(codigo);
