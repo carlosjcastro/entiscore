@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { HiGlobeAlt } from "react-icons/hi2";
 import { FaGithub } from "react-icons/fa";
+import { useI18n } from "@/i18n";
 
 const GITHUB_REPO_URL = "https://github.com/carlosjcastro/entiscore";
 
@@ -10,6 +11,7 @@ const INTERNAL_LINK_CLASS = "text-[13px] text-zinc-600 dark:text-zinc-400 hover:
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
+  const t = useI18n();
 
   return (
     <footer className="border-t border-zinc-200 dark:border-zinc-800 bg-zinc-100/50 dark:bg-zinc-950/80">
@@ -23,8 +25,7 @@ export function Footer() {
               </span>
             </div>
             <p className="text-[13px] leading-relaxed text-zinc-500 dark:text-zinc-400 max-w-xs">
-              Auditor de entidad digital. Analiza tu presencia online y genera un plan de
-              acción para mejorar tu reconocimiento ante buscadores e inteligencia artificial.
+              {t.hero.description}
             </p>
             <a
               href={GITHUB_REPO_URL}
@@ -33,26 +34,26 @@ export function Footer() {
               className="inline-flex items-center gap-1.5 text-[13px] font-medium text-zinc-600 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors w-fit"
             >
               <FaGithub className="h-3.5 w-3.5" />
-              Ver en GitHub
+              GitHub
             </a>
           </div>
 
           <div className="flex flex-col gap-3">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
-              Producto
+              {t.footer.product}
             </span>
             <nav className="flex flex-col gap-2">
               <Link href="/" className={INTERNAL_LINK_CLASS}>
-                Analizar un sitio
+                {t.footer.analyzeLink}
               </Link>
               <Link href="/comparar" className={INTERNAL_LINK_CLASS}>
-                Comparar dos sitios
+                {t.footer.compareLink}
               </Link>
               <Link href="/historial" className={INTERNAL_LINK_CLASS}>
-                Historial de análisis
+                {t.footer.historyLink}
               </Link>
               <Link href="/api-docs" className={INTERNAL_LINK_CLASS}>
-                API para desarrolladores
+                {t.footer.apiDocs}
               </Link>
               <a
                 href={GITHUB_REPO_URL}
@@ -60,27 +61,27 @@ export function Footer() {
                 rel="noopener noreferrer"
                 className={INTERNAL_LINK_CLASS}
               >
-                Repositorio del proyecto
+                {t.footer.repoLink}
               </a>
             </nav>
           </div>
 
           <div className="flex flex-col gap-3">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
-              Información
+              {t.footer.info}
             </span>
             <nav className="flex flex-col gap-2">
               <Link href="/acerca-de" className={INTERNAL_LINK_CLASS}>
-                Acerca de Entiscore
+                {t.footer.aboutLink}
               </Link>
               <Link href="/equipo" className={INTERNAL_LINK_CLASS}>
-                Equipo
+                {t.footer.teamLink}
               </Link>
               <Link href="/derechos-de-autor" className={INTERNAL_LINK_CLASS}>
-                Derechos de autor
+                {t.footer.copyrightLink}
               </Link>
               <Link href="/terminos-de-uso" className={INTERNAL_LINK_CLASS}>
-                Términos de uso
+                {t.footer.termsLink}
               </Link>
             </nav>
           </div>
@@ -90,7 +91,7 @@ export function Footer() {
       <div className="border-t border-zinc-200/60 dark:border-zinc-800/60">
         <div className="mx-auto max-w-6xl px-4 py-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
           <p className="text-[11px] text-zinc-400 dark:text-zinc-500">
-            {currentYear} Carlos José Castro Galante y Matías Edgardo Tula Sarquis. Todos los derechos reservados.
+            {currentYear} Carlos José Castro Galante y Matías Edgardo Tula Sarquis. {t.footer.rights}
           </p>
           <button
             onClick={() => {
@@ -99,7 +100,7 @@ export function Footer() {
             }}
             className="text-[11px] text-zinc-400 dark:text-zinc-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors w-fit"
           >
-            Preferencias de cookies
+            {t.footer.cookiePrefs}
           </button>
         </div>
       </div>

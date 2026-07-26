@@ -6,6 +6,7 @@ import { HiCodeBracketSquare, HiUser, HiShieldCheck, HiGlobeAlt } from "react-ic
 import type { AxisResult, AxisName } from "@/types";
 import { FindingCard } from "./FindingCard";
 import { ScoreChange } from "./ScoreChange";
+import { useI18n } from "@/i18n";
 
 interface AxisSectionProps {
   axisName: AxisName;
@@ -52,12 +53,12 @@ const AXIS_CONFIG: Record<AxisName, AxisConfig> = {
   },
 };
 
-function ScoreIndicator({ score, status }: { score: number; status: AxisResult["status"] }) {
+function ScoreIndicator({ score, status, pendingLabel }: { score: number; status: AxisResult["status"]; pendingLabel: string }) {
   if (status === "partial") {
     return (
       <span className="inline-flex items-center gap-1 text-[11px] font-medium text-zinc-400 dark:text-zinc-500">
         <HiClock className="h-3.5 w-3.5" />
-        Pendiente
+        {pendingLabel}
       </span>
     );
   }
@@ -80,6 +81,7 @@ export function AxisSection({ axisName, result, previousScore }: AxisSectionProp
   const [isExpanded, setIsExpanded] = useState(false);
   const config = AXIS_CONFIG[axisName];
   const Icon = config.icon;
+  const t = useI18n();
 
   return (
     <div className={`border-l-[3px] ${config.borderAccent} pl-4`}>
@@ -92,11 +94,11 @@ export function AxisSection({ axisName, result, previousScore }: AxisSectionProp
         </div>
         <div className="flex-1 min-w-0">
           <span className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">
-            {config.label}
+            {t.axis[axisName]}
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <ScoreIndicator score={result.score} status={result.status} />
+          <ScoreIndicator score={result.score} status={result.status} pendingLabel={t.axis.pending} />
           {previousScore !== undefined && result.status === "evaluated" && (
             <ScoreChange currentScore={result.score} previousScore={previousScore} />
           )}
@@ -113,7 +115,7 @@ export function AxisSection({ axisName, result, previousScore }: AxisSectionProp
           <div className="pb-3">
             {result.status === "partial" ? (
               <p className="text-[13px] text-zinc-500 dark:text-zinc-400 italic py-2">
-                Este eje se evaluará en una fase posterior del desarrollo.
+                {t.axis.pendingMessage}
               </p>
             ) : (
               result.findings.map((finding, index) => (

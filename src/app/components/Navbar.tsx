@@ -6,17 +6,18 @@ import { usePathname } from "next/navigation";
 import { HiBars3, HiXMark } from "react-icons/hi2";
 import { ThemeToggle } from "./ThemeToggle";
 import { LocaleSelector } from "./LocaleSelector";
+import { useI18n } from "@/i18n";
 
 interface NavLink {
-  label: string;
+  labelKey: "analyze" | "compare" | "history" | "about";
   href: string;
 }
 
 const NAV_LINKS: NavLink[] = [
-  { label: "Analizar", href: "/" },
-  { label: "Comparar", href: "/comparar" },
-  { label: "Historial", href: "/historial" },
-  { label: "Acerca de", href: "/acerca-de" },
+  { labelKey: "analyze", href: "/" },
+  { labelKey: "compare", href: "/comparar" },
+  { labelKey: "history", href: "/historial" },
+  { labelKey: "about", href: "/acerca-de" },
 ];
 
 function isActiveLink(pathname: string, href: string): boolean {
@@ -28,6 +29,7 @@ export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const menuRef = useRef<HTMLDivElement>(null);
+  const t = useI18n();
 
   useEffect(() => {
     setIsMobileMenuOpen(false);
@@ -67,7 +69,7 @@ export function Navbar() {
                     : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800"
                 }`}
               >
-                {link.label}
+                {t.nav[link.labelKey]}
               </Link>
             ))}
             <div className="ml-2 flex items-center gap-1.5">
@@ -107,7 +109,7 @@ export function Navbar() {
                     : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200"
                 }`}
               >
-                {link.label}
+                {t.nav[link.labelKey]}
               </Link>
             ))}
           </div>

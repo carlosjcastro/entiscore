@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { HiMagnifyingGlass } from "react-icons/hi2";
+import { useI18n } from "@/i18n";
 
 interface AuditFormProps {
   onSubmit: (url: string) => void;
@@ -20,18 +21,19 @@ function isValidHttpUrl(value: string): boolean {
 export function AuditForm({ onSubmit, isLoading }: AuditFormProps) {
   const [urlInput, setUrlInput] = useState("");
   const [validationError, setValidationError] = useState<string | null>(null);
+  const t = useI18n();
 
   function handleFormSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const trimmedUrl = urlInput.trim();
 
     if (trimmedUrl.length === 0) {
-      setValidationError("Ingresa una URL para analizar");
+      setValidationError(t.form.errorEmpty);
       return;
     }
 
     if (!isValidHttpUrl(trimmedUrl)) {
-      setValidationError("La URL debe comenzar con http:// o https:// y tener un formato válido");
+      setValidationError(t.form.errorInvalid);
       return;
     }
 
@@ -55,7 +57,7 @@ export function AuditForm({ onSubmit, isLoading }: AuditFormProps) {
             type="text"
             value={urlInput}
             onChange={handleInputChange}
-            placeholder="https://tu-sitio.com"
+            placeholder={t.form.placeholder}
             disabled={isLoading}
             className={`w-full rounded-md border bg-white dark:bg-zinc-900 pl-10 pr-4 py-3 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 disabled:opacity-50 transition-shadow ${
               validationError
@@ -69,7 +71,7 @@ export function AuditForm({ onSubmit, isLoading }: AuditFormProps) {
           disabled={isLoading}
           className="rounded-md bg-indigo-600 dark:bg-indigo-500 px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-indigo-700 dark:hover:bg-indigo-400 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
         >
-          {isLoading ? "Analizando..." : "Analizar"}
+          {isLoading ? t.form.buttonLoading : t.form.button}
         </button>
       </div>
       {validationError && (
