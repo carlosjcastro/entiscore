@@ -70,6 +70,8 @@ Evalúa si el sitio es técnicamente accesible para crawlers: código de respues
 
 ![Reporte individual completo](public/docs/screenshots/reporte-individual.png)
 
+![Reporte individual completo](public/docs/screenshots/reporte-individual-2.png)
+
 ### Comparación entre dos URLs
 
 - Análisis en paralelo de dos sitios distintos con un solo click.
@@ -107,6 +109,8 @@ Evalúa si el sitio es técnicamente accesible para crawlers: código de respues
 
 ![Botón de compartir y insignia](public/docs/screenshots/compartir-insignia.png)
 
+![Botón de compartir y insignia](public/docs/screenshots/insignia.png)
+
 ### Asistente conversacional
 
 - Panel de chat con Claude AI contextualizado al análisis o comparativa que se está viendo.
@@ -118,6 +122,10 @@ Evalúa si el sitio es técnicamente accesible para crawlers: código de respues
 - Reglas estrictas del system prompt: solo responde sobre el análisis, no inventa datos, rechaza temas ajenos, resiste inyección de prompts, no usa emojis.
 
 ![Panel del asistente](public/docs/screenshots/asistente-chat.png)
+
+![Panel del asistente](public/docs/screenshots/asistente-chat-2.png)
+
+![Panel del asistente](public/docs/screenshots/asistente-chat-3.png)
 
 ### Interfaz y experiencia
 
@@ -154,6 +162,8 @@ Se generaron tres documentos formales antes de escribir cualquier línea de cód
 - `.kiro/specs/tasks.md`: desglose de tareas ejecutables con dependencias entre sí, estimaciones de tiempo, y criterios de completitud por tarea.
 
 ![Panel de Specs en Kiro](public/docs/screenshots/kiro-specs.png)
+
+![Panel de Specs en Kiro](public/docs/screenshots/kiro-specs-2.png)
 
 ### Steering
 
@@ -413,4 +423,4 @@ Detalle completo en https://entiscore.vercel.app/derechos-de-autor
 
 - **Demo en producción:** https://entiscore.vercel.app
 - **Repositorio:** https://github.com/carlosjcastro/entiscore
-- **Video de presentación:** *(pendiente de grabación)*
+- **Video de presentación:**
