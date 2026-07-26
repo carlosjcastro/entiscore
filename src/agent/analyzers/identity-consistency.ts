@@ -188,12 +188,14 @@ async function evaluateExternalLinks(
         type: "positive",
         title: `Perfil en ${domain} accesible`,
         description: `El enlace a ${domain} responde correctamente (${result.statusCode}).`,
+        details: link,
       });
     } else {
       findings.push({
         type: "warning",
         title: `Perfil en ${domain} no accesible`,
         description: `El enlace a ${domain} no responde o devuelve un error (código ${result.statusCode}). Esto puede indicar un enlace roto o un perfil inexistente.`,
+        details: link,
       });
     }
   }

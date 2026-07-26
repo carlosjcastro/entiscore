@@ -87,6 +87,7 @@ function evaluateAuthorityLinks(links: string[]): Finding[] {
       type: "positive",
       title: `${uniqueDomains.length} plataforma${uniqueDomains.length > 1 ? "s" : ""} de autoridad enlazada${uniqueDomains.length > 1 ? "s" : ""}`,
       description: `Se encontraron enlaces a: ${uniqueDomains.join(", ")}. Esto refuerza la presencia profesional y la credibilidad ante buscadores e IA.`,
+      details: links.join("\n"),
     },
   ];
 }
