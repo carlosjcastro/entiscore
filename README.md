@@ -2,6 +2,8 @@
   <img src="public/logo/entiscore.png" alt="Entiscore" width="120" />
 </div>
 
+![Vista previa al compartir Entiscore](public/og-cover.png)
+
 # Entiscore
 
 Auditor de entidad digital. Analiza tu presencia online y genera un reporte accionable sobre qué tan reconocible eres para buscadores e inteligencia artificial.
@@ -347,6 +349,9 @@ El endpoint /api/audit valida cada URL contra rangos de IP privados (127.0.0.0/8
 El sitio funciona completo en español e inglés. Un selector de idioma en la navbar permite cambiar entre ambos idiomas con persistencia en localStorage y cookie para el servidor. La traducción abarca toda la interfaz (navbar, footer, formularios, páginas institucionales, historial, comparación), los mensajes de error del servidor, los findings generados por los cuatro analizadores (resueltos dinámicamente según el idioma recibido en la request), y el contenido generado por Claude (plan de acción, resumen ejecutivo, respuestas del asistente), que recibe una instrucción explícita de idioma en cada prompt.
 
 ![Selector de idioma](public/docs/screenshots/selector-idioma.png)
+
+![Selector de idioma](public/docs/screenshots/selector-idioma-2.png)
+
 
 ---
 
