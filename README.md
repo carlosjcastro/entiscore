@@ -225,6 +225,8 @@ El sistema está organizado en capas con responsabilidades claramente separadas.
 
 ![Diagrama de arquitectura de Entiscore](public/docs/architecture-diagram.svg)
 
+Ver en producción: https://entiscore.vercel.app/docs/architecture-diagram.svg
+
 ```
 src/
 ├── app/                   Presentación (Next.js App Router)
