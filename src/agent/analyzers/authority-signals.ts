@@ -1,6 +1,11 @@
 import * as cheerio from "cheerio";
 import type { Analyzer, AnalysisContext, AxisResult, Finding } from "@/types";
-import { AUTHORITY_PLATFORM_DOMAINS } from "@/agent/shared-platforms";
+import {
+  AUTHORITY_PLATFORM_DOMAINS,
+  extractSameAsLinksFromSchema,
+  filterLinksByDomainList,
+  deduplicateByDomain,
+} from "@/agent/shared-platforms";
 
 const ACHIEVEMENT_KEYWORDS = [
   "certificación",
@@ -36,7 +41,7 @@ const SCORE_WEIGHT_ACHIEVEMENT_MENTIONS = 25;
 
 function extractAuthorityPlatformLinks(html: string): string[] {
   const $ = cheerio.load(html);
-  const authorityLinks: string[] = [];
+  const anchorLinks: string[] = [];
 
   $("a[href]").each((_, element) => {
     const href = $(element).attr("href");
@@ -48,15 +53,19 @@ function extractAuthorityPlatformLinks(html: string): string[] {
       const isAuthorityPlatform = AUTHORITY_PLATFORM_DOMAINS.some(
         (domain) => hostname === domain || hostname.endsWith(`.${domain}`)
       );
-      if (isAuthorityPlatform && !authorityLinks.includes(href)) {
-        authorityLinks.push(href);
+      if (isAuthorityPlatform && !anchorLinks.includes(href)) {
+        anchorLinks.push(href);
       }
     } catch {
       return;
     }
   });
 
-  return authorityLinks;
+  const sameAsLinks = extractSameAsLinksFromSchema(html);
+  const filteredSameAs = filterLinksByDomainList(sameAsLinks, AUTHORITY_PLATFORM_DOMAINS);
+
+  const combinedLinks = [...anchorLinks, ...filteredSameAs];
+  return deduplicateByDomain(combinedLinks);
 }
 
 function evaluateAuthorityLinks(links: string[]): Finding[] {

@@ -1,6 +1,11 @@
 import * as cheerio from "cheerio";
 import type { Analyzer, AnalysisContext, AxisResult, Finding } from "@/types";
-import { RECOGNIZED_PLATFORM_DOMAINS } from "@/agent/shared-platforms";
+import {
+  RECOGNIZED_PLATFORM_DOMAINS,
+  extractSameAsLinksFromSchema,
+  filterLinksByDomainList,
+  deduplicateByDomain,
+} from "@/agent/shared-platforms";
 
 const SCORE_BASE = 50;
 const SCORE_BONUS_PER_VALID_LINK = 10;
@@ -127,7 +132,7 @@ function evaluateNameConsistency(sources: NameSources): Finding[] {
 
 function extractExternalPlatformLinks(html: string): string[] {
   const $ = cheerio.load(html);
-  const platformLinks: string[] = [];
+  const anchorLinks: string[] = [];
 
   $("a[href]").each((_, element) => {
     const href = $(element).attr("href");
@@ -139,15 +144,19 @@ function extractExternalPlatformLinks(html: string): string[] {
       const isPlatformLink = RECOGNIZED_PLATFORM_DOMAINS.some(
         (domain) => hostname === domain || hostname.endsWith(`.${domain}`)
       );
-      if (isPlatformLink && !platformLinks.includes(href)) {
-        platformLinks.push(href);
+      if (isPlatformLink && !anchorLinks.includes(href)) {
+        anchorLinks.push(href);
       }
     } catch {
       return;
     }
   });
 
-  return platformLinks;
+  const sameAsLinks = extractSameAsLinksFromSchema(html);
+  const filteredSameAs = filterLinksByDomainList(sameAsLinks, RECOGNIZED_PLATFORM_DOMAINS);
+
+  const combinedLinks = [...anchorLinks, ...filteredSameAs];
+  return deduplicateByDomain(combinedLinks);
 }
 
 async function evaluateExternalLinks(
