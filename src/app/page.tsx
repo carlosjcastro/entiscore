@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense } from "react";
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
-import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
+import { motion } from "framer-motion";
 import { HiDocumentDuplicate, HiCheck } from "react-icons/hi2";
 import type { AuditResponse, AuditErrorResponse, AxisName } from "@/types";
 import { useI18n, useLocale } from "@/i18n";
@@ -138,7 +138,7 @@ export default function HomePage() {
         isLoading={pageState.phase === "loading"}
       />
 
-      <main className="flex-1 px-4 py-8 sm:py-12 sm:px-6 lg:px-8 bg-zinc-50 dark:bg-zinc-900">
+      <main className="relative z-10 flex-1 px-4 py-8 sm:py-12 sm:px-6 lg:px-8 bg-zinc-50 dark:bg-zinc-900">
         <div className="mx-auto w-full max-w-6xl">
           {pageState.phase === "idle" && (
             <FeaturesSection
@@ -191,42 +191,38 @@ interface HeroSectionProps {
 }
 
 function HeroSection({ title, description, onSubmit, isLoading }: HeroSectionProps) {
-  const { scrollY } = useScroll();
-  const parallaxY: MotionValue<number> = useTransform(scrollY, [0, 600], [0, -80]);
-
   return (
-    <section className="relative flex flex-col items-center justify-center min-h-[520px] sm:min-h-[560px] px-4 py-16 sm:py-20 overflow-hidden bg-zinc-950">
-      <NetworkGraph />
-      <motion.div
-        className="relative z-10 w-full max-w-2xl flex flex-col items-center"
-        style={{ y: parallaxY }}
-      >
-        <motion.h1
-          initial={{ opacity: 0, y: 30, filter: "blur(4px)" }}
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
-          className="text-4xl sm:text-5xl font-extrabold tracking-tight text-white text-center"
-        >
-          {title}
-        </motion.h1>
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1], delay: 0.15 }}
-          className="mt-3 text-sm sm:text-base text-zinc-300 max-w-lg mx-auto text-center leading-relaxed"
-        >
-          {description}
-        </motion.p>
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1], delay: 0.3 }}
-          className="mt-8 w-full"
-        >
-          <AuditForm onSubmit={onSubmit} isLoading={isLoading} />
-        </motion.div>
-      </motion.div>
-    </section>
+    <div className="relative h-screen">
+      <section className="sticky top-0 z-0 flex flex-col items-center justify-center h-screen px-4 py-16 sm:py-20 overflow-hidden bg-zinc-950">
+        <NetworkGraph />
+        <div className="relative z-10 w-full max-w-2xl flex flex-col items-center">
+          <motion.h1
+            initial={{ opacity: 0, y: 30, filter: "blur(4px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+            className="text-4xl sm:text-5xl font-extrabold tracking-tight text-white text-center"
+          >
+            {title}
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1], delay: 0.15 }}
+            className="mt-3 text-sm sm:text-base text-zinc-300 max-w-lg mx-auto text-center leading-relaxed"
+          >
+            {description}
+          </motion.p>
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1], delay: 0.3 }}
+            className="mt-8 w-full"
+          >
+            <AuditForm onSubmit={onSubmit} isLoading={isLoading} />
+          </motion.div>
+        </div>
+      </section>
+    </div>
   );
 }
 
