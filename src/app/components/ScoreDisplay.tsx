@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import type { MaturityLevel } from "@/types";
 import { ScoreChange } from "./ScoreChange";
+import { useI18n } from "@/i18n";
 
 interface ScoreDisplayProps {
   overallScore: number;
@@ -76,6 +77,7 @@ export function ScoreDisplay({ overallScore, maturityLevel, previousScore }: Sco
   const config = MATURITY_LEVEL_CONFIG[maturityLevel];
   const progressOffset = CIRCLE_CIRCUMFERENCE - (overallScore / 100) * CIRCLE_CIRCUMFERENCE;
   const animatedScore = useAnimatedCount(overallScore);
+  const t = useI18n();
 
   return (
     <div className="flex flex-col items-center gap-3">
@@ -112,7 +114,7 @@ export function ScoreDisplay({ overallScore, maturityLevel, previousScore }: Sco
       </div>
       <div className="flex items-center gap-2">
         <span className={`rounded-full px-3 py-1 text-xs font-semibold ${config.badgeClass}`}>
-          {config.label}
+          {t.maturity[maturityLevel]}
         </span>
         {previousScore !== undefined && (
           <ScoreChange currentScore={overallScore} previousScore={previousScore} />

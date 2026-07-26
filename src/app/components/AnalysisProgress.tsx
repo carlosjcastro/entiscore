@@ -2,20 +2,14 @@
 
 import { useEffect, useState, useRef } from "react";
 import { HiCheck } from "react-icons/hi2";
+import { useI18n } from "@/i18n";
 
 interface AnalysisStep {
   label: string;
   durationMs: number;
 }
 
-const ANALYSIS_STEPS: AnalysisStep[] = [
-  { label: "Accediendo al sitio", durationMs: 2000 },
-  { label: "Evaluando datos estructurados", durationMs: 2500 },
-  { label: "Verificando accesibilidad técnica", durationMs: 2000 },
-  { label: "Analizando consistencia de identidad", durationMs: 3000 },
-  { label: "Revisando señales de autoridad", durationMs: 2500 },
-  { label: "Generando plan de acción", durationMs: 2000 },
-];
+const STEP_DURATIONS = [2000, 2500, 2000, 3000, 2500, 2000];
 
 type StepStatus = "pending" | "active" | "completed";
 
@@ -27,6 +21,12 @@ export function AnalysisProgress({ isComplete }: AnalysisProgressProps) {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const startTimeRef = useRef(Date.now());
+  const t = useI18n();
+
+  const analysisSteps: AnalysisStep[] = t.progress.steps.map((label, index) => ({
+    label,
+    durationMs: STEP_DURATIONS[index] ?? 2000,
+  }));
 
   useEffect(() => {
     startTimeRef.current = Date.now();
@@ -39,15 +39,15 @@ export function AnalysisProgress({ isComplete }: AnalysisProgressProps) {
 
   useEffect(() => {
     if (isComplete) {
-      setCurrentStepIndex(ANALYSIS_STEPS.length);
+      setCurrentStepIndex(analysisSteps.length);
       if (timerRef.current) clearTimeout(timerRef.current);
     }
-  }, [isComplete]);
+  }, [isComplete, analysisSteps.length]);
 
   function advanceToNextStep(stepIndex: number) {
-    if (stepIndex >= ANALYSIS_STEPS.length - 1) return;
+    if (stepIndex >= analysisSteps.length - 1) return;
 
-    const step = ANALYSIS_STEPS[stepIndex];
+    const step = analysisSteps[stepIndex];
     if (!step) return;
 
     timerRef.current = setTimeout(() => {
@@ -66,7 +66,7 @@ export function AnalysisProgress({ isComplete }: AnalysisProgressProps) {
   return (
     <div className="flex flex-col items-center gap-6 py-12 max-w-sm mx-auto">
       <div className="flex flex-col gap-1 w-full">
-        {ANALYSIS_STEPS.map((step, index) => (
+        {analysisSteps.map((step, index) => (
           <StepRow key={step.label} label={step.label} status={getStepStatus(index)} />
         ))}
       </div>

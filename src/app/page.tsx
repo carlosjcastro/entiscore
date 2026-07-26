@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
 import { HiDocumentDuplicate, HiCheck } from "react-icons/hi2";
 import type { AuditResponse, AuditErrorResponse, AxisName } from "@/types";
+import { useI18n, useLocale } from "@/i18n";
 import { AuditForm } from "./components/AuditForm";
 import { ScoreDisplay } from "./components/ScoreDisplay";
 import { SummaryStats } from "./components/SummaryStats";
@@ -74,6 +75,8 @@ export default function HomePage() {
   const [previousReport, setPreviousReport] = useState<AuditResponse | null>(null);
   const [shareCode, setShareCode] = useState<string | null>(null);
   const [siteName, setSiteName] = useState<string | null>(null);
+  const t = useI18n();
+  const { locale } = useLocale();
 
   async function handleAuditSubmit(url: string) {
     setPageState({ phase: "loading" });
@@ -96,7 +99,7 @@ export default function HomePage() {
         phase: "error",
         errorData: errorData.code
           ? errorData
-          : { error: "Error de conexión con el servidor", code: "INTERNAL_ERROR" },
+          : { error: t.errors.connectionError, code: "INTERNAL_ERROR" },
       });
     }
   }
@@ -119,11 +122,10 @@ export default function HomePage() {
         <NetworkGraph />
         <div className="relative z-10 w-full max-w-2xl flex flex-col items-center">
           <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-white text-center">
-            Entiscore
+            {t.hero.title}
           </h1>
           <p className="mt-3 text-sm sm:text-base text-zinc-300 max-w-lg mx-auto text-center leading-relaxed">
-            Analiza tu presencia digital y descubre qué tan reconocible eres
-            para buscadores e inteligencia artificial.
+            {t.hero.description}
           </p>
           <div className="mt-8 w-full">
             <AuditForm
@@ -186,7 +188,7 @@ export default function HomePage() {
 
               <div>
                 <h2 className="text-base font-semibold text-zinc-800 dark:text-zinc-100 mb-5">
-                  Evaluación por eje
+                  {t.report.evaluationByAxis}
                 </h2>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {AXIS_ORDER.map((axisName, index) => (
@@ -213,7 +215,7 @@ export default function HomePage() {
 
               <div className="border-t border-zinc-200 dark:border-zinc-700 pt-6">
                 <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-4 text-center">
-                  Insignia de tu resultado
+                  {t.report.badge}
                 </h3>
                 <ScoreBadge report={pageState.data} />
               </div>
@@ -233,12 +235,12 @@ export default function HomePage() {
                   {isCopied ? (
                     <>
                       <HiCheck className="h-4 w-4 text-emerald-500" />
-                      Copiado
+                      {t.report.copied}
                     </>
                   ) : (
                     <>
                       <HiDocumentDuplicate className="h-4 w-4" />
-                      Copiar reporte JSON
+                      {t.report.copyJson}
                     </>
                   )}
                 </button>

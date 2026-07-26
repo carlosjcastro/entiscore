@@ -1,45 +1,18 @@
 "use client";
 
 import { HiCodeBracketSquare, HiUser, HiShieldCheck, HiGlobeAlt } from "react-icons/hi2";
+import { useI18n } from "@/i18n";
 
 interface FeatureCardProps {
   icon: typeof HiCodeBracketSquare;
   title: string;
   description: string;
-  accentColor: string;
 }
 
-const FEATURES: FeatureCardProps[] = [
-  {
-    icon: HiCodeBracketSquare,
-    title: "Datos estructurados",
-    description: "Verifica si tu sitio tiene schema markup que identifique quién eres ante buscadores e IA.",
-    accentColor: "text-indigo-600 dark:text-indigo-400",
-  },
-  {
-    icon: HiUser,
-    title: "Consistencia de identidad",
-    description: "Compara tu nombre y perfiles entre fuentes para confirmar que te reconocen como una sola entidad.",
-    accentColor: "text-indigo-600 dark:text-indigo-400",
-  },
-  {
-    icon: HiShieldCheck,
-    title: "Señales de autoridad",
-    description: "Detecta enlaces a plataformas profesionales, autoría definida y menciones de logros.",
-    accentColor: "text-indigo-600 dark:text-indigo-400",
-  },
-  {
-    icon: HiGlobeAlt,
-    title: "Accesibilidad técnica",
-    description: "Evalúa si crawlers e IA pueden acceder a tu contenido sin barreras técnicas.",
-    accentColor: "text-indigo-600 dark:text-indigo-400",
-  },
-];
-
-function FeatureCard({ icon: Icon, title, description, accentColor }: FeatureCardProps) {
+function FeatureCard({ icon: Icon, title, description }: FeatureCardProps) {
   return (
     <div className="flex flex-col gap-2 py-4 border-b border-zinc-100 dark:border-zinc-800 sm:border-b-0 sm:border-r sm:border-zinc-100 sm:dark:border-zinc-800 last:border-0 sm:pr-6 sm:last:pr-0">
-      <Icon className={`h-5 w-5 ${accentColor}`} />
+      <Icon className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
       <h3 className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">{title}</h3>
       <p className="text-[13px] leading-relaxed text-zinc-500 dark:text-zinc-400">{description}</p>
     </div>
@@ -58,17 +31,26 @@ const EXAMPLE_URLS = [
 ];
 
 export function FeaturesSection({ onQuickAudit, isLoading }: FeaturesSectionProps) {
+  const t = useI18n();
+
+  const features = [
+    { icon: HiCodeBracketSquare, ...t.features.structuredData },
+    { icon: HiUser, ...t.features.identityConsistency },
+    { icon: HiShieldCheck, ...t.features.authoritySignals },
+    { icon: HiGlobeAlt, ...t.features.technicalAccessibility },
+  ];
+
   return (
     <div id="features" className="flex flex-col gap-10 py-10">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0 sm:gap-6">
-        {FEATURES.map((feature) => (
-          <FeatureCard key={feature.title} {...feature} />
+        {features.map((feature) => (
+          <FeatureCard key={feature.title} icon={feature.icon} title={feature.title} description={feature.description} />
         ))}
       </div>
 
       <div className="flex flex-col items-center gap-3">
         <p className="text-[13px] text-zinc-500 dark:text-zinc-400">
-          Prueba rápida con un sitio de ejemplo
+          {t.features.quickTest}
         </p>
         <div className="flex flex-wrap justify-center gap-2">
           {EXAMPLE_URLS.map((example) => (

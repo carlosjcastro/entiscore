@@ -1,5 +1,6 @@
 import { HiCheckCircle, HiExclamationTriangle, HiXCircle } from "react-icons/hi2";
 import type { AuditResponse, Finding } from "@/types";
+import { useI18n } from "@/i18n";
 
 interface SummaryStatsProps {
   data: AuditResponse;
@@ -17,6 +18,7 @@ function countFindingsByType(data: AuditResponse): { positive: number; warning: 
 
 export function SummaryStats({ data }: SummaryStatsProps) {
   const counts = countFindingsByType(data);
+  const t = useI18n();
 
   return (
     <div className="flex items-center gap-6">
@@ -25,21 +27,21 @@ export function SummaryStats({ data }: SummaryStatsProps) {
         <span className="text-lg font-bold tabular-nums text-zinc-800 dark:text-zinc-200">
           {counts.positive}
         </span>
-        <span className="text-[11px] text-zinc-500 dark:text-zinc-400">positivos</span>
+        <span className="text-[11px] text-zinc-500 dark:text-zinc-400">{t.report.positive}</span>
       </div>
       <div className="flex items-center gap-2">
         <HiExclamationTriangle className="h-4 w-4 text-amber-500" />
         <span className="text-lg font-bold tabular-nums text-zinc-800 dark:text-zinc-200">
           {counts.warning}
         </span>
-        <span className="text-[11px] text-zinc-500 dark:text-zinc-400">mejorables</span>
+        <span className="text-[11px] text-zinc-500 dark:text-zinc-400">{t.report.warnings}</span>
       </div>
       <div className="flex items-center gap-2">
         <HiXCircle className="h-4 w-4 text-rose-500" />
         <span className="text-lg font-bold tabular-nums text-zinc-800 dark:text-zinc-200">
           {counts.critical}
         </span>
-        <span className="text-[11px] text-zinc-500 dark:text-zinc-400">críticos</span>
+        <span className="text-[11px] text-zinc-500 dark:text-zinc-400">{t.report.critical}</span>
       </div>
     </div>
   );
