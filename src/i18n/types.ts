@@ -132,4 +132,65 @@ export interface Dictionary {
     email: string;
     moreOptions: string;
   };
+  pages: {
+    about: PageAbout;
+    team: PageTeam;
+    copyright: PageCopyright;
+    terms: PageTerms;
+    history: PageHistory;
+  };
+}
+
+export interface PageAbout {
+  title: string;
+  whatIs: string;
+  whatIsDescription: string;
+  audience: string;
+  audienceDescription: string;
+  problem: string;
+  problemDescription: string;
+  purpose: string;
+  purposeDescription: string;
+}
+
+export interface PageTeam {
+  title: string;
+  intro: string;
+  roleCarlos: string;
+  roleMatias: string;
+}
+
+export interface PageCopyright {
+  title: string;
+  ownership: string;
+  prohibition: string;
+  disclaimer: string;
+}
+
+export interface PageTerms {
+  title: string;
+  intro: string;
+  availabilityTitle: string;
+  availabilityDescription: string;
+  resultsTitle: string;
+  resultsDescription: string;
+  responsibilityTitle: string;
+  responsibilityDescription: string;
+  usageTitle: string;
+  usageDescription: string;
+  modificationsTitle: string;
+  modificationsDescription: string;
+  legalDisclaimer: string;
+}
+
+export interface PageHistory {
+  title: string;
+  emptyTitle: string;
+  emptyDescription: string;
+  emptyButton: string;
+  clearAll: string;
+  repeat: string;
+  exportJson: string;
+  exportPdf: string;
+  delete: string;
 }
