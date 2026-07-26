@@ -428,3 +428,8 @@ Detalle completo en https://entiscore.vercel.app/derechos-de-autor
 - **Demo en producción:** https://entiscore.vercel.app
 - **Repositorio:** https://github.com/carlosjcastro/entiscore
 - **Video de presentación:**
+
+
+<div align="center">
+  <img src="public/logo/kiro.png" alt="Entiscore" width="60" />
+</div>
