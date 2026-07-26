@@ -205,6 +205,10 @@ El hackathon permite y valora AWS como plus opcional. Este proyecto decidió pri
 
 ## Arquitectura del proyecto
 
+El sistema está organizado en capas con responsabilidades claramente separadas. La capa de presentación (Next.js App Router) maneja la interfaz web y los route handlers HTTP. La capa de API (endpoints /api/audit, /api/compare, /api/chat) recibe las solicitudes, valida inputs y delega al agente. El agente orquestador coordina la ejecución de los cuatro analizadores en paralelo (datos estructurados, consistencia de identidad, señales de autoridad, accesibilidad técnica), calcula el puntaje ponderado y genera el plan de acción. Las herramientas de acceso a datos externos (fetchPage, fetchRobotsTxt, checkUrlAccessibility) encapsulan toda operación de red siguiendo el contrato de MCP. Supabase provee la persistencia para análisis y comparativas compartibles. Claude API genera el plan de acción con código de solución, el resumen ejecutivo, y las respuestas del asistente conversacional.
+
+![Diagrama de arquitectura de Entiscore](docs/architecture-diagram.svg)
+
 ```
 src/
 ├── app/                   Presentación (Next.js App Router)
@@ -240,6 +244,46 @@ src/
 │   └── file-validation.ts Validación estricta de archivos
 └── types/                 Interfaces TypeScript compartidas
 ```
+
+---
+
+## Casos de uso
+
+```mermaid
+flowchart TD
+    A[Ingreso a la página principal] --> B{Acción del usuario}
+    B --> C[Analizar una URL individual]
+    B --> D[Comparar dos URLs]
+    B --> E[Consultar historial]
+    B --> F[Acceder via código compartido /r/codigo]
+
+    C --> G[Reporte con score, hallazgos y plan de acción]
+    D --> H[Resumen comparativo lado a lado]
+    E --> I[Lista de análisis previos con opciones de exportar y repetir]
+    F --> J[Reporte o comparativa recuperada desde Supabase]
+
+    G --> K{Interacción posterior}
+    H --> K
+    J --> K
+
+    K --> L[Conversar con el asistente]
+    K --> M[Compartir por enlace, WhatsApp, X, LinkedIn, email]
+    K --> N[Descargar insignia o exportar PDF/JSON]
+
+    L --> O{Adjuntar archivo}
+    O -->|Sí| P[Análisis del archivo en contexto del reporte]
+    O -->|No| Q[Respuesta basada solo en el reporte]
+```
+
+**Analizar una URL individual:** El usuario ingresa una URL, el sistema la analiza en los cuatro ejes, genera un puntaje, un resumen ejecutivo por IA, y un plan de acción con código de solución. El resultado se guarda con un código único compartible.
+
+**Comparar dos URLs:** Ambos análisis se ejecutan en paralelo contra el mismo endpoint, generando un resumen comparativo que indica cuál sitio tiene mejor resultado por eje y en general.
+
+**Consultar historial:** Los análisis realizados se guardan en localStorage (si se aceptaron cookies) con opción de repetir, exportar a JSON o PDF, y eliminar.
+
+**Acceder via código compartido:** Cualquier persona con el código puede ver el reporte completo o la comparativa desde la ruta pública /r/[codigo], sin necesidad de repetir el análisis.
+
+**Conversar con el asistente:** Un panel de chat contextualizado al reporte permite preguntar sobre hallazgos específicos, pedir recomendaciones detalladas, o adjuntar un archivo para análisis complementario. El contenido del archivo se procesa en memoria sin persistencia.
 
 ---
 
