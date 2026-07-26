@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { HiBars3, HiXMark } from "react-icons/hi2";
 import { ThemeToggle } from "./ThemeToggle";
+import { LocaleSelector } from "./LocaleSelector";
 
 interface NavLink {
   label: string;
@@ -69,12 +70,14 @@ export function Navbar() {
                 {link.label}
               </Link>
             ))}
-            <div className="ml-2">
+            <div className="ml-2 flex items-center gap-1.5">
+              <LocaleSelector />
               <ThemeToggle />
             </div>
           </div>
 
-          <div className="flex sm:hidden items-center gap-2">
+          <div className="flex sm:hidden items-center gap-1.5">
+            <LocaleSelector />
             <ThemeToggle />
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
