@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { HiArrowPath, HiArrowDownTray, HiTrash, HiDocumentText, HiArrowLeft } from "react-icons/hi2";
 import type { MaturityLevel } from "@/types";
 import {
@@ -13,6 +14,15 @@ import {
 } from "@/app/lib/history-storage";
 import { generateAuditPdf } from "@/app/lib/pdf-export";
 import { useI18n } from "@/i18n";
+import {
+  fadeInUp,
+  fadeInScale,
+  cardReveal,
+  staggerContainer,
+  getVariants,
+  getStaggerVariants,
+  useMotionSafe,
+} from "@/lib/motion";
 
 const MATURITY_COLOR_MAP: Record<MaturityLevel, string> = {
   bajo: "text-rose-600 dark:text-rose-400",
@@ -41,6 +51,7 @@ function formatDate(isoDate: string): string {
 export default function HistorialPage() {
   const [entries, setEntries] = useState<HistoryEntry[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
+  const motionSafe = useMotionSafe();
   const t = useI18n();
 
   useEffect(() => {
@@ -86,7 +97,12 @@ export default function HistorialPage() {
   return (
     <main className="flex-1 px-4 py-8 sm:py-12 sm:px-6 lg:px-8 bg-zinc-50 dark:bg-zinc-900 min-h-screen">
       <div className="mx-auto w-full max-w-4xl">
-        <div className="flex items-center justify-between mb-8">
+        <motion.div
+          className="flex items-center justify-between mb-8"
+          variants={getVariants(motionSafe, fadeInUp)}
+          initial="hidden"
+          animate="visible"
+        >
           <div className="flex items-center gap-3">
             <Link
               href="/"
@@ -109,10 +125,15 @@ export default function HistorialPage() {
               </button>
             )}
           </div>
-        </div>
+        </motion.div>
 
         {entries.length === 0 ? (
-          <div className="flex flex-col items-center gap-5 py-24 text-center">
+          <motion.div
+            className="flex flex-col items-center gap-5 py-24 text-center"
+            variants={getVariants(motionSafe, fadeInScale)}
+            initial="hidden"
+            animate="visible"
+          >
             <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-indigo-100 dark:bg-indigo-900/30">
               <HiDocumentText className="h-10 w-10 text-indigo-500 dark:text-indigo-400" />
             </div>
@@ -130,12 +151,18 @@ export default function HistorialPage() {
             >
               {t.pages.history.emptyButton}
             </Link>
-          </div>
+          </motion.div>
         ) : (
-          <div className="flex flex-col gap-3">
+          <motion.div
+            className="flex flex-col gap-3"
+            variants={getStaggerVariants(motionSafe, staggerContainer)}
+            initial="hidden"
+            animate="visible"
+          >
             {entries.map((entry) => (
-              <div
+              <motion.div
                 key={entry.id}
+                variants={getVariants(motionSafe, cardReveal)}
                 className="rounded-xl border border-zinc-200 dark:border-zinc-700/60 bg-white dark:bg-zinc-800/30 p-4 sm:p-5 transition-shadow hover:shadow-sm"
               >
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -186,9 +213,9 @@ export default function HistorialPage() {
                     {t.pages.history.delete}
                   </button>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         )}
       </div>
     </main>

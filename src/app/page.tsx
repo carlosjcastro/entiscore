@@ -3,9 +3,26 @@
 import { useState, useEffect, Suspense } from "react";
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
+import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
 import { HiDocumentDuplicate, HiCheck } from "react-icons/hi2";
 import type { AuditResponse, AuditErrorResponse, AxisName } from "@/types";
 import { useI18n, useLocale } from "@/i18n";
+import {
+  heroTextReveal,
+  heroSubtitleReveal,
+  heroFormReveal,
+  fadeInUp,
+  fadeInScale,
+  staggerContainer,
+  staggerContainerSlow,
+  cardReveal,
+  scaleIn,
+  getVariants,
+  getStaggerVariants,
+  useMotionSafe,
+  PARALLAX_Y_RANGE_SUBTLE,
+} from "@/lib/motion";
+import { ScrollReveal } from "./components/ScrollReveal";
 import { AuditForm } from "./components/AuditForm";
 import { ScoreDisplay } from "./components/ScoreDisplay";
 import { SummaryStats } from "./components/SummaryStats";
@@ -118,23 +135,12 @@ export default function HomePage() {
       <Suspense fallback={null}>
         <AutoAuditTrigger onAudit={handleAuditSubmit} />
       </Suspense>
-      <section className="relative flex flex-col items-center justify-center min-h-[520px] sm:min-h-[560px] px-4 py-16 sm:py-20 overflow-hidden bg-zinc-950">
-        <NetworkGraph />
-        <div className="relative z-10 w-full max-w-2xl flex flex-col items-center">
-          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-white text-center">
-            {t.hero.title}
-          </h1>
-          <p className="mt-3 text-sm sm:text-base text-zinc-300 max-w-lg mx-auto text-center leading-relaxed">
-            {t.hero.description}
-          </p>
-          <div className="mt-8 w-full">
-            <AuditForm
-              onSubmit={handleAuditSubmit}
-              isLoading={pageState.phase === "loading"}
-            />
-          </div>
-        </div>
-      </section>
+      <HeroSection
+        title={t.hero.title}
+        description={t.hero.description}
+        onSubmit={handleAuditSubmit}
+        isLoading={pageState.phase === "loading"}
+      />
 
       <main className="flex-1 px-4 py-8 sm:py-12 sm:px-6 lg:px-8 bg-zinc-50 dark:bg-zinc-900">
         <div className="mx-auto w-full max-w-6xl">
@@ -163,89 +169,14 @@ export default function HomePage() {
           )}
 
           {pageState.phase === "result" && (
-            <div className="flex flex-col gap-10">
-              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 pb-6 border-b border-zinc-200 dark:border-zinc-700">
-                <div className="flex flex-col items-center lg:items-start gap-1">
-                  <p className="text-[11px] font-medium uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
-                    {pageState.data.url}
-                  </p>
-                  <ScoreDisplay
-                    overallScore={pageState.data.overallScore}
-                    maturityLevel={pageState.data.maturityLevel}
-                    previousScore={previousReport?.overallScore}
-                  />
-                </div>
-                <SummaryStats data={pageState.data} />
-              </div>
-
-              {pageState.data.executiveSummary && (
-                <div className="border-l-[3px] border-indigo-500 pl-4 py-1">
-                  <p className="text-[14px] leading-relaxed text-zinc-600 dark:text-zinc-400 italic">
-                    {pageState.data.executiveSummary}
-                  </p>
-                </div>
-              )}
-
-              <div>
-                <h2 className="text-base font-semibold text-zinc-800 dark:text-zinc-100 mb-5">
-                  {t.report.evaluationByAxis}
-                </h2>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {AXIS_ORDER.map((axisName, index) => (
-                    <div
-                      key={axisName}
-                      className="animate-in fade-in slide-in-from-bottom-2"
-                      style={{ animationDelay: `${index * 80}ms`, animationFillMode: "both" }}
-                    >
-                      <AxisSection
-                        axisName={axisName}
-                        result={pageState.data.axes[axisName]}
-                        previousScore={previousReport?.axes[axisName]?.score}
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="border-t border-zinc-200 dark:border-zinc-700 pt-8">
-                <ActionPlan items={pageState.data.actionPlan} />
-              </div>
-
-              <EntityGraph report={pageState.data} />
-
-              <div className="border-t border-zinc-200 dark:border-zinc-700 pt-6">
-                <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-4 text-center">
-                  {t.report.badge}
-                </h3>
-                <ScoreBadge report={pageState.data} />
-              </div>
-
-              <div className="flex justify-center gap-2 pt-4 border-t border-zinc-200 dark:border-zinc-700">
-                {shareCode && siteName && (
-                  <ShareMenu
-                    code={shareCode}
-                    siteName={siteName}
-                    score={pageState.data.overallScore}
-                  />
-                )}
-                <button
-                  onClick={handleCopyReport}
-                  className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 dark:border-zinc-600 bg-white dark:bg-zinc-800 px-4 py-2 text-[13px] font-medium text-zinc-600 dark:text-zinc-300 shadow-sm transition-all hover:shadow-md hover:bg-zinc-50 dark:hover:bg-zinc-700 active:scale-[0.98]"
-                >
-                  {isCopied ? (
-                    <>
-                      <HiCheck className="h-4 w-4 text-emerald-500" />
-                      {t.report.copied}
-                    </>
-                  ) : (
-                    <>
-                      <HiDocumentDuplicate className="h-4 w-4" />
-                      {t.report.copyJson}
-                    </>
-                  )}
-                </button>
-              </div>
-            </div>
+            <ResultSection
+              data={pageState.data}
+              previousReport={previousReport}
+              shareCode={shareCode}
+              siteName={siteName}
+              onCopyReport={handleCopyReport}
+              isCopied={isCopied}
+            />
           )}
         </div>
       </main>
@@ -253,5 +184,171 @@ export default function HomePage() {
       <CookieBanner />
       {shareCode && <ChatPanel code={shareCode} />}
     </>
+  );
+}
+
+interface HeroSectionProps {
+  title: string;
+  description: string;
+  onSubmit: (url: string) => void;
+  isLoading: boolean;
+}
+
+function HeroSection({ title, description, onSubmit, isLoading }: HeroSectionProps) {
+  const motionSafe = useMotionSafe();
+  const { scrollY } = useScroll();
+  const parallaxOutput = motionSafe ? PARALLAX_Y_RANGE_SUBTLE : [0, 0];
+  const parallaxY: MotionValue<number> = useTransform(scrollY, [0, 400], parallaxOutput);
+
+  return (
+    <section className="relative flex flex-col items-center justify-center min-h-[520px] sm:min-h-[560px] px-4 py-16 sm:py-20 overflow-hidden bg-zinc-950">
+      <NetworkGraph />
+      <motion.div
+        className="relative z-10 w-full max-w-2xl flex flex-col items-center"
+        style={{ y: parallaxY }}
+      >
+        <motion.h1
+          variants={getVariants(motionSafe, heroTextReveal)}
+          initial="hidden"
+          animate="visible"
+          className="text-4xl sm:text-5xl font-extrabold tracking-tight text-white text-center"
+        >
+          {title}
+        </motion.h1>
+        <motion.p
+          variants={getVariants(motionSafe, heroSubtitleReveal)}
+          initial="hidden"
+          animate="visible"
+          className="mt-3 text-sm sm:text-base text-zinc-300 max-w-lg mx-auto text-center leading-relaxed"
+        >
+          {description}
+        </motion.p>
+        <motion.div
+          variants={getVariants(motionSafe, heroFormReveal)}
+          initial="hidden"
+          animate="visible"
+          className="mt-8 w-full"
+        >
+          <AuditForm onSubmit={onSubmit} isLoading={isLoading} />
+        </motion.div>
+      </motion.div>
+    </section>
+  );
+}
+
+interface ResultSectionProps {
+  data: AuditResponse;
+  previousReport: AuditResponse | null;
+  shareCode: string | null;
+  siteName: string | null;
+  onCopyReport: () => void;
+  isCopied: boolean;
+}
+
+function ResultSection({ data, previousReport, shareCode, siteName, onCopyReport, isCopied }: ResultSectionProps) {
+  const motionSafe = useMotionSafe();
+  const t = useI18n();
+
+  return (
+    <motion.div
+      className="flex flex-col gap-10"
+      variants={getStaggerVariants(motionSafe, staggerContainerSlow)}
+      initial="hidden"
+      animate="visible"
+    >
+      <motion.div
+        variants={getVariants(motionSafe, fadeInScale)}
+        className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 pb-6 border-b border-zinc-200 dark:border-zinc-700"
+      >
+        <div className="flex flex-col items-center lg:items-start gap-1">
+          <p className="text-[11px] font-medium uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+            {data.url}
+          </p>
+          <ScoreDisplay
+            overallScore={data.overallScore}
+            maturityLevel={data.maturityLevel}
+            previousScore={previousReport?.overallScore}
+          />
+        </div>
+        <SummaryStats data={data} />
+      </motion.div>
+
+      {data.executiveSummary && (
+        <motion.div
+          variants={getVariants(motionSafe, fadeInUp)}
+          className="border-l-[3px] border-indigo-500 pl-4 py-1"
+        >
+          <p className="text-[14px] leading-relaxed text-zinc-600 dark:text-zinc-400 italic">
+            {data.executiveSummary}
+          </p>
+        </motion.div>
+      )}
+
+      <motion.div variants={getVariants(motionSafe, fadeInUp)}>
+        <h2 className="text-base font-semibold text-zinc-800 dark:text-zinc-100 mb-5">
+          {t.report.evaluationByAxis}
+        </h2>
+        <motion.div
+          className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+          variants={getStaggerVariants(motionSafe, staggerContainer)}
+          initial="hidden"
+          animate="visible"
+        >
+          {AXIS_ORDER.map((axisName) => (
+            <motion.div key={axisName} variants={getVariants(motionSafe, cardReveal)}>
+              <AxisSection
+                axisName={axisName}
+                result={data.axes[axisName]}
+                previousScore={previousReport?.axes[axisName]?.score}
+              />
+            </motion.div>
+          ))}
+        </motion.div>
+      </motion.div>
+
+      <ScrollReveal variants={fadeInUp}>
+        <div className="border-t border-zinc-200 dark:border-zinc-700 pt-8">
+          <ActionPlan items={data.actionPlan} />
+        </div>
+      </ScrollReveal>
+
+      <ScrollReveal variants={scaleIn}>
+        <EntityGraph report={data} />
+      </ScrollReveal>
+
+      <ScrollReveal variants={fadeInUp}>
+        <div className="border-t border-zinc-200 dark:border-zinc-700 pt-6">
+          <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-4 text-center">
+            {t.report.badge}
+          </h3>
+          <ScoreBadge report={data} />
+        </div>
+      </ScrollReveal>
+
+      <motion.div
+        variants={getVariants(motionSafe, fadeInUp)}
+        className="flex justify-center gap-2 pt-4 border-t border-zinc-200 dark:border-zinc-700"
+      >
+        {shareCode && siteName && (
+          <ShareMenu code={shareCode} siteName={siteName} score={data.overallScore} />
+        )}
+        <button
+          onClick={onCopyReport}
+          className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 dark:border-zinc-600 bg-white dark:bg-zinc-800 px-4 py-2 text-[13px] font-medium text-zinc-600 dark:text-zinc-300 shadow-sm transition-all hover:shadow-md hover:bg-zinc-50 dark:hover:bg-zinc-700 active:scale-[0.98]"
+        >
+          {isCopied ? (
+            <>
+              <HiCheck className="h-4 w-4 text-emerald-500" />
+              {t.report.copied}
+            </>
+          ) : (
+            <>
+              <HiDocumentDuplicate className="h-4 w-4" />
+              {t.report.copyJson}
+            </>
+          )}
+        </button>
+      </motion.div>
+    </motion.div>
   );
 }

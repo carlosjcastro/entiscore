@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { HiArrowLeft, HiArrowTrendingUp, HiArrowTrendingDown } from "react-icons/hi2";
 import type { AuditResponse, AxisName } from "@/types";
 import { ScoreDisplay } from "@/app/components/ScoreDisplay";
@@ -12,6 +13,17 @@ import { ShareMenu } from "@/app/components/ShareMenu";
 import { ChatPanel } from "@/app/components/ChatPanel";
 import { useI18n, useLocale } from "@/i18n";
 import { isStrictlyValidUrl } from "@/lib/url-validation";
+import {
+  fadeInUp,
+  fadeInScale,
+  slideInFromLeft,
+  slideInFromRight,
+  staggerContainerSlow,
+  getVariants,
+  getStaggerVariants,
+  useMotionSafe,
+} from "@/lib/motion";
+import { ScrollReveal } from "@/app/components/ScrollReveal";
 
 interface CompareResult {
   reportA: AuditResponse;
@@ -330,29 +342,7 @@ export default function CompararPage() {
         )}
 
         {state.phase === "result" && (
-          <div className="flex flex-col gap-6">
-            <ComparisonSummary
-              reportA={state.result.reportA}
-              reportB={state.result.reportB}
-            />
-
-            {state.result.code && (
-              <div className="flex justify-center">
-                <ShareMenu
-                  code={state.result.code}
-                  siteName={state.result.siteNameA}
-                  score={state.result.reportA.overallScore}
-                  comparisonSiteNameB={state.result.siteNameB}
-                  comparisonScoreB={state.result.reportB.overallScore}
-                />
-              </div>
-            )}
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <ReportColumn report={state.result.reportA} label="Sitio A" />
-              <ReportColumn report={state.result.reportB} label="Sitio B" />
-            </div>
-          </div>
+          <ComparisonResult result={state.result} />
         )}
 
         {state.phase === "idle" && (
@@ -367,5 +357,43 @@ export default function CompararPage() {
         <ChatPanel code={state.result.code} />
       )}
     </main>
+  );
+}
+
+function ComparisonResult({ result }: { result: CompareResult }) {
+  const motionSafe = useMotionSafe();
+
+  return (
+    <motion.div
+      className="flex flex-col gap-6"
+      variants={getStaggerVariants(motionSafe, staggerContainerSlow)}
+      initial="hidden"
+      animate="visible"
+    >
+      <motion.div variants={getVariants(motionSafe, fadeInScale)}>
+        <ComparisonSummary reportA={result.reportA} reportB={result.reportB} />
+      </motion.div>
+
+      {result.code && (
+        <motion.div variants={getVariants(motionSafe, fadeInUp)} className="flex justify-center">
+          <ShareMenu
+            code={result.code}
+            siteName={result.siteNameA}
+            score={result.reportA.overallScore}
+            comparisonSiteNameB={result.siteNameB}
+            comparisonScoreB={result.reportB.overallScore}
+          />
+        </motion.div>
+      )}
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <motion.div variants={getVariants(motionSafe, slideInFromLeft)}>
+          <ReportColumn report={result.reportA} label="Sitio A" />
+        </motion.div>
+        <motion.div variants={getVariants(motionSafe, slideInFromRight)}>
+          <ReportColumn report={result.reportB} label="Sitio B" />
+        </motion.div>
+      </div>
+    </motion.div>
   );
 }
