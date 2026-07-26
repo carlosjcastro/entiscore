@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 const BASE_URL = "https://entiscore.vercel.app";
-const OG_IMAGE_PATH = "/docs/og-cover.png";
+const OG_IMAGE_PATH = "/og-cover.png";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
