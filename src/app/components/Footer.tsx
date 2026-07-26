@@ -51,6 +51,9 @@ export function Footer() {
               <Link href="/historial" className={INTERNAL_LINK_CLASS}>
                 Historial de análisis
               </Link>
+              <Link href="/api-docs" className={INTERNAL_LINK_CLASS}>
+                API para desarrolladores
+              </Link>
               <a
                 href={GITHUB_REPO_URL}
                 target="_blank"
