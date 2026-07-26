@@ -215,7 +215,7 @@ export function ChatPanel({ code }: ChatPanelProps) {
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
+      <div className="flex-1 min-h-0 overflow-y-auto px-4 py-3 space-y-3">
         {messages.length === 0 && !isStreaming && (
           <div className="flex flex-col items-center justify-center h-full gap-2 text-center">
             <HiChatBubbleLeftRight className="h-8 w-8 text-zinc-200 dark:text-zinc-700" />
@@ -319,11 +319,12 @@ function MessageBubble({ message }: { message: ChatMessage }) {
   return (
     <div className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
       <div
-        className={`max-w-[85%] rounded-xl px-3 py-2 text-[13px] leading-relaxed ${
+        className={`max-w-[85%] rounded-xl px-3 py-2 text-[13px] leading-relaxed break-words overflow-hidden ${
           isUser
             ? "bg-indigo-600 text-white"
             : "bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200"
         }`}
+        style={{ overflowWrap: "break-word", wordBreak: "break-word" }}
       >
         {message.attachedFileName && (
           <div className={`flex items-center gap-1.5 mb-1.5 pb-1.5 border-b ${isUser ? "border-indigo-500/30" : "border-zinc-200 dark:border-zinc-700"}`}>
@@ -334,9 +335,9 @@ function MessageBubble({ message }: { message: ChatMessage }) {
           </div>
         )}
         {isUser ? (
-          <p>{message.content}</p>
+          <p className="whitespace-pre-wrap break-words">{message.content}</p>
         ) : (
-          <div className="prose prose-sm prose-zinc dark:prose-invert max-w-none [&_p]:mb-1.5 [&_p]:last:mb-0 [&_ul]:mb-1.5 [&_ol]:mb-1.5 [&_li]:mb-0.5">
+          <div className="prose prose-sm prose-zinc dark:prose-invert max-w-none break-words [&_p]:mb-1.5 [&_p]:last:mb-0 [&_ul]:mb-1.5 [&_ol]:mb-1.5 [&_li]:mb-0.5 [&_pre]:overflow-x-auto [&_pre]:max-w-full [&_code]:break-all [&_pre_code]:break-normal">
             <ReactMarkdown>{message.content}</ReactMarkdown>
           </div>
         )}

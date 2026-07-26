@@ -5,7 +5,7 @@ import { getAnalysisByCode, getComparisonByCode } from "@/lib/persistence";
 import { validateAndExtractFileContent } from "@/lib/file-validation";
 
 const CLAUDE_MODEL = "claude-haiku-4-5-20251001";
-const CLAUDE_MAX_TOKENS = 1024;
+const CLAUDE_MAX_TOKENS = 2048;
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -174,6 +174,12 @@ export async function POST(request: NextRequest): Promise<Response> {
               controller.enqueue(encoder.encode(event.delta.text));
             }
           }
+
+          const finalMessage = await stream.finalMessage();
+          if (finalMessage.stop_reason === "max_tokens") {
+            controller.enqueue(encoder.encode("\n\n---\n*[Respuesta truncada por límite de extensión. Podés hacer una pregunta más específica para obtener el detalle que necesitás.]*"));
+          }
+
           controller.close();
         } catch (streamError) {
           controller.error(streamError);
