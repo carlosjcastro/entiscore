@@ -77,10 +77,12 @@ export interface Dictionary {
     buttonLoading: string;
     summaryTitle: string;
     same: string;
+    equal: string;
     beatsBy: string;
     idleMessage: string;
     errorBothRequired: string;
     errorBothInvalid: string;
+    errorSameUrl: string;
   };
   chat: {
     title: string;

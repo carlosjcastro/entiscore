@@ -16,6 +16,7 @@ const CORS_HEADERS = {
 const CompareRequestSchema = z.object({
   urlA: z.string().url(),
   urlB: z.string().url(),
+  locale: z.enum(["es", "en"]).optional().default("es"),
 });
 
 async function executeWithTimeout<T>(
@@ -55,7 +56,7 @@ export async function POST(request: NextRequest): Promise<Response> {
     );
   }
 
-  const { urlA, urlB } = parseResult.data;
+  const { urlA, urlB, locale } = parseResult.data;
 
   const [safetyA, safetyB] = await Promise.all([
     validateUrlSafety(urlA),
@@ -78,7 +79,7 @@ export async function POST(request: NextRequest): Promise<Response> {
 
   try {
     const [resultA, resultB] = await executeWithTimeout(
-      Promise.all([runAuditWithMetadata(urlA), runAuditWithMetadata(urlB)]),
+      Promise.all([runAuditWithMetadata(urlA, locale), runAuditWithMetadata(urlB, locale)]),
       GLOBAL_TIMEOUT_MS
     );
 

@@ -84,10 +84,12 @@ export const en: Dictionary = {
     buttonLoading: "Comparing...",
     summaryTitle: "Comparative summary",
     same: "Both sites have the same score",
+    equal: "Equal",
     beatsBy: "beats by",
     idleMessage: "Enter two URLs above to compare their digital entity maturity side by side and discover which has better presence for search engines and AI.",
     errorBothRequired: "Enter both URLs to compare",
     errorBothInvalid: "Both URLs must start with http:// or https:// and have a valid format",
+    errorSameUrl: "You cannot compare a site against itself. Enter two different URLs.",
   },
   chat: {
     title: "Entiscore Assistant",

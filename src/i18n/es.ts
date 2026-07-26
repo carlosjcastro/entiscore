@@ -84,10 +84,12 @@ export const es: Dictionary = {
     buttonLoading: "Comparando...",
     summaryTitle: "Resumen comparativo",
     same: "Ambos sitios tienen el mismo puntaje",
+    equal: "Igual",
     beatsBy: "supera por",
     idleMessage: "Ingresa dos URLs arriba para comparar su madurez de entidad digital lado a lado y descubrir cuál tiene mejor presencia ante buscadores e IA.",
     errorBothRequired: "Ingresa ambas URLs para comparar",
     errorBothInvalid: "Ambas URLs deben comenzar con http:// o https:// y tener un formato válido",
+    errorSameUrl: "No se puede comparar un sitio contra sí mismo. Ingresa dos URLs distintas.",
   },
   chat: {
     title: "Asistente Entiscore",

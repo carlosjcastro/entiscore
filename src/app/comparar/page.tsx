@@ -10,6 +10,7 @@ import { ActionPlan } from "@/app/components/ActionPlan";
 import { AnalysisProgress } from "@/app/components/AnalysisProgress";
 import { ShareMenu } from "@/app/components/ShareMenu";
 import { ChatPanel } from "@/app/components/ChatPanel";
+import { useI18n, useLocale } from "@/i18n";
 
 interface CompareResult {
   reportA: AuditResponse;
@@ -39,11 +40,11 @@ const AXIS_LABELS: Record<AxisName, string> = {
   technicalAccessibility: "Accesibilidad técnica",
 };
 
-async function requestComparison(urlA: string, urlB: string): Promise<CompareResult> {
+async function requestComparison(urlA: string, urlB: string, locale: string): Promise<CompareResult> {
   const response = await fetch("/api/compare", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ urlA, urlB }),
+    body: JSON.stringify({ urlA, urlB, locale }),
   });
 
   const body = await response.json();
@@ -70,6 +71,20 @@ function isValidHttpUrl(value: string): boolean {
   }
 }
 
+function normalizeUrlForComparison(value: string): string {
+  try {
+    const url = new URL(value);
+    const normalized = `${url.protocol}//${url.hostname.toLowerCase()}${url.pathname.replace(/\/$/, "")}${url.search}`;
+    return normalized;
+  } catch {
+    return value.toLowerCase().replace(/\/$/, "");
+  }
+}
+
+function areUrlsEquivalent(urlA: string, urlB: string): boolean {
+  return normalizeUrlForComparison(urlA) === normalizeUrlForComparison(urlB);
+}
+
 function extractDomain(url: string): string {
   try {
     return new URL(url).hostname.replace(/^www\./, "");
@@ -79,6 +94,7 @@ function extractDomain(url: string): string {
 }
 
 function ComparisonSummary({ reportA, reportB }: { reportA: AuditResponse; reportB: AuditResponse }) {
+  const t = useI18n();
   const scoreDifference = reportA.overallScore - reportB.overallScore;
   const winnerDomain = scoreDifference > 0
     ? extractDomain(reportA.url)
@@ -90,7 +106,7 @@ function ComparisonSummary({ reportA, reportB }: { reportA: AuditResponse; repor
   return (
     <div className="rounded-2xl border border-zinc-200 dark:border-zinc-700/60 bg-white dark:bg-zinc-800/30 p-5 sm:p-6 shadow-sm">
       <h2 className="text-base font-semibold text-zinc-800 dark:text-zinc-100 mb-4">
-        Resumen comparativo
+        {t.compare.summaryTitle}
       </h2>
       <div className="flex flex-col gap-4">
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
@@ -99,10 +115,10 @@ function ComparisonSummary({ reportA, reportB }: { reportA: AuditResponse; repor
           </span>
           {winnerDomain ? (
             <span className="text-[13px] text-zinc-700 dark:text-zinc-200">
-              <span className="font-semibold">{winnerDomain}</span> supera por {absoluteDifference} puntos
+              <span className="font-semibold">{winnerDomain}</span> {t.compare.beatsBy} {absoluteDifference}
             </span>
           ) : (
-            <span className="text-[13px] text-zinc-500 dark:text-zinc-400">Ambos sitios tienen el mismo puntaje</span>
+            <span className="text-[13px] text-zinc-500 dark:text-zinc-400">{t.compare.same}</span>
           )}
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -128,7 +144,7 @@ function ComparisonSummary({ reportA, reportB }: { reportA: AuditResponse; repor
                   </span>
                 )}
                 {diff === 0 && (
-                  <span className="text-[11px] text-zinc-400 dark:text-zinc-500">Igual</span>
+                  <span className="text-[11px] text-zinc-400 dark:text-zinc-500">{t.compare.equal}</span>
                 )}
               </div>
             );
@@ -143,6 +159,7 @@ function CompareForm({ onSubmit, isLoading }: { onSubmit: (urlA: string, urlB: s
   const [urlA, setUrlA] = useState("");
   const [urlB, setUrlB] = useState("");
   const [validationError, setValidationError] = useState<string | null>(null);
+  const t = useI18n();
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -150,12 +167,17 @@ function CompareForm({ onSubmit, isLoading }: { onSubmit: (urlA: string, urlB: s
     const trimmedB = urlB.trim();
 
     if (trimmedA.length === 0 || trimmedB.length === 0) {
-      setValidationError("Ingresa ambas URLs para comparar");
+      setValidationError(t.compare.errorBothRequired);
       return;
     }
 
     if (!isValidHttpUrl(trimmedA) || !isValidHttpUrl(trimmedB)) {
-      setValidationError("Ambas URLs deben comenzar con http:// o https:// y tener un formato válido");
+      setValidationError(t.compare.errorBothInvalid);
+      return;
+    }
+
+    if (areUrlsEquivalent(trimmedA, trimmedB)) {
+      setValidationError(t.compare.errorSameUrl);
       return;
     }
 
@@ -245,13 +267,15 @@ function ReportColumn({ report, label }: { report: AuditResponse; label: string 
 export default function CompararPage() {
   const [state, setState] = useState<CompareState>({ phase: "idle" });
   const [analysisComplete, setAnalysisComplete] = useState(false);
+  const t = useI18n();
+  const { locale } = useLocale();
 
   async function handleCompare(urlA: string, urlB: string) {
     setState({ phase: "loading", urlA, urlB });
     setAnalysisComplete(false);
 
     try {
-      const result = await requestComparison(urlA, urlB);
+      const result = await requestComparison(urlA, urlB, locale);
       setAnalysisComplete(true);
       setTimeout(() => {
         setState({ phase: "result", result });
@@ -274,7 +298,7 @@ export default function CompararPage() {
               <HiArrowLeft className="h-4 w-4" />
             </Link>
             <h1 className="text-xl sm:text-2xl font-bold text-zinc-800 dark:text-zinc-100">
-              Comparar dos sitios
+              {t.compare.title}
             </h1>
           </div>
         </div>
