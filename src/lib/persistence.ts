@@ -1,4 +1,4 @@
-import { getPublicSupabase, isSupabaseConfigured } from "@/lib/supabase";
+import { getPublicSupabase } from "@/lib/supabase";
 import { getServerSupabase, isServerSupabaseConfigured } from "@/lib/supabase-server";
 import { generateUniqueCode } from "@/lib/code-generator";
 import type { AuditResponse } from "@/types";
@@ -129,8 +129,8 @@ export async function saveComparison(
 }
 
 export async function getAnalysisByCode(code: string): Promise<SavedAnalysis | null> {
-  if (!isSupabaseConfigured()) return null;
-  const supabase = getPublicSupabase()!;
+  const supabase = getServerSupabase() ?? getPublicSupabase();
+  if (!supabase) return null;
 
   const { data, error } = await supabase
     .from("analyses")
@@ -152,8 +152,8 @@ export async function getAnalysisByCode(code: string): Promise<SavedAnalysis | n
 }
 
 export async function getComparisonByCode(code: string): Promise<SavedComparison | null> {
-  if (!isSupabaseConfigured()) return null;
-  const supabase = getPublicSupabase()!;
+  const supabase = getServerSupabase() ?? getPublicSupabase();
+  if (!supabase) return null;
 
   const { data, error } = await supabase
     .from("comparisons")
