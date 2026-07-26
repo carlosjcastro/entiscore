@@ -8,6 +8,7 @@ import { SummaryStats } from "@/app/components/SummaryStats";
 import { AxisSection } from "@/app/components/AxisSection";
 import { ActionPlan } from "@/app/components/ActionPlan";
 import { ThemeToggle } from "@/app/components/ThemeToggle";
+import { ShareMenu } from "@/app/components/ShareMenu";
 
 interface SharedReportViewProps {
   report: AuditResponse;
@@ -49,7 +50,10 @@ export function SharedReportView({ report, siteName, faviconUrl, code }: SharedR
               </div>
             </div>
           </div>
-          <ThemeToggle />
+          <div className="flex items-center gap-2">
+            <ShareMenu code={code} siteName={siteName} score={report.overallScore} />
+            <ThemeToggle />
+          </div>
         </div>
 
         <div className="flex flex-col gap-6">

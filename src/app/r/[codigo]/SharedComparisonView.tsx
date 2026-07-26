@@ -7,12 +7,14 @@ import { ScoreDisplay } from "@/app/components/ScoreDisplay";
 import { AxisSection } from "@/app/components/AxisSection";
 import { ActionPlan } from "@/app/components/ActionPlan";
 import { ThemeToggle } from "@/app/components/ThemeToggle";
+import { ShareMenu } from "@/app/components/ShareMenu";
 
 interface SharedComparisonViewProps {
   reportA: AuditResponse;
   reportB: AuditResponse;
   siteNameA: string;
   siteNameB: string;
+  code: string;
 }
 
 const AXIS_ORDER: AxisName[] = [
@@ -48,7 +50,7 @@ function ReportColumn({ report, label }: { report: AuditResponse; label: string 
   );
 }
 
-export function SharedComparisonView({ reportA, reportB, siteNameA, siteNameB }: SharedComparisonViewProps) {
+export function SharedComparisonView({ reportA, reportB, siteNameA, siteNameB, code }: SharedComparisonViewProps) {
   return (
     <main className="flex-1 px-4 py-8 sm:py-12 sm:px-6 lg:px-8 bg-zinc-50 dark:bg-zinc-900 min-h-screen">
       <div className="mx-auto w-full max-w-6xl">
@@ -64,7 +66,10 @@ export function SharedComparisonView({ reportA, reportB, siteNameA, siteNameB }:
               {siteNameA} vs {siteNameB}
             </h1>
           </div>
-          <ThemeToggle />
+          <div className="flex items-center gap-2">
+            <ShareMenu code={code} siteName={`${siteNameA} vs ${siteNameB}`} score={reportA.overallScore} />
+            <ThemeToggle />
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

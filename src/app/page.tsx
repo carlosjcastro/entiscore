@@ -12,6 +12,7 @@ import { SummaryStats } from "./components/SummaryStats";
 import { AxisSection } from "./components/AxisSection";
 import { ActionPlan } from "./components/ActionPlan";
 import { ScoreBadge } from "./components/ScoreBadge";
+import { ShareMenu } from "./components/ShareMenu";
 import { ThemeToggle } from "./components/ThemeToggle";
 import { FeaturesSection } from "./components/FeaturesSection";
 import { AnalysisProgress } from "./components/AnalysisProgress";
@@ -72,6 +73,8 @@ export default function HomePage() {
   const [isCopied, setIsCopied] = useState(false);
   const [analysisJustCompleted, setAnalysisJustCompleted] = useState(false);
   const [previousReport, setPreviousReport] = useState<AuditResponse | null>(null);
+  const [shareCode, setShareCode] = useState<string | null>(null);
+  const [siteName, setSiteName] = useState<string | null>(null);
 
   async function handleAuditSubmit(url: string) {
     setPageState({ phase: "loading" });
@@ -79,11 +82,14 @@ export default function HomePage() {
     setAnalysisJustCompleted(false);
 
     try {
-      const data = await requestAudit(url);
-      saveAuditToHistory(data);
+      const rawData = await requestAudit(url);
+      const responseWithExtras = rawData as AuditResponse & { code?: string; siteName?: string };
+      setShareCode(responseWithExtras.code ?? null);
+      setSiteName(responseWithExtras.siteName ?? null);
+      saveAuditToHistory(rawData);
       setAnalysisJustCompleted(true);
       setTimeout(() => {
-        setPageState({ phase: "result", data });
+        setPageState({ phase: "result", data: rawData });
       }, 600);
     } catch (error) {
       const errorData = error as AuditErrorResponse;
@@ -223,7 +229,14 @@ export default function HomePage() {
                 <ScoreBadge report={pageState.data} />
               </div>
 
-              <div className="flex justify-center pt-2 pb-4">
+              <div className="flex justify-center gap-2 pt-2 pb-4">
+                {shareCode && siteName && (
+                  <ShareMenu
+                    code={shareCode}
+                    siteName={siteName}
+                    score={pageState.data.overallScore}
+                  />
+                )}
                 <button
                   onClick={handleCopyReport}
                   className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 dark:border-zinc-600 bg-white dark:bg-zinc-800 px-4 py-2 text-[13px] font-medium text-zinc-600 dark:text-zinc-300 shadow-sm transition-all hover:shadow-md hover:bg-zinc-50 dark:hover:bg-zinc-700 active:scale-[0.98]"

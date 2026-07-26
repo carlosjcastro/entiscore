@@ -32,6 +32,7 @@ export default async function SharedResultPage({ params }: PageProps) {
         reportB={comparison.reportB}
         siteNameA={comparison.siteNameA}
         siteNameB={comparison.siteNameB}
+        code={comparison.code}
       />
     );
   }
