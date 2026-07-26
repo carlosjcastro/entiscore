@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useI18n } from "@/i18n";
@@ -27,24 +27,19 @@ function isActiveLink(pathname: string, href: string): boolean {
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
-  const menuRef = useRef<HTMLDivElement>(null);
   const t = useI18n();
 
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [pathname]);
 
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setIsMobileMenuOpen(false);
-      }
-    }
-    if (isMobileMenuOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isMobileMenuOpen]);
+  function closeMobileMenu() {
+    setIsMobileMenuOpen(false);
+  }
+
+  function toggleMobileMenu() {
+    setIsMobileMenuOpen((prev) => !prev);
+  }
 
   return (
     <nav className="sticky top-0 z-30 border-b border-zinc-100 dark:border-zinc-800/60 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md">
@@ -84,7 +79,7 @@ export function Navbar() {
             <LocaleSelector />
             <ThemeToggle />
             <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              onClick={toggleMobileMenu}
               className="relative flex h-8 w-8 items-center justify-center text-zinc-600 dark:text-zinc-300"
               aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
             >
@@ -96,37 +91,29 @@ export function Navbar() {
         </div>
       </div>
 
-      <div
-        ref={menuRef}
-        className={`fixed inset-0 top-14 z-40 sm:hidden transition-all duration-300 ease-out ${
-          isMobileMenuOpen
-            ? "opacity-100 pointer-events-auto"
-            : "opacity-0 pointer-events-none"
-        }`}
-      >
-        <div className="absolute inset-0 bg-black/20 dark:bg-black/40" onClick={() => setIsMobileMenuOpen(false)} />
-        <div
-          className={`relative bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 px-6 py-4 transition-transform duration-300 ease-out ${
-            isMobileMenuOpen ? "translate-y-0" : "-translate-y-4"
-          }`}
-        >
-          <div className="flex flex-col gap-1">
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`py-2.5 text-[15px] font-medium transition-colors ${
-                  isActiveLink(pathname, link.href)
-                    ? "text-indigo-600 dark:text-indigo-400"
-                    : "text-zinc-600 dark:text-zinc-400"
-                }`}
-              >
-                {t.nav[link.labelKey]}
-              </Link>
-            ))}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 top-14 z-40 sm:hidden">
+          <div className="absolute inset-0 bg-black/20 dark:bg-black/40" onClick={closeMobileMenu} />
+          <div className="relative bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 px-6 py-4 animate-in fade-in slide-in-from-top-2 duration-200">
+            <div className="flex flex-col gap-1">
+              {NAV_LINKS.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={closeMobileMenu}
+                  className={`py-2.5 text-[15px] font-medium transition-colors ${
+                    isActiveLink(pathname, link.href)
+                      ? "text-indigo-600 dark:text-indigo-400"
+                      : "text-zinc-600 dark:text-zinc-400"
+                  }`}
+                >
+                  {t.nav[link.labelKey]}
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </nav>
   );
 }
