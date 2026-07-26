@@ -11,7 +11,6 @@ import {
   fadeInUp,
   fadeInScale,
   staggerContainer,
-  staggerContainerSlow,
   cardReveal,
   scaleIn,
   getVariants,
@@ -240,14 +239,11 @@ function ResultSection({ data, previousReport, shareCode, siteName, onCopyReport
   const t = useI18n();
 
   return (
-    <motion.div
-      className="flex flex-col gap-10"
-      variants={getStaggerVariants(motionSafe, staggerContainerSlow)}
-      initial="hidden"
-      animate="visible"
-    >
+    <div className="flex flex-col gap-10">
       <motion.div
         variants={getVariants(motionSafe, fadeInScale)}
+        initial="hidden"
+        animate="visible"
         className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 pb-6 border-b border-zinc-200 dark:border-zinc-700"
       >
         <div className="flex flex-col items-center lg:items-start gap-1">
@@ -264,17 +260,14 @@ function ResultSection({ data, previousReport, shareCode, siteName, onCopyReport
       </motion.div>
 
       {data.executiveSummary && (
-        <motion.div
-          variants={getVariants(motionSafe, fadeInUp)}
-          className="border-l-[3px] border-indigo-500 pl-4 py-1"
-        >
+        <ScrollReveal variants={fadeInUp} className="border-l-[3px] border-indigo-500 pl-4 py-1">
           <p className="text-[14px] leading-relaxed text-zinc-600 dark:text-zinc-400 italic">
             {data.executiveSummary}
           </p>
-        </motion.div>
+        </ScrollReveal>
       )}
 
-      <motion.div variants={getVariants(motionSafe, fadeInUp)}>
+      <ScrollReveal variants={fadeInUp}>
         <h2 className="text-base font-semibold text-zinc-800 dark:text-zinc-100 mb-5">
           {t.report.evaluationByAxis}
         </h2>
@@ -294,7 +287,7 @@ function ResultSection({ data, previousReport, shareCode, siteName, onCopyReport
             </motion.div>
           ))}
         </motion.div>
-      </motion.div>
+      </ScrollReveal>
 
       <ScrollReveal variants={fadeInUp}>
         <div className="border-t border-zinc-200 dark:border-zinc-700 pt-8">
@@ -315,10 +308,7 @@ function ResultSection({ data, previousReport, shareCode, siteName, onCopyReport
         </div>
       </ScrollReveal>
 
-      <motion.div
-        variants={getVariants(motionSafe, fadeInUp)}
-        className="flex justify-center gap-2 pt-4 border-t border-zinc-200 dark:border-zinc-700"
-      >
+      <ScrollReveal variants={fadeInUp} className="flex justify-center gap-2 pt-4 border-t border-zinc-200 dark:border-zinc-700">
         {shareCode && siteName && (
           <ShareMenu code={shareCode} siteName={siteName} score={data.overallScore} />
         )}
@@ -338,7 +328,7 @@ function ResultSection({ data, previousReport, shareCode, siteName, onCopyReport
             </>
           )}
         </button>
-      </motion.div>
-    </motion.div>
+      </ScrollReveal>
+    </div>
   );
 }
