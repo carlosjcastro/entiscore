@@ -1,6 +1,6 @@
 "use client";
 
-import { useReducedMotion } from "framer-motion";
+import { useState, useEffect } from "react";
 import type { Variants, Transition } from "framer-motion";
 
 const STANDARD_EASE: [number, number, number, number] = [0.25, 0.1, 0.25, 1];
@@ -113,8 +113,21 @@ export const PARALLAX_Y_RANGE_SUBTLE: number[] = [0, -30];
 export const PARALLAX_Y_RANGE_MEDIUM: number[] = [0, -50];
 
 export function useMotionSafe(): boolean {
-  const prefersReducedMotion = useReducedMotion();
-  return !prefersReducedMotion;
+  const [motionAllowed, setMotionAllowed] = useState(true);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setMotionAllowed(!mediaQuery.matches);
+
+    function handleChange(event: MediaQueryListEvent) {
+      setMotionAllowed(!event.matches);
+    }
+
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
+
+  return motionAllowed;
 }
 
 export const reducedMotionVariants: Variants = {
