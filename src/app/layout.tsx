@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "./components/Navbar";
 import { Footer } from "./components/Footer";
+import { SmoothScroll } from "./components/SmoothScroll";
 import { I18nProvider } from "@/i18n";
 import { ToastProvider } from "./components/Toast";
 
@@ -130,11 +131,13 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col">
         <I18nProvider>
-          <ToastProvider>
-            <Navbar />
-            <div className="flex-1 flex flex-col">{children}</div>
-            <Footer />
-          </ToastProvider>
+          <SmoothScroll>
+            <ToastProvider>
+              <Navbar />
+              <div className="flex-1 flex flex-col">{children}</div>
+              <Footer />
+            </ToastProvider>
+          </SmoothScroll>
         </I18nProvider>
       </body>
     </html>
