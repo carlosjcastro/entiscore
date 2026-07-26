@@ -14,13 +14,13 @@ const FEATURES: FeatureCardProps[] = [
     icon: HiCodeBracketSquare,
     title: "Datos estructurados",
     description: "Verifica si tu sitio tiene schema markup que identifique quién eres ante buscadores e IA.",
-    accentColor: "text-violet-600 dark:text-violet-400",
+    accentColor: "text-indigo-600 dark:text-indigo-400",
   },
   {
     icon: HiUser,
     title: "Consistencia de identidad",
     description: "Compara tu nombre y perfiles entre fuentes para confirmar que te reconocen como una sola entidad.",
-    accentColor: "text-sky-600 dark:text-sky-400",
+    accentColor: "text-indigo-600 dark:text-indigo-400",
   },
   {
     icon: HiShieldCheck,
@@ -32,7 +32,7 @@ const FEATURES: FeatureCardProps[] = [
     icon: HiGlobeAlt,
     title: "Accesibilidad técnica",
     description: "Evalúa si crawlers e IA pueden acceder a tu contenido sin barreras técnicas.",
-    accentColor: "text-teal-600 dark:text-teal-400",
+    accentColor: "text-indigo-600 dark:text-indigo-400",
   },
 ];
 

@@ -20,10 +20,10 @@ interface GraphEdge {
 }
 
 const CATEGORY_COLORS: Record<GraphNode["category"], string> = {
-  center: "#6366f1",
-  schema: "#8b5cf6",
-  profile: "#0ea5e9",
-  authority: "#6366f1",
+  center: "#4f46e5",
+  schema: "#4f46e5",
+  profile: "#6366f1",
+  authority: "#818cf8",
 };
 
 function extractDomain(url: string): string {
@@ -199,15 +199,15 @@ export function EntityGraph({ report }: EntityGraphProps) {
           </div>
           <div className="flex items-center justify-center gap-4 mt-3">
             <div className="flex items-center gap-1.5">
-              <div className="h-2.5 w-2.5 rounded-full border border-violet-500 bg-violet-500/10" />
+              <div className="h-2.5 w-2.5 rounded-full border border-indigo-600 bg-indigo-600/10" />
               <span className="text-[10px] text-zinc-500 dark:text-zinc-400">Schema</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <div className="h-2.5 w-2.5 rounded-full border border-sky-500 bg-sky-500/10" />
+              <div className="h-2.5 w-2.5 rounded-full border border-indigo-500 bg-indigo-500/10" />
               <span className="text-[10px] text-zinc-500 dark:text-zinc-400">Perfiles</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <div className="h-2.5 w-2.5 rounded-full border border-indigo-500 bg-indigo-500/10" />
+              <div className="h-2.5 w-2.5 rounded-full border border-indigo-400 bg-indigo-400/10" />
               <span className="text-[10px] text-zinc-500 dark:text-zinc-400">Autoridad</span>
             </div>
           </div>
