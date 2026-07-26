@@ -2,6 +2,10 @@
 
 import { useEffect, useState } from "react";
 
+const DOT_COUNT = 5;
+const CYCLE_DURATION_MS = 1200;
+const DELAY_PER_DOT_MS = CYCLE_DURATION_MS / DOT_COUNT;
+
 export function SplashScreen() {
   const [isVisible, setIsVisible] = useState(true);
   const [isFadingOut, setIsFadingOut] = useState(false);
@@ -9,11 +13,11 @@ export function SplashScreen() {
   useEffect(() => {
     const fadeTimer = setTimeout(() => {
       setIsFadingOut(true);
-    }, 1000);
+    }, 1200);
 
     const removeTimer = setTimeout(() => {
       setIsVisible(false);
-    }, 1500);
+    }, 1700);
 
     return () => {
       clearTimeout(fadeTimer);
@@ -29,42 +33,24 @@ export function SplashScreen() {
         isFadingOut ? "opacity-0" : "opacity-100"
       }`}
     >
-      <div className="relative h-24 w-24">
-        <svg viewBox="0 0 100 100" className="h-full w-full">
-          <polygon
-            points="50,5 95,27.5 95,72.5 50,95 5,72.5 5,27.5"
-            fill="none"
-            stroke="#6366f1"
-            strokeWidth="1.5"
-            className="animate-[spin_8s_linear_infinite]"
-            opacity="0.6"
+      <div className="flex items-center gap-2">
+        {Array.from({ length: DOT_COUNT }).map((_, index) => (
+          <div
+            key={index}
+            className="h-2 w-2 rounded-full bg-indigo-500"
+            style={{
+              animation: `dotPulse ${CYCLE_DURATION_MS}ms ease-in-out infinite`,
+              animationDelay: `${index * DELAY_PER_DOT_MS}ms`,
+            }}
           />
-          <polygon
-            points="50,20 80,35 80,65 50,80 20,65 20,35"
-            fill="none"
-            stroke="#818cf8"
-            strokeWidth="1"
-            className="animate-[spin_6s_linear_infinite_reverse]"
-            opacity="0.4"
-          />
-          <line
-            x1="10"
-            y1="50"
-            x2="90"
-            y2="50"
-            stroke="#a5b4fc"
-            strokeWidth="0.8"
-            opacity="0.8"
-            className="animate-[scanPulse_1.5s_ease-in-out_infinite]"
-          />
-        </svg>
-        <style dangerouslySetInnerHTML={{ __html: `
-          @keyframes scanPulse {
-            0%, 100% { opacity: 0.3; transform: translateY(-15px); }
-            50% { opacity: 0.9; transform: translateY(15px); }
-          }
-        `}} />
+        ))}
       </div>
+      <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes dotPulse {
+          0%, 60%, 100% { opacity: 0.2; transform: scale(1); }
+          30% { opacity: 1; transform: scale(1.5); }
+        }
+      `}} />
     </div>
   );
 }
