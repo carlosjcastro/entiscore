@@ -4,6 +4,7 @@ import { useState } from "react";
 import { HiMagnifyingGlass } from "react-icons/hi2";
 import { useI18n } from "@/i18n";
 import { isStrictlyValidUrl } from "@/lib/url-validation";
+import { GlowButton } from "./GlowButton";
 
 interface AuditFormProps {
   onSubmit: (url: string) => void;
@@ -60,13 +61,13 @@ export function AuditForm({ onSubmit, isLoading }: AuditFormProps) {
             }`}
           />
         </div>
-        <button
+        <GlowButton
           type="submit"
           disabled={isLoading || !isInputValid}
-          className="rounded-md bg-indigo-600 dark:bg-indigo-500 px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-indigo-700 dark:hover:bg-indigo-400 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
+          className="rounded-md bg-indigo-600 dark:bg-indigo-500 px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-indigo-700 dark:hover:bg-indigo-400 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLoading ? t.form.buttonLoading : t.form.button}
-        </button>
+        </GlowButton>
       </div>
       {validationError && (
         <p className="text-[12px] text-rose-600 dark:text-rose-400 pl-1">

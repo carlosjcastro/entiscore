@@ -338,7 +338,12 @@ function MessageBubble({ message }: { message: ChatMessage }) {
   const isUser = message.role === "user";
 
   return (
-    <div className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
+    <motion.div
+      className={`flex ${isUser ? "justify-end" : "justify-start"}`}
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
+    >
       <div
         className={`max-w-[85%] rounded-xl px-3 py-2 text-[13px] leading-relaxed break-words overflow-hidden ${
           isUser
@@ -363,6 +368,6 @@ function MessageBubble({ message }: { message: ChatMessage }) {
           </div>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }

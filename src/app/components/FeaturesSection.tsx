@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { HiCodeBracketSquare, HiUser, HiShieldCheck, HiGlobeAlt } from "react-icons/hi2";
 import { useI18n } from "@/i18n";
 import {
-  cardReveal,
+  blurReveal,
   fadeInUp,
   staggerContainer,
   getVariants,
@@ -23,7 +23,7 @@ function FeatureCard({ icon: Icon, title, description }: FeatureCardProps) {
 
   return (
     <motion.div
-      variants={getVariants(motionSafe, cardReveal)}
+      variants={getVariants(motionSafe, blurReveal)}
       className="flex flex-col gap-2 py-4 border-b border-zinc-100 dark:border-zinc-800 sm:border-b-0 sm:border-r sm:border-zinc-100 sm:dark:border-zinc-800 last:border-0 sm:pr-6 sm:last:pr-0"
     >
       <Icon className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />

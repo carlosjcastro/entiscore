@@ -11,7 +11,7 @@ import {
   fadeInUp,
   fadeInScale,
   staggerContainer,
-  cardReveal,
+  blurReveal,
   scaleIn,
   getVariants,
   getStaggerVariants,
@@ -276,7 +276,7 @@ function ResultSection({ data, previousReport, shareCode, siteName, onCopyReport
           animate="visible"
         >
           {AXIS_ORDER.map((axisName) => (
-            <motion.div key={axisName} variants={getVariants(motionSafe, cardReveal)}>
+            <motion.div key={axisName} variants={getVariants(motionSafe, blurReveal)}>
               <AxisSection
                 axisName={axisName}
                 result={data.axes[axisName]}

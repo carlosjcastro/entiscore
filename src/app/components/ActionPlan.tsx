@@ -57,7 +57,7 @@ function ActionItemRow({ item }: { item: ActionItem }) {
   const [isCodeExpanded, setIsCodeExpanded] = useState(false);
 
   return (
-    <div className="py-2.5 border-b border-zinc-100 dark:border-zinc-800 last:border-b-0">
+    <div className="py-2.5 border-b border-zinc-100 dark:border-zinc-800 last:border-b-0 transition-all duration-200 hover:translate-x-1 hover:bg-zinc-50/50 dark:hover:bg-zinc-800/20 rounded-r">
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-[11px] font-bold text-zinc-300 dark:text-zinc-600 tabular-nums">
           {item.priority}
@@ -79,11 +79,18 @@ function ActionItemRow({ item }: { item: ActionItem }) {
       <p className="mt-1 text-[12px] leading-relaxed text-zinc-500 dark:text-zinc-400 pl-5">
         {item.reason}
       </p>
-      {item.codeSnippet && isCodeExpanded && (
-        <div className="pl-5">
-          <CodeSnippetBlock code={item.codeSnippet} language={item.codeLanguage ?? "html"} />
+      <div
+        className="grid transition-[grid-template-rows] duration-300 ease-in-out"
+        style={{ gridTemplateRows: isCodeExpanded ? "1fr" : "0fr" }}
+      >
+        <div className="overflow-hidden">
+          {item.codeSnippet && (
+            <div className="pl-5">
+              <CodeSnippetBlock code={item.codeSnippet} language={item.codeLanguage ?? "html"} />
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 }

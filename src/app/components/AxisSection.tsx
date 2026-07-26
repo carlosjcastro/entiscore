@@ -84,7 +84,7 @@ export function AxisSection({ axisName, result, previousScore }: AxisSectionProp
   const t = useI18n();
 
   return (
-    <div className={`border-l-[3px] ${config.borderAccent} pl-4`}>
+    <div className={`border-l-[3px] ${config.borderAccent} pl-4 rounded-r-lg transition-all duration-200 hover:shadow-md hover:shadow-indigo-500/5 hover:bg-white/50 dark:hover:bg-zinc-800/30`}>
       <button
         onClick={() => setIsExpanded(!isExpanded)}
         className="flex w-full items-center gap-3 py-3 text-left"
