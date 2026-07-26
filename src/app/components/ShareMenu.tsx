@@ -14,6 +14,8 @@ interface ShareMenuProps {
   code: string;
   siteName: string;
   score: number;
+  comparisonSiteNameB?: string;
+  comparisonScoreB?: number;
 }
 
 function buildShareUrl(code: string): string {
@@ -21,18 +23,24 @@ function buildShareUrl(code: string): string {
   return `${baseUrl}/r/${code}`;
 }
 
-function buildShareText(siteName: string, score: number): string {
-  return `Analicé ${siteName} con Entiscore y obtuvo ${score}/100 en madurez de entidad digital.`;
+function buildShareText(props: ShareMenuProps): string {
+  if (props.comparisonSiteNameB !== undefined && props.comparisonScoreB !== undefined) {
+    const winner = props.score >= props.comparisonScoreB ? props.siteName : props.comparisonSiteNameB;
+    const winnerScore = props.score >= props.comparisonScoreB ? props.score : props.comparisonScoreB;
+    return `Comparé ${props.siteName} (${props.score}/100) con ${props.comparisonSiteNameB} (${props.comparisonScoreB}/100) en Entiscore. ${winner} obtuvo mejor resultado con ${winnerScore} puntos.`;
+  }
+  return `Analicé ${props.siteName} con Entiscore y obtuvo ${props.score}/100 en madurez de entidad digital.`;
 }
 
-export function ShareMenu({ code, siteName, score }: ShareMenuProps) {
+export function ShareMenu(props: ShareMenuProps) {
+  const { code, siteName } = props;
   const [isOpen, setIsOpen] = useState(false);
   const [isLinkCopied, setIsLinkCopied] = useState(false);
   const [supportsNativeShare, setSupportsNativeShare] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   const shareUrl = buildShareUrl(code);
-  const shareText = buildShareText(siteName, score);
+  const shareText = buildShareText(props);
 
   useEffect(() => {
     setSupportsNativeShare(typeof navigator.share === "function");

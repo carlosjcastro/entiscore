@@ -3,17 +3,26 @@
 import { useState } from "react";
 import Link from "next/link";
 import { HiArrowLeft, HiArrowTrendingUp, HiArrowTrendingDown } from "react-icons/hi2";
-import type { AuditResponse, AuditErrorResponse, AxisName } from "@/types";
+import type { AuditResponse, AxisName } from "@/types";
 import { ScoreDisplay } from "@/app/components/ScoreDisplay";
 import { AxisSection } from "@/app/components/AxisSection";
 import { ActionPlan } from "@/app/components/ActionPlan";
 import { ThemeToggle } from "@/app/components/ThemeToggle";
 import { AnalysisProgress } from "@/app/components/AnalysisProgress";
+import { ShareMenu } from "@/app/components/ShareMenu";
+
+interface CompareResult {
+  reportA: AuditResponse;
+  reportB: AuditResponse;
+  siteNameA: string;
+  siteNameB: string;
+  code: string | null;
+}
 
 type CompareState =
   | { phase: "idle" }
   | { phase: "loading"; urlA: string; urlB: string }
-  | { phase: "result"; reportA: AuditResponse; reportB: AuditResponse }
+  | { phase: "result"; result: CompareResult }
   | { phase: "error"; errorMessage: string };
 
 const AXIS_ORDER: AxisName[] = [
@@ -30,21 +39,26 @@ const AXIS_LABELS: Record<AxisName, string> = {
   technicalAccessibility: "Accesibilidad técnica",
 };
 
-async function requestAudit(url: string): Promise<AuditResponse> {
-  const response = await fetch("/api/audit", {
+async function requestComparison(urlA: string, urlB: string): Promise<CompareResult> {
+  const response = await fetch("/api/compare", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ url }),
+    body: JSON.stringify({ urlA, urlB }),
   });
 
-  const body: unknown = await response.json();
+  const body = await response.json();
 
   if (!response.ok) {
-    const errorData = body as AuditErrorResponse;
-    throw new Error(errorData.error ?? "Error al analizar la URL");
+    throw new Error(body.error ?? "Error al comparar");
   }
 
-  return body as AuditResponse;
+  return {
+    reportA: body.reportA,
+    reportB: body.reportB,
+    siteNameA: body.siteNameA,
+    siteNameB: body.siteNameB,
+    code: body.code ?? null,
+  };
 }
 
 function isValidHttpUrl(value: string): boolean {
@@ -56,9 +70,21 @@ function isValidHttpUrl(value: string): boolean {
   }
 }
 
+function extractDomain(url: string): string {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return url;
+  }
+}
+
 function ComparisonSummary({ reportA, reportB }: { reportA: AuditResponse; reportB: AuditResponse }) {
   const scoreDifference = reportA.overallScore - reportB.overallScore;
-  const winnerUrl = scoreDifference > 0 ? reportA.url : scoreDifference < 0 ? reportB.url : null;
+  const winnerDomain = scoreDifference > 0
+    ? extractDomain(reportA.url)
+    : scoreDifference < 0
+      ? extractDomain(reportB.url)
+      : null;
   const absoluteDifference = Math.abs(scoreDifference);
 
   return (
@@ -66,27 +92,24 @@ function ComparisonSummary({ reportA, reportB }: { reportA: AuditResponse; repor
       <h2 className="text-base font-semibold text-zinc-800 dark:text-zinc-100 mb-4">
         Resumen comparativo
       </h2>
-
       <div className="flex flex-col gap-4">
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
           <span className="text-[13px] font-medium text-zinc-600 dark:text-zinc-300">
             Score general:
           </span>
-          {winnerUrl ? (
+          {winnerDomain ? (
             <span className="text-[13px] text-zinc-700 dark:text-zinc-200">
-              <span className="font-semibold">{new URL(winnerUrl).hostname}</span> supera por {absoluteDifference} puntos
+              <span className="font-semibold">{winnerDomain}</span> supera por {absoluteDifference} puntos
             </span>
           ) : (
             <span className="text-[13px] text-zinc-500 dark:text-zinc-400">Ambos sitios tienen el mismo puntaje</span>
           )}
         </div>
-
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {AXIS_ORDER.map((axisName) => {
             const scoreA = reportA.axes[axisName].score;
             const scoreB = reportB.axes[axisName].score;
             const diff = scoreA - scoreB;
-
             return (
               <div key={axisName} className="flex items-center gap-2 rounded-lg bg-zinc-50 dark:bg-zinc-800/50 px-3 py-2">
                 <span className="text-[12px] text-zinc-500 dark:text-zinc-400 flex-1">
@@ -207,13 +230,11 @@ function ReportColumn({ report, label }: { report: AuditResponse; label: string 
           <ScoreDisplay overallScore={report.overallScore} maturityLevel={report.maturityLevel} />
         </div>
       </div>
-
       <div className="flex flex-col gap-2">
         {AXIS_ORDER.map((axisName) => (
           <AxisSection key={axisName} axisName={axisName} result={report.axes[axisName]} />
         ))}
       </div>
-
       <div className="rounded-xl border border-zinc-200 dark:border-zinc-700/60 bg-white dark:bg-zinc-800/30 p-4 shadow-sm">
         <ActionPlan items={report.actionPlan} />
       </div>
@@ -230,13 +251,10 @@ export default function CompararPage() {
     setAnalysisComplete(false);
 
     try {
-      const [reportA, reportB] = await Promise.all([
-        requestAudit(urlA),
-        requestAudit(urlB),
-      ]);
+      const result = await requestComparison(urlA, urlB);
       setAnalysisComplete(true);
       setTimeout(() => {
-        setState({ phase: "result", reportA, reportB });
+        setState({ phase: "result", result });
       }, 600);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Error desconocido al comparar";
@@ -273,13 +291,13 @@ export default function CompararPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="flex flex-col items-center">
               <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 mb-3">
-                {new URL(state.urlA).hostname}
+                {extractDomain(state.urlA)}
               </p>
               <AnalysisProgress isComplete={analysisComplete} />
             </div>
             <div className="flex flex-col items-center">
               <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 mb-3">
-                {new URL(state.urlB).hostname}
+                {extractDomain(state.urlB)}
               </p>
               <AnalysisProgress isComplete={analysisComplete} />
             </div>
@@ -296,11 +314,26 @@ export default function CompararPage() {
 
         {state.phase === "result" && (
           <div className="flex flex-col gap-6">
-            <ComparisonSummary reportA={state.reportA} reportB={state.reportB} />
+            <ComparisonSummary
+              reportA={state.result.reportA}
+              reportB={state.result.reportB}
+            />
+
+            {state.result.code && (
+              <div className="flex justify-center">
+                <ShareMenu
+                  code={state.result.code}
+                  siteName={state.result.siteNameA}
+                  score={state.result.reportA.overallScore}
+                  comparisonSiteNameB={state.result.siteNameB}
+                  comparisonScoreB={state.result.reportB.overallScore}
+                />
+              </div>
+            )}
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <ReportColumn report={state.reportA} label="Sitio A" />
-              <ReportColumn report={state.reportB} label="Sitio B" />
+              <ReportColumn report={state.result.reportA} label="Sitio A" />
+              <ReportColumn report={state.result.reportB} label="Sitio B" />
             </div>
           </div>
         )}

@@ -67,7 +67,13 @@ export function SharedComparisonView({ reportA, reportB, siteNameA, siteNameB, c
             </h1>
           </div>
           <div className="flex items-center gap-2">
-            <ShareMenu code={code} siteName={`${siteNameA} vs ${siteNameB}`} score={reportA.overallScore} />
+            <ShareMenu
+              code={code}
+              siteName={siteNameA}
+              score={reportA.overallScore}
+              comparisonSiteNameB={siteNameB}
+              comparisonScoreB={reportB.overallScore}
+            />
             <ThemeToggle />
           </div>
         </div>
