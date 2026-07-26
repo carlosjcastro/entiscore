@@ -12,7 +12,6 @@ import {
   type HistoryEntry,
 } from "@/app/lib/history-storage";
 import { generateAuditPdf } from "@/app/lib/pdf-export";
-import { ThemeToggle } from "@/app/components/ThemeToggle";
 
 const MATURITY_COLOR_MAP: Record<MaturityLevel, string> = {
   bajo: "text-rose-600 dark:text-rose-400",
@@ -98,7 +97,6 @@ export default function HistorialPage() {
             </h1>
           </div>
           <div className="flex items-center gap-2">
-            <ThemeToggle />
             {entries.length > 0 && (
               <button
                 onClick={handleClearAll}

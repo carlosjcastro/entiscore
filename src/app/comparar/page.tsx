@@ -7,7 +7,6 @@ import type { AuditResponse, AxisName } from "@/types";
 import { ScoreDisplay } from "@/app/components/ScoreDisplay";
 import { AxisSection } from "@/app/components/AxisSection";
 import { ActionPlan } from "@/app/components/ActionPlan";
-import { ThemeToggle } from "@/app/components/ThemeToggle";
 import { AnalysisProgress } from "@/app/components/AnalysisProgress";
 import { ShareMenu } from "@/app/components/ShareMenu";
 import { ChatPanel } from "@/app/components/ChatPanel";
@@ -278,7 +277,6 @@ export default function CompararPage() {
               Comparar dos sitios
             </h1>
           </div>
-          <ThemeToggle />
         </div>
 
         <div className="mb-8">

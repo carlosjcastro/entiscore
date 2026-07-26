@@ -7,7 +7,6 @@ import { ScoreDisplay } from "@/app/components/ScoreDisplay";
 import { SummaryStats } from "@/app/components/SummaryStats";
 import { AxisSection } from "@/app/components/AxisSection";
 import { ActionPlan } from "@/app/components/ActionPlan";
-import { ThemeToggle } from "@/app/components/ThemeToggle";
 import { ShareMenu } from "@/app/components/ShareMenu";
 import { ChatPanel } from "@/app/components/ChatPanel";
 
@@ -53,7 +52,6 @@ export function SharedReportView({ report, siteName, faviconUrl, code }: SharedR
           </div>
           <div className="flex items-center gap-2">
             <ShareMenu code={code} siteName={siteName} score={report.overallScore} />
-            <ThemeToggle />
           </div>
         </div>
 

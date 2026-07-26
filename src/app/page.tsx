@@ -2,7 +2,6 @@
 
 import { useState, useEffect, Suspense } from "react";
 import dynamic from "next/dynamic";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { HiDocumentDuplicate, HiCheck } from "react-icons/hi2";
 import type { AuditResponse, AuditErrorResponse, AxisName } from "@/types";
@@ -15,11 +14,9 @@ import { ScoreBadge } from "./components/ScoreBadge";
 import { ShareMenu } from "./components/ShareMenu";
 import { ChatPanel } from "./components/ChatPanel";
 import { EntityGraph } from "./components/EntityGraph";
-import { ThemeToggle } from "./components/ThemeToggle";
 import { FeaturesSection } from "./components/FeaturesSection";
 import { AnalysisProgress } from "./components/AnalysisProgress";
 import { CookieBanner } from "./components/CookieBanner";
-import { Footer } from "./components/Footer";
 import { SplashScreen } from "./components/SplashScreen";
 import { saveAuditToHistory, getPreviousReportForUrl } from "./lib/history-storage";
 
@@ -119,21 +116,6 @@ export default function HomePage() {
         <AutoAuditTrigger onAudit={handleAuditSubmit} />
       </Suspense>
       <section className="relative flex flex-col items-center justify-center min-h-[520px] sm:min-h-[560px] px-4 py-16 sm:py-20 overflow-hidden bg-zinc-950">
-        <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
-          <Link
-            href="/comparar"
-            className="flex h-8 items-center gap-1.5 rounded-lg border border-white/20 bg-white/10 px-3 text-[12px] font-medium text-white/80 backdrop-blur-sm transition-colors hover:bg-white/20"
-          >
-            Comparar
-          </Link>
-          <Link
-            href="/historial"
-            className="flex h-8 items-center gap-1.5 rounded-lg border border-white/20 bg-white/10 px-3 text-[12px] font-medium text-white/80 backdrop-blur-sm transition-colors hover:bg-white/20"
-          >
-            Historial
-          </Link>
-          <ThemeToggle variant="hero" />
-        </div>
         <NetworkGraph />
         <div className="relative z-10 w-full max-w-2xl flex flex-col items-center">
           <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-white text-center">
@@ -258,7 +240,6 @@ export default function HomePage() {
         </div>
       </main>
 
-      <Footer />
       <CookieBanner />
       {shareCode && <ChatPanel code={shareCode} />}
     </>
