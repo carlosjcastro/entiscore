@@ -4,8 +4,8 @@ import type { AxisResult, AxisName, ActionItem, Finding } from "@/types";
 import { generateActionPlan as generateRuleBasedActionPlan } from "@/agent/action-plan";
 
 const CLAUDE_MODEL = "claude-haiku-4-5-20251001";
-const CLAUDE_TIMEOUT_MS = 10_000;
-const CLAUDE_MAX_TOKENS = 1500;
+const CLAUDE_TIMEOUT_MS = 15_000;
+const CLAUDE_MAX_TOKENS = 3000;
 
 const AXIS_LABELS: Record<AxisName, string> = {
   structuredData: "Datos estructurados",
@@ -20,6 +20,8 @@ const ActionItemSchema = z.object({
   reason: z.string(),
   effort: z.enum(["bajo", "medio", "alto"]),
   axis: z.enum(["structuredData", "identityConsistency", "authoritySignals", "technicalAccessibility"]),
+  codeSnippet: z.string().optional(),
+  codeLanguage: z.string().optional(),
 });
 
 const ActionPlanResponseSchema = z.array(ActionItemSchema);
@@ -66,9 +68,10 @@ Genera un plan de acción priorizado con recomendaciones concretas. Cada recomen
 - Indicar el nivel de esfuerzo (bajo, medio, alto)
 - Indicar el eje de origen (structuredData, identityConsistency, authoritySignals, technicalAccessibility)
 - Estar numerada por prioridad (1 = más urgente)
+- Si es posible generar un snippet de código que resuelva directamente el problema (por ejemplo un bloque JSON-LD, meta tags, o un fragmento HTML), incluirlo en el campo "codeSnippet" con el lenguaje en "codeLanguage" (html, json, etc.). Si no aplica código para esa recomendación, omitir esos campos.
 
 Responde ÚNICAMENTE con un array JSON válido siguiendo este formato exacto, sin texto adicional antes o después:
-[{"priority":1,"title":"...","reason":"...","effort":"bajo|medio|alto","axis":"structuredData|identityConsistency|authoritySignals|technicalAccessibility"}]
+[{"priority":1,"title":"...","reason":"...","effort":"bajo|medio|alto","axis":"...","codeSnippet":"...","codeLanguage":"html"}]
 
 Genera entre 3 y 8 recomendaciones, ordenadas de mayor a menor impacto.`;
 }

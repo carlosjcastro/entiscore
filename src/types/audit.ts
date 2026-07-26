@@ -38,6 +38,8 @@ export interface ActionItem {
   reason: string;
   effort: EffortLevel;
   axis: AxisName;
+  codeSnippet?: string;
+  codeLanguage?: string;
 }
 
 export interface AuditResponse {
