@@ -120,10 +120,14 @@ export const es: Dictionary = {
   theme: {
     light: "Cambiar a modo claro",
     dark: "Cambiar a modo oscuro",
+    activatedLight: "Modo claro activado",
+    activatedDark: "Modo oscuro activado",
   },
   locale: {
     es: "ES",
     en: "EN",
+    switchedToEs: "Idioma cambiado a español",
+    switchedToEn: "Language changed to English",
   },
   errors: {
     INVALID_URL: "La URL proporcionada no es válida",

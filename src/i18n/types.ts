@@ -113,10 +113,14 @@ export interface Dictionary {
   theme: {
     light: string;
     dark: string;
+    activatedLight: string;
+    activatedDark: string;
   };
   locale: {
     es: string;
     en: string;
+    switchedToEs: string;
+    switchedToEn: string;
   };
   errors: {
     INVALID_URL: string;

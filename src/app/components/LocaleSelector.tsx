@@ -1,22 +1,19 @@
 "use client";
 
-import { useLocale } from "@/i18n";
+import { useLocale, useI18n } from "@/i18n";
 import type { Locale } from "@/i18n";
 import { useToast } from "./Toast";
 
-const LOCALE_LABELS: Record<Locale, string> = {
-  es: "Español",
-  en: "English",
-};
-
 export function LocaleSelector() {
   const { locale, setLocale } = useLocale();
+  const t = useI18n();
   const { showToast } = useToast();
 
   function handleToggle() {
     const newLocale: Locale = locale === "es" ? "en" : "es";
     setLocale(newLocale);
-    showToast(LOCALE_LABELS[newLocale]);
+    const confirmationMessage = newLocale === "en" ? t.locale.switchedToEn : t.locale.switchedToEs;
+    showToast(confirmationMessage);
   }
 
   return (

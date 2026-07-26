@@ -50,7 +50,7 @@ export function ThemeToggle({ variant = "default" }: ThemeToggleProps) {
     setTheme(newTheme);
     localStorage.setItem(THEME_STORAGE_KEY, newTheme);
     applyThemeToDocument(newTheme);
-    showToast(newTheme === "dark" ? t.theme.dark : t.theme.light);
+    showToast(newTheme === "dark" ? t.theme.activatedDark : t.theme.activatedLight);
   }
 
   const buttonClass = variant === "hero"
