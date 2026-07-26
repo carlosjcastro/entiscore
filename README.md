@@ -205,7 +205,7 @@ El hackathon permite y valora AWS como plus opcional. Este proyecto decidió pri
 
 ## Arquitectura del proyecto
 
-El sistema está organizado en capas con responsabilidades claramente separadas. La capa de presentación (Next.js App Router) maneja la interfaz web y los route handlers HTTP. La capa de API (endpoints /api/audit, /api/compare, /api/chat) recibe las solicitudes, valida inputs y delega al agente. El agente orquestador coordina la ejecución de los cuatro analizadores en paralelo (datos estructurados, consistencia de identidad, señales de autoridad, accesibilidad técnica), calcula el puntaje ponderado y genera el plan de acción. Las herramientas de acceso a datos externos (fetchPage, fetchRobotsTxt, checkUrlAccessibility) encapsulan toda operación de red siguiendo el contrato de MCP. Supabase provee la persistencia para análisis y comparativas compartibles. Claude API genera el plan de acción con código de solución, el resumen ejecutivo, y las respuestas del asistente conversacional.
+El sistema está organizado en capas con responsabilidades claramente separadas. La capa de presentación (Next.js App Router) maneja la interfaz web y los route handlers HTTP. La capa de API expone tres endpoints: /api/audit para análisis individuales, /api/compare para ejecutar dos análisis en paralelo y guardar la comparativa con su código único en Supabase desde el servidor, y /api/chat para el asistente conversacional con streaming. El agente orquestador coordina la ejecución de los cuatro analizadores en paralelo (datos estructurados, consistencia de identidad, señales de autoridad, accesibilidad técnica), calcula el puntaje ponderado y genera el plan de acción. Las herramientas de acceso a datos externos (fetchPage, fetchRobotsTxt, checkUrlAccessibility) encapsulan toda operación de red siguiendo el contrato de MCP. Supabase provee la persistencia para análisis y comparativas compartibles. Claude API genera el plan de acción con código de solución, el resumen ejecutivo, y las respuestas del asistente conversacional.
 
 ![Diagrama de arquitectura de Entiscore](docs/architecture-diagram.svg)
 
@@ -213,7 +213,7 @@ El sistema está organizado en capas con responsabilidades claramente separadas.
 src/
 ├── app/                   Presentación (Next.js App Router)
 │   ├── api/audit/         Endpoint POST /api/audit
-│   ├── api/compare/       Endpoint POST /api/compare
+│   ├── api/compare/       Endpoint POST /api/compare (orquesta ambos análisis, guarda comparativa en Supabase con código único)
 │   ├── api/chat/          Endpoint POST /api/chat (streaming)
 │   ├── components/        Componentes React del reporte y UI
 │   ├── comparar/          Página de comparación
