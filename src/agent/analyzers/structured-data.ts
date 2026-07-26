@@ -8,6 +8,7 @@ const EXPECTED_FIELDS_BY_TYPE: Record<string, string[]> = {
   Organization: ["name", "url", "logo", "sameAs", "description", "contactPoint"],
   WebSite: ["name", "url", "description", "publisher", "potentialAction"],
   ProfilePage: ["name", "url", "mainEntity", "description"],
+  SoftwareApplication: ["name", "url", "description", "applicationCategory", "operatingSystem", "offers"],
 };
 
 const RECOGNIZED_SCHEMA_TYPES = Object.keys(EXPECTED_FIELDS_BY_TYPE);
@@ -32,21 +33,37 @@ function extractJsonLdSchemas(html: string): DetectedSchema[] {
 
     try {
       const parsed: unknown = JSON.parse(rawContent);
-      const items = Array.isArray(parsed) ? parsed : [parsed];
-
-      for (const item of items) {
-        if (typeof item === "object" && item !== null && "@type" in item) {
-          const typedItem = item as Record<string, unknown>;
-          const schemaType = String(typedItem["@type"]);
-          schemas.push({ type: schemaType, fields: typedItem, source: "json-ld" });
-        }
-      }
+      extractSchemasFromJsonLdNode(parsed, schemas);
     } catch {
       return;
     }
   });
 
   return schemas;
+}
+
+function extractSchemasFromJsonLdNode(node: unknown, schemas: DetectedSchema[]): void {
+  if (Array.isArray(node)) {
+    for (const item of node) {
+      extractSchemasFromJsonLdNode(item, schemas);
+    }
+    return;
+  }
+
+  if (typeof node !== "object" || node === null) return;
+
+  const obj = node as Record<string, unknown>;
+
+  if ("@graph" in obj && Array.isArray(obj["@graph"])) {
+    for (const graphItem of obj["@graph"]) {
+      extractSchemasFromJsonLdNode(graphItem, schemas);
+    }
+  }
+
+  if ("@type" in obj) {
+    const schemaType = String(obj["@type"]);
+    schemas.push({ type: schemaType, fields: obj, source: "json-ld" });
+  }
 }
 
 function extractMicrodataSchemas(html: string): DetectedSchema[] {

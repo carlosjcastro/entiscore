@@ -28,8 +28,7 @@ export const metadata: Metadata = {
   description:
     "Analiza tu presencia digital y descubre qué tan reconocible eres para buscadores e inteligencia artificial. Reporte con puntaje, hallazgos y plan de acción.",
   authors: [
-    { name: "Carlos José Castro Galante" },
-    { name: "Matías Edgardo Tula Sarquis" },
+    { name: "Carlos José Castro Galante, Matías Edgardo Tula Sarquis" },
   ],
   openGraph: {
     type: "website",
@@ -50,9 +49,6 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: BASE_URL,
-  },
-  other: {
-    "author": "Carlos José Castro Galante, Matías Edgardo Tula Sarquis",
   },
 };
 
