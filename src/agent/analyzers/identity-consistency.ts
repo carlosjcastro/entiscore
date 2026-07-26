@@ -6,6 +6,7 @@ import {
   filterLinksByDomainList,
   deduplicateByDomain,
 } from "@/agent/shared-platforms";
+import { getFinding } from "@/i18n/findings";
 
 const SCORE_BASE = 50;
 const SCORE_BONUS_PER_VALID_LINK = 10;
@@ -89,7 +90,7 @@ function namesAreSignificantlyDifferent(nameA: string, nameB: string): boolean {
   return true;
 }
 
-function evaluateNameConsistency(sources: NameSources): Finding[] {
+function evaluateNameConsistency(sources: NameSources, context: AnalysisContext): Finding[] {
   const findings: Finding[] = [];
   const availableSources: { label: string; value: string }[] = [];
 
@@ -110,21 +111,15 @@ function evaluateNameConsistency(sources: NameSources): Finding[] {
 
       if (namesAreSignificantlyDifferent(sourceA.value, sourceB.value)) {
         hasInconsistency = true;
-        findings.push({
-          type: "warning",
-          title: `Inconsistencia entre ${sourceA.label} y ${sourceB.label}`,
-          description: `${sourceA.label} dice "${sourceA.value}" pero ${sourceB.label} dice "${sourceB.value}". Los buscadores e IA pueden interpretar esto como dos entidades distintas.`,
-        });
+        const tpl = getFinding(context.locale, "ic.name_inconsistent", { sourceA: sourceA.label, sourceB: sourceB.label, valueA: sourceA.value, valueB: sourceB.value });
+        findings.push({ type: "warning", title: tpl.title, description: tpl.description });
       }
     }
   }
 
   if (!hasInconsistency && availableSources.length >= 2) {
-    findings.push({
-      type: "positive",
-      title: "Nombre consistente entre fuentes",
-      description: `El nombre es coherente entre las ${availableSources.length} fuentes evaluadas (${availableSources.map((s) => s.label).join(", ")}).`,
-    });
+    const tpl = getFinding(context.locale, "ic.name_consistent", { count: availableSources.length, sources: availableSources.map((s) => s.label).join(", ") });
+    findings.push({ type: "positive", title: tpl.title, description: tpl.description });
   }
 
   return findings;
@@ -166,11 +161,8 @@ async function evaluateExternalLinks(
   const findings: Finding[] = [];
 
   if (links.length === 0) {
-    findings.push({
-      type: "warning",
-      title: "Sin enlaces a perfiles externos",
-      description: "No se encontraron enlaces a plataformas profesionales o sociales reconocidas. Agregar enlaces a GitHub, LinkedIn u otras plataformas fortalece la identidad cruzada y mejora el reconocimiento como entidad.",
-    });
+    const tpl = getFinding(context.locale, "ic.no_links");
+    findings.push({ type: "warning", title: tpl.title, description: tpl.description });
     return findings;
   }
 
@@ -184,19 +176,11 @@ async function evaluateExternalLinks(
     const domain = new URL(link).hostname.replace(/^www\./, "");
 
     if (result.accessible) {
-      findings.push({
-        type: "positive",
-        title: `Perfil en ${domain} accesible`,
-        description: `El enlace a ${domain} responde correctamente (${result.statusCode}).`,
-        details: link,
-      });
+      const tpl = getFinding(context.locale, "ic.profile_ok", { domain, code: result.statusCode });
+      findings.push({ type: "positive", title: tpl.title, description: tpl.description, details: link });
     } else {
-      findings.push({
-        type: "warning",
-        title: `Perfil en ${domain} no accesible`,
-        description: `El enlace a ${domain} no responde o devuelve un error (código ${result.statusCode}). Esto puede indicar un enlace roto o un perfil inexistente.`,
-        details: link,
-      });
+      const tpl = getFinding(context.locale, "ic.profile_fail", { domain, code: result.statusCode });
+      findings.push({ type: "warning", title: tpl.title, description: tpl.description, details: link });
     }
   }
 
@@ -230,7 +214,7 @@ function calculateIdentityScore(
 export const identityConsistencyAnalyzer: Analyzer = {
   async analyze(context: AnalysisContext): Promise<AxisResult> {
     const nameSources = extractNameSources(context.html);
-    const nameFindings = evaluateNameConsistency(nameSources);
+    const nameFindings = evaluateNameConsistency(nameSources, context);
 
     const externalLinks = extractExternalPlatformLinks(context.html);
     const linkFindings = await evaluateExternalLinks(externalLinks, context);

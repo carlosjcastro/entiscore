@@ -6,6 +6,7 @@ import {
   filterLinksByDomainList,
   deduplicateByDomain,
 } from "@/agent/shared-platforms";
+import { getFinding } from "@/i18n/findings";
 
 const ACHIEVEMENT_KEYWORDS = [
   "certificación",
@@ -68,28 +69,17 @@ function extractAuthorityPlatformLinks(html: string): string[] {
   return deduplicateByDomain(combinedLinks);
 }
 
-function evaluateAuthorityLinks(links: string[]): Finding[] {
+function evaluateAuthorityLinks(links: string[], locale: "es" | "en"): Finding[] {
   if (links.length === 0) {
-    return [
-      {
-        type: "warning",
-        title: "Sin enlaces a plataformas de autoridad",
-        description:
-          "No se encontraron enlaces a plataformas profesionales de publicación o contribución técnica. Incluir enlaces a GitHub, Medium, Dev.to u otras plataformas donde tengas actividad refuerza tu autoridad como profesional.",
-      },
-    ];
+    const tpl = getFinding(locale, "as.no_links");
+    return [{ type: "warning", title: tpl.title, description: tpl.description }];
   }
 
   const uniqueDomains = extractUniqueDomains(links);
+  const plural = uniqueDomains.length > 1 ? "s" : "";
+  const tpl = getFinding(locale, "as.platforms_found", { count: uniqueDomains.length, plural, domains: uniqueDomains.join(", ") });
 
-  return [
-    {
-      type: "positive",
-      title: `${uniqueDomains.length} plataforma${uniqueDomains.length > 1 ? "s" : ""} de autoridad enlazada${uniqueDomains.length > 1 ? "s" : ""}`,
-      description: `Se encontraron enlaces a: ${uniqueDomains.join(", ")}. Esto refuerza la presencia profesional y la credibilidad ante buscadores e IA.`,
-      details: links.join("\n"),
-    },
-  ];
+  return [{ type: "positive", title: tpl.title, description: tpl.description, details: links.join("\n") }];
 }
 
 function extractUniqueDomains(links: string[]): string[] {
@@ -145,30 +135,19 @@ function extractAuthorMetadata(html: string): AuthorMetadata {
   return { metaAuthor: metaAuthor || null, linkRelAuthor: linkRelAuthor || null, schemaAuthor };
 }
 
-function evaluateAuthorMetadata(metadata: AuthorMetadata): Finding[] {
+function evaluateAuthorMetadata(metadata: AuthorMetadata, locale: "es" | "en"): Finding[] {
   const presentSources: string[] = [];
   if (metadata.metaAuthor) presentSources.push(`meta author ("${metadata.metaAuthor}")`);
   if (metadata.linkRelAuthor) presentSources.push("link rel=author");
   if (metadata.schemaAuthor) presentSources.push(`schema author ("${metadata.schemaAuthor}")`);
 
   if (presentSources.length === 0) {
-    return [
-      {
-        type: "warning",
-        title: "Sin metadata de autoría",
-        description:
-          "No se encontró meta author, link rel=author ni campo author en el schema markup. Definir la autoría permite a buscadores e IA atribuir el contenido a una persona específica.",
-      },
-    ];
+    const tpl = getFinding(locale, "as.author_missing");
+    return [{ type: "warning", title: tpl.title, description: tpl.description }];
   }
 
-  return [
-    {
-      type: "positive",
-      title: "Metadata de autoría presente",
-      description: `Se encontró autoría definida en: ${presentSources.join(", ")}. Esto ayuda a atribuir el contenido a una entidad específica.`,
-    },
-  ];
+  const tpl = getFinding(locale, "as.author_present", { sources: presentSources.join(", ") });
+  return [{ type: "positive", title: tpl.title, description: tpl.description }];
 }
 
 interface DateMetadata {
@@ -213,18 +192,12 @@ function extractDateMetadata(html: string): DateMetadata {
   return { publishedTime: publishedTime || null, modifiedTime: modifiedTime || null, schemaDatePublished, schemaDateModified };
 }
 
-function evaluateDateMetadata(metadata: DateMetadata): Finding[] {
+function evaluateDateMetadata(metadata: DateMetadata, locale: "es" | "en"): Finding[] {
   const hasDates = metadata.publishedTime || metadata.modifiedTime || metadata.schemaDatePublished || metadata.schemaDateModified;
 
   if (!hasDates) {
-    return [
-      {
-        type: "warning",
-        title: "Sin fechas de publicación o actualización",
-        description:
-          "No se encontraron fechas de publicación ni de modificación en metadata o schema. Las fechas indican a buscadores que el contenido está actualizado y vigente.",
-      },
-    ];
+    const tpl = getFinding(locale, "as.dates_missing");
+    return [{ type: "warning", title: tpl.title, description: tpl.description }];
   }
 
   const dateSources: string[] = [];
@@ -233,13 +206,8 @@ function evaluateDateMetadata(metadata: DateMetadata): Finding[] {
   if (metadata.schemaDatePublished) dateSources.push("schema datePublished");
   if (metadata.schemaDateModified) dateSources.push("schema dateModified");
 
-  return [
-    {
-      type: "positive",
-      title: "Fechas de publicación presentes",
-      description: `Se encontraron fechas en: ${dateSources.join(", ")}. Esto indica que el contenido tiene una línea temporal definida.`,
-    },
-  ];
+  const tpl = getFinding(locale, "as.dates_present", { sources: dateSources.join(", ") });
+  return [{ type: "positive", title: tpl.title, description: tpl.description }];
 }
 
 function detectAchievementMentions(html: string): string[] {
@@ -256,25 +224,14 @@ function detectAchievementMentions(html: string): string[] {
   return detectedKeywords;
 }
 
-function evaluateAchievementMentions(detectedKeywords: string[]): Finding[] {
+function evaluateAchievementMentions(detectedKeywords: string[], locale: "es" | "en"): Finding[] {
   if (detectedKeywords.length === 0) {
-    return [
-      {
-        type: "warning",
-        title: "Sin menciones de logros o contribuciones",
-        description:
-          "No se detectaron menciones de certificaciones, conferencias, contribuciones open source u otros logros profesionales en el contenido visible. Incluir estos logros refuerza la percepción de autoridad.",
-      },
-    ];
+    const tpl = getFinding(locale, "as.achievements_missing");
+    return [{ type: "warning", title: tpl.title, description: tpl.description }];
   }
 
-  return [
-    {
-      type: "positive",
-      title: `Menciones de logros detectadas`,
-      description: `Se encontraron referencias a: ${detectedKeywords.join(", ")}. Estas menciones refuerzan la credibilidad y autoridad profesional ante sistemas automatizados.`,
-    },
-  ];
+  const tpl = getFinding(locale, "as.achievements_found", { keywords: detectedKeywords.join(", ") });
+  return [{ type: "positive", title: tpl.title, description: tpl.description }];
 }
 
 function calculateAuthorityScore(
@@ -303,17 +260,18 @@ function calculateAuthorityScore(
 
 export const authoritySignalsAnalyzer: Analyzer = {
   async analyze(context: AnalysisContext): Promise<AxisResult> {
+    const locale = context.locale;
     const authorityLinks = extractAuthorityPlatformLinks(context.html);
-    const linkFindings = evaluateAuthorityLinks(authorityLinks);
+    const linkFindings = evaluateAuthorityLinks(authorityLinks, locale);
 
     const authorMetadata = extractAuthorMetadata(context.html);
-    const authorFindings = evaluateAuthorMetadata(authorMetadata);
+    const authorFindings = evaluateAuthorMetadata(authorMetadata, locale);
 
     const dateMetadata = extractDateMetadata(context.html);
-    const dateFindings = evaluateDateMetadata(dateMetadata);
+    const dateFindings = evaluateDateMetadata(dateMetadata, locale);
 
     const achievementKeywords = detectAchievementMentions(context.html);
-    const achievementFindings = evaluateAchievementMentions(achievementKeywords);
+    const achievementFindings = evaluateAchievementMentions(achievementKeywords, locale);
 
     const allFindings: Finding[] = [
       ...linkFindings,

@@ -1,5 +1,7 @@
 import * as cheerio from "cheerio";
 import type { Analyzer, AnalysisContext, AxisResult, Finding } from "@/types";
+import { getFinding } from "@/i18n/findings";
+import type { Locale } from "@/i18n/types";
 
 const EXPECTED_FIELDS_BY_TYPE: Record<string, string[]> = {
   Person: ["name", "jobTitle", "url", "sameAs", "image", "description", "email"],
@@ -139,35 +141,21 @@ function evaluateFieldCompleteness(
   return { presentFields, missingFields, emptyFields };
 }
 
-function buildNoSchemaFindings(): Finding[] {
-  return [
-    {
-      type: "critical",
-      title: "No se encontró schema markup en el sitio",
-      description:
-        "El sitio no tiene datos estructurados que permitan a buscadores e IA interpretar la identidad de forma precisa.",
-      details:
-        "Se recomienda agregar al menos un bloque JSON-LD con el tipo más adecuado según el contenido del sitio (Person para portfolios personales, Organization para empresas).",
-    },
-  ];
+function buildNoSchemaFindings(locale: Locale): Finding[] {
+  const tpl = getFinding(locale, "sd.no_schema");
+  return [{ type: "critical", title: tpl.title, description: tpl.description, details: tpl.details }];
 }
 
-function buildSchemaTypeFindings(schemas: DetectedSchema[]): Finding[] {
+function buildSchemaTypeFindings(schemas: DetectedSchema[], locale: Locale): Finding[] {
   const findings: Finding[] = [];
 
   for (const schema of schemas) {
     if (isRecognizedType(schema.type)) {
-      findings.push({
-        type: "positive",
-        title: `Schema de tipo ${schema.type} detectado (${schema.source})`,
-        description: `Se encontró un schema markup de tipo ${schema.type} que es relevante para la identidad digital.`,
-      });
+      const tpl = getFinding(locale, "sd.type_detected", { type: schema.type, source: schema.source });
+      findings.push({ type: "positive", title: tpl.title, description: tpl.description });
     } else {
-      findings.push({
-        type: "warning",
-        title: `Schema de tipo ${schema.type} detectado pero no es un tipo de identidad reconocido`,
-        description: `El tipo ${schema.type} existe pero no es uno de los tipos principales para describir una persona o proyecto.`,
-      });
+      const tpl = getFinding(locale, "sd.type_unrecognized", { type: schema.type });
+      findings.push({ type: "warning", title: tpl.title, description: tpl.description });
     }
   }
 
@@ -178,33 +166,24 @@ function buildFieldCompletenessFindings(
   schema: DetectedSchema,
   presentFields: string[],
   missingFields: string[],
-  emptyFields: string[]
+  emptyFields: string[],
+  locale: Locale
 ): Finding[] {
   const findings: Finding[] = [];
 
   if (presentFields.length > 0) {
-    findings.push({
-      type: "positive",
-      title: `Campos completos en ${schema.type}`,
-      description: `Los siguientes campos están correctamente definidos: ${presentFields.join(", ")}.`,
-    });
+    const tpl = getFinding(locale, "sd.fields_complete", { type: schema.type, fields: presentFields.join(", ") });
+    findings.push({ type: "positive", title: tpl.title, description: tpl.description });
   }
 
   if (missingFields.length > 0) {
-    findings.push({
-      type: "warning",
-      title: `Campos faltantes en ${schema.type}`,
-      description: `Los siguientes campos recomendados no están presentes: ${missingFields.join(", ")}.`,
-      details: `Agregar estos campos mejora la capacidad de buscadores e IA para entender la entidad representada.`,
-    });
+    const tpl = getFinding(locale, "sd.fields_missing", { type: schema.type, fields: missingFields.join(", ") });
+    findings.push({ type: "warning", title: tpl.title, description: tpl.description, details: tpl.details });
   }
 
   if (emptyFields.length > 0) {
-    findings.push({
-      type: "warning",
-      title: `Campos vacíos en ${schema.type}`,
-      description: `Los siguientes campos existen pero tienen valores vacíos: ${emptyFields.join(", ")}.`,
-    });
+    const tpl = getFinding(locale, "sd.fields_empty", { type: schema.type, fields: emptyFields.join(", ") });
+    findings.push({ type: "warning", title: tpl.title, description: tpl.description });
   }
 
   return findings;
@@ -225,10 +204,7 @@ function calculateScore(schemas: DetectedSchema[]): number {
     const expectedFields = getExpectedFields(primarySchema.type);
 
     if (expectedFields.length > 0) {
-      const { presentFields } = evaluateFieldCompleteness(
-        primarySchema,
-        expectedFields
-      );
+      const { presentFields } = evaluateFieldCompleteness(primarySchema, expectedFields);
       const completenessRatio = presentFields.length / expectedFields.length;
       score += Math.round(SCORE_WEIGHT_FIELD_COMPLETENESS * completenessRatio);
     }
@@ -242,34 +218,20 @@ export const structuredDataAnalyzer: Analyzer = {
     const schemas = findAllSchemas(context.html);
 
     if (schemas.length === 0) {
-      return {
-        score: 0,
-        status: "evaluated",
-        findings: buildNoSchemaFindings(),
-      };
+      return { score: 0, status: "evaluated", findings: buildNoSchemaFindings(context.locale) };
     }
 
     const findings: Finding[] = [];
-
-    findings.push(...buildSchemaTypeFindings(schemas));
+    findings.push(...buildSchemaTypeFindings(schemas, context.locale));
 
     const recognizedSchemas = schemas.filter((s) => isRecognizedType(s.type));
     for (const schema of recognizedSchemas) {
       const expectedFields = getExpectedFields(schema.type);
-      const { presentFields, missingFields, emptyFields } =
-        evaluateFieldCompleteness(schema, expectedFields);
-      findings.push(
-        ...buildFieldCompletenessFindings(
-          schema,
-          presentFields,
-          missingFields,
-          emptyFields
-        )
-      );
+      const { presentFields, missingFields, emptyFields } = evaluateFieldCompleteness(schema, expectedFields);
+      findings.push(...buildFieldCompletenessFindings(schema, presentFields, missingFields, emptyFields, context.locale));
     }
 
     const score = calculateScore(schemas);
-
     return { score, status: "evaluated", findings };
   },
 };
