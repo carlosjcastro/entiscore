@@ -14,6 +14,7 @@ import { ActionPlan } from "./components/ActionPlan";
 import { ScoreBadge } from "./components/ScoreBadge";
 import { ShareMenu } from "./components/ShareMenu";
 import { ChatPanel } from "./components/ChatPanel";
+import { EntityGraph } from "./components/EntityGraph";
 import { ThemeToggle } from "./components/ThemeToggle";
 import { FeaturesSection } from "./components/FeaturesSection";
 import { AnalysisProgress } from "./components/AnalysisProgress";
@@ -217,6 +218,8 @@ export default function HomePage() {
               <div className="border-t border-zinc-200 dark:border-zinc-700 pt-8">
                 <ActionPlan items={pageState.data.actionPlan} />
               </div>
+
+              <EntityGraph report={pageState.data} />
 
               <div className="border-t border-zinc-200 dark:border-zinc-700 pt-6">
                 <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-4 text-center">
