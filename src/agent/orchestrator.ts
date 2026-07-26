@@ -140,9 +140,20 @@ async function buildAuditResponse(url: string, axes: AllAxesResults): Promise<Au
   };
 }
 
+export interface AuditResult {
+  report: AuditResponse;
+  html: string;
+}
+
 export async function runAudit(url: string): Promise<AuditResponse> {
+  const result = await runAuditWithMetadata(url);
+  return result.report;
+}
+
+export async function runAuditWithMetadata(url: string): Promise<AuditResult> {
   const siteData = await fetchSiteData(url);
   const context = buildAnalysisContext(url, siteData);
   const axesResults = await runAllAnalyzers(context);
-  return await buildAuditResponse(url, axesResults);
+  const report = await buildAuditResponse(url, axesResults);
+  return { report, html: siteData.html };
 }

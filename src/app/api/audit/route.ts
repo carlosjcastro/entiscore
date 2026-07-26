@@ -1,7 +1,9 @@
 import { type NextRequest } from "next/server";
 import { ZodError } from "zod";
 import { AuditRequestSchema, validateUrlSafety } from "./validation";
-import { runAudit } from "@/agent/orchestrator";
+import { runAuditWithMetadata } from "@/agent/orchestrator";
+import { extractSiteMetadata } from "@/lib/site-metadata";
+import { saveAnalysis } from "@/lib/persistence";
 import type { AuditErrorResponse } from "@/types";
 
 const GLOBAL_TIMEOUT_MS = 55_000;
@@ -49,7 +51,7 @@ export async function POST(request: NextRequest): Promise<Response> {
     body = await request.json();
   } catch {
     return buildErrorResponse(400, {
-      error: "El body de la request no es JSON valido",
+      error: "El body de la request no es JSON válido",
       code: "INVALID_URL",
     });
   }
@@ -57,7 +59,7 @@ export async function POST(request: NextRequest): Promise<Response> {
   const parseResult = AuditRequestSchema.safeParse(body);
   if (!parseResult.success) {
     return buildErrorResponse(400, {
-      error: "La URL proporcionada no es valida",
+      error: "La URL proporcionada no es válida",
       code: "INVALID_URL",
       details: extractZodErrorDetails(parseResult.error),
     });
@@ -68,23 +70,37 @@ export async function POST(request: NextRequest): Promise<Response> {
   const safetyResult = await validateUrlSafety(url);
   if (!safetyResult.valid) {
     return buildErrorResponse(403, {
-      error: "La URL no esta permitida por razones de seguridad",
+      error: "La URL no está permitida por razones de seguridad",
       code: "FORBIDDEN_URL",
       details: safetyResult.details,
     });
   }
 
   try {
-    const auditResponse = await executeWithTimeout(
-      runAudit(url),
+    const { report, html } = await executeWithTimeout(
+      runAuditWithMetadata(url),
       GLOBAL_TIMEOUT_MS
     );
 
-    return Response.json(auditResponse, { status: 200, headers: CORS_HEADERS });
+    const metadata = extractSiteMetadata(html, url);
+
+    const code = await saveAnalysis(report, {
+      siteName: metadata.siteName,
+      faviconUrl: metadata.faviconUrl,
+    });
+
+    const responsePayload = {
+      ...report,
+      code: code ?? undefined,
+      siteName: metadata.siteName,
+      faviconUrl: metadata.faviconUrl,
+    };
+
+    return Response.json(responsePayload, { status: 200, headers: CORS_HEADERS });
   } catch (error) {
     if (error instanceof Error && error.message === "TIMEOUT") {
       return buildErrorResponse(504, {
-        error: "El analisis excedio el tiempo maximo permitido",
+        error: "El análisis excedió el tiempo máximo permitido",
         code: "TIMEOUT",
       });
     }
@@ -92,7 +108,7 @@ export async function POST(request: NextRequest): Promise<Response> {
     console.error("Error inesperado en /api/audit:", error);
 
     return buildErrorResponse(500, {
-      error: "Ocurrio un error interno durante el analisis",
+      error: "Ocurrió un error interno durante el análisis",
       code: "INTERNAL_ERROR",
     });
   }
