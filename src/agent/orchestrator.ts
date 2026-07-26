@@ -6,6 +6,7 @@ import { identityConsistencyAnalyzer } from "@/agent/analyzers/identity-consiste
 import { authoritySignalsAnalyzer } from "@/agent/analyzers/authority-signals";
 import { calculateOverallScore } from "@/agent/scoring";
 import { generateSmartActionPlan } from "@/agent/action-plan-ai";
+import { generateExecutiveSummary } from "@/agent/executive-summary";
 
 function buildFailedAxisResult(errorMessage: string): AxisResult {
   return {
@@ -128,13 +129,17 @@ async function runAllAnalyzers(context: AnalysisContext): Promise<AllAxesResults
 
 async function buildAuditResponse(url: string, axes: AllAxesResults): Promise<AuditResponse> {
   const { overallScore, maturityLevel } = calculateOverallScore(axes);
-  const actionPlan = await generateSmartActionPlan(axes);
+  const [actionPlan, executiveSummary] = await Promise.all([
+    generateSmartActionPlan(axes),
+    generateExecutiveSummary(url, overallScore, axes),
+  ]);
 
   return {
     url,
     timestamp: new Date().toISOString(),
     overallScore,
     maturityLevel,
+    executiveSummary,
     axes,
     actionPlan,
   };

@@ -74,6 +74,14 @@ export function SharedReportView({ report, siteName, faviconUrl, code }: SharedR
             </div>
           </div>
 
+          {report.executiveSummary && (
+            <div className="border-l-[3px] border-indigo-500 pl-4 py-1">
+              <p className="text-[14px] leading-relaxed text-zinc-600 dark:text-zinc-400 italic">
+                {report.executiveSummary}
+              </p>
+            </div>
+          )}
+
           <div className="rounded-2xl border border-zinc-200 dark:border-zinc-700/60 bg-white dark:bg-zinc-800/30 p-5 sm:p-6 shadow-sm">
             <h2 className="text-base sm:text-lg font-semibold text-zinc-800 dark:text-zinc-100 mb-4">
               Evaluación por eje

@@ -47,6 +47,7 @@ export interface AuditResponse {
   timestamp: string;
   overallScore: number;
   maturityLevel: MaturityLevel;
+  executiveSummary?: string;
   axes: {
     structuredData: AxisResult;
     identityConsistency: AxisResult;

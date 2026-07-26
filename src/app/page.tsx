@@ -176,6 +176,14 @@ export default function HomePage() {
                 <SummaryStats data={pageState.data} />
               </div>
 
+              {pageState.data.executiveSummary && (
+                <div className="border-l-[3px] border-indigo-500 pl-4 py-1">
+                  <p className="text-[14px] leading-relaxed text-zinc-600 dark:text-zinc-400 italic">
+                    {pageState.data.executiveSummary}
+                  </p>
+                </div>
+              )}
+
               <div>
                 <h2 className="text-base font-semibold text-zinc-800 dark:text-zinc-100 mb-5">
                   Evaluación por eje
