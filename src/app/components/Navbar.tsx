@@ -55,6 +55,7 @@ export function Navbar() {
               alt="Entiscore"
               width={24}
               height={24}
+              className="h-auto w-auto"
               priority
             />
             Entiscore

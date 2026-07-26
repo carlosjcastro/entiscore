@@ -117,7 +117,9 @@ export function useMotionSafe(): boolean {
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setMotionAllowed(!mediaQuery.matches);
+    if (mediaQuery.matches) {
+      setMotionAllowed(false);
+    }
 
     function handleChange(event: MediaQueryListEvent) {
       setMotionAllowed(!event.matches);

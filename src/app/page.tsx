@@ -8,9 +8,6 @@ import { HiDocumentDuplicate, HiCheck } from "react-icons/hi2";
 import type { AuditResponse, AuditErrorResponse, AxisName } from "@/types";
 import { useI18n, useLocale } from "@/i18n";
 import {
-  heroTextReveal,
-  heroSubtitleReveal,
-  heroFormReveal,
   fadeInUp,
   fadeInScale,
   staggerContainer,
@@ -20,7 +17,6 @@ import {
   getVariants,
   getStaggerVariants,
   useMotionSafe,
-  PARALLAX_Y_RANGE_SUBTLE,
 } from "@/lib/motion";
 import { ScrollReveal } from "./components/ScrollReveal";
 import { AuditForm } from "./components/AuditForm";
@@ -195,10 +191,8 @@ interface HeroSectionProps {
 }
 
 function HeroSection({ title, description, onSubmit, isLoading }: HeroSectionProps) {
-  const motionSafe = useMotionSafe();
   const { scrollY } = useScroll();
-  const parallaxOutput = motionSafe ? PARALLAX_Y_RANGE_SUBTLE : [0, 0];
-  const parallaxY: MotionValue<number> = useTransform(scrollY, [0, 400], parallaxOutput);
+  const parallaxY: MotionValue<number> = useTransform(scrollY, [0, 600], [0, -80]);
 
   return (
     <section className="relative flex flex-col items-center justify-center min-h-[520px] sm:min-h-[560px] px-4 py-16 sm:py-20 overflow-hidden bg-zinc-950">
@@ -208,25 +202,25 @@ function HeroSection({ title, description, onSubmit, isLoading }: HeroSectionPro
         style={{ y: parallaxY }}
       >
         <motion.h1
-          variants={getVariants(motionSafe, heroTextReveal)}
-          initial="hidden"
-          animate="visible"
+          initial={{ opacity: 0, y: 30, filter: "blur(4px)" }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
           className="text-4xl sm:text-5xl font-extrabold tracking-tight text-white text-center"
         >
           {title}
         </motion.h1>
         <motion.p
-          variants={getVariants(motionSafe, heroSubtitleReveal)}
-          initial="hidden"
-          animate="visible"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1], delay: 0.15 }}
           className="mt-3 text-sm sm:text-base text-zinc-300 max-w-lg mx-auto text-center leading-relaxed"
         >
           {description}
         </motion.p>
         <motion.div
-          variants={getVariants(motionSafe, heroFormReveal)}
-          initial="hidden"
-          animate="visible"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1], delay: 0.3 }}
           className="mt-8 w-full"
         >
           <AuditForm onSubmit={onSubmit} isLoading={isLoading} />

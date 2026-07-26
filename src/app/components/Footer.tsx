@@ -25,6 +25,7 @@ export function Footer() {
                 alt="Entiscore"
                 width={40}
                 height={40}
+                className="h-auto w-auto"
               />
               <span className="text-sm font-bold text-zinc-800 dark:text-zinc-200">
                 Entiscore
