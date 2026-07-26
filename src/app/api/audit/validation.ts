@@ -1,13 +1,14 @@
 import { z } from "zod";
 import { promises as dns } from "node:dns";
+import { isStrictlyValidUrl } from "@/lib/url-validation";
 
 export const AuditRequestSchema = z.object({
   url: z
     .string()
     .url()
     .refine(
-      (value) => value.startsWith("http://") || value.startsWith("https://"),
-      { message: "Solo se permiten protocolos http o https" }
+      (value) => isStrictlyValidUrl(value),
+      { message: "The URL format is not valid" }
     ),
   locale: z.enum(["es", "en"]).optional().default("es"),
 });

@@ -11,6 +11,7 @@ import { AnalysisProgress } from "@/app/components/AnalysisProgress";
 import { ShareMenu } from "@/app/components/ShareMenu";
 import { ChatPanel } from "@/app/components/ChatPanel";
 import { useI18n, useLocale } from "@/i18n";
+import { isStrictlyValidUrl } from "@/lib/url-validation";
 
 interface CompareResult {
   reportA: AuditResponse;
@@ -60,15 +61,6 @@ async function requestComparison(urlA: string, urlB: string, locale: string): Pr
     siteNameB: body.siteNameB,
     code: body.code ?? null,
   };
-}
-
-function isValidHttpUrl(value: string): boolean {
-  try {
-    const url = new URL(value);
-    return url.protocol === "http:" || url.protocol === "https:";
-  } catch {
-    return false;
-  }
 }
 
 function normalizeUrlForComparison(value: string): string {
@@ -161,17 +153,19 @@ function CompareForm({ onSubmit, isLoading }: { onSubmit: (urlA: string, urlB: s
   const [validationError, setValidationError] = useState<string | null>(null);
   const t = useI18n();
 
+  const trimmedA = urlA.trim();
+  const trimmedB = urlB.trim();
+  const isFormValid = trimmedA.length > 0 && trimmedB.length > 0 && isStrictlyValidUrl(trimmedA) && isStrictlyValidUrl(trimmedB) && !areUrlsEquivalent(trimmedA, trimmedB);
+
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const trimmedA = urlA.trim();
-    const trimmedB = urlB.trim();
 
     if (trimmedA.length === 0 || trimmedB.length === 0) {
       setValidationError(t.compare.errorBothRequired);
       return;
     }
 
-    if (!isValidHttpUrl(trimmedA) || !isValidHttpUrl(trimmedB)) {
+    if (!isStrictlyValidUrl(trimmedA) || !isStrictlyValidUrl(trimmedB)) {
       setValidationError(t.compare.errorBothInvalid);
       return;
     }
@@ -224,10 +218,10 @@ function CompareForm({ onSubmit, isLoading }: { onSubmit: (urlA: string, urlB: s
       </div>
       <button
         type="submit"
-        disabled={isLoading}
+        disabled={isLoading || !isFormValid}
         className="w-full sm:w-auto sm:self-center rounded-xl bg-indigo-600 px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-indigo-700 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
       >
-        {isLoading ? "Comparando..." : "Comparar ambos"}
+        {isLoading ? t.compare.buttonLoading : t.compare.button}
       </button>
       {validationError && (
         <p className="text-[12px] text-rose-600 dark:text-rose-400 text-center">

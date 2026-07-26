@@ -3,19 +3,11 @@
 import { useState } from "react";
 import { HiMagnifyingGlass } from "react-icons/hi2";
 import { useI18n } from "@/i18n";
+import { isStrictlyValidUrl } from "@/lib/url-validation";
 
 interface AuditFormProps {
   onSubmit: (url: string) => void;
   isLoading: boolean;
-}
-
-function isValidHttpUrl(value: string): boolean {
-  try {
-    const url = new URL(value);
-    return url.protocol === "http:" || url.protocol === "https:";
-  } catch {
-    return false;
-  }
 }
 
 export function AuditForm({ onSubmit, isLoading }: AuditFormProps) {
@@ -23,22 +15,24 @@ export function AuditForm({ onSubmit, isLoading }: AuditFormProps) {
   const [validationError, setValidationError] = useState<string | null>(null);
   const t = useI18n();
 
+  const trimmedInput = urlInput.trim();
+  const isInputValid = trimmedInput.length > 0 && isStrictlyValidUrl(trimmedInput);
+
   function handleFormSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const trimmedUrl = urlInput.trim();
 
-    if (trimmedUrl.length === 0) {
+    if (trimmedInput.length === 0) {
       setValidationError(t.form.errorEmpty);
       return;
     }
 
-    if (!isValidHttpUrl(trimmedUrl)) {
+    if (!isStrictlyValidUrl(trimmedInput)) {
       setValidationError(t.form.errorInvalid);
       return;
     }
 
     setValidationError(null);
-    onSubmit(trimmedUrl);
+    onSubmit(trimmedInput);
   }
 
   function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -68,7 +62,7 @@ export function AuditForm({ onSubmit, isLoading }: AuditFormProps) {
         </div>
         <button
           type="submit"
-          disabled={isLoading}
+          disabled={isLoading || !isInputValid}
           className="rounded-md bg-indigo-600 dark:bg-indigo-500 px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-indigo-700 dark:hover:bg-indigo-400 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
         >
           {isLoading ? t.form.buttonLoading : t.form.button}

@@ -4,6 +4,7 @@ import { validateUrlSafety } from "@/app/api/audit/validation";
 import { runAuditWithMetadata } from "@/agent/orchestrator";
 import { extractSiteMetadata } from "@/lib/site-metadata";
 import { saveComparison } from "@/lib/persistence";
+import { isStrictlyValidUrl } from "@/lib/url-validation";
 
 const GLOBAL_TIMEOUT_MS = 55_000;
 
@@ -14,8 +15,8 @@ const CORS_HEADERS = {
 };
 
 const CompareRequestSchema = z.object({
-  urlA: z.string().url(),
-  urlB: z.string().url(),
+  urlA: z.string().url().refine((v) => isStrictlyValidUrl(v), { message: "URL A is not valid" }),
+  urlB: z.string().url().refine((v) => isStrictlyValidUrl(v), { message: "URL B is not valid" }),
   locale: z.enum(["es", "en"]).optional().default("es"),
 });
 
