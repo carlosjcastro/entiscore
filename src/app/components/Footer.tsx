@@ -1,19 +1,15 @@
 "use client";
 
+import Link from "next/link";
 import { HiGlobeAlt } from "react-icons/hi2";
 import { FaGithub } from "react-icons/fa";
 
 const GITHUB_REPO_URL = "https://github.com/carlosjcastro/entiscore";
 
+const INTERNAL_LINK_CLASS = "text-[13px] text-zinc-600 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors w-fit";
+
 export function Footer() {
   const currentYear = new Date().getFullYear();
-
-  function scrollToSection(sectionId: string) {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
-  }
 
   return (
     <footer className="border-t border-zinc-200 dark:border-zinc-800 bg-zinc-100/50 dark:bg-zinc-950/80">
@@ -46,35 +42,20 @@ export function Footer() {
               Producto
             </span>
             <nav className="flex flex-col gap-2">
-              <button
-                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                className="text-[13px] text-zinc-600 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-left w-fit"
-              >
+              <Link href="/" className={INTERNAL_LINK_CLASS}>
                 Analizar un sitio
-              </button>
-              <button
-                onClick={() => scrollToSection("features")}
-                className="text-[13px] text-zinc-600 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-left w-fit"
-              >
-                Ejes de evaluación
-              </button>
-              <a
-                href="/historial"
-                className="text-[13px] text-zinc-600 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors w-fit"
-              >
-                Historial de análisis
-              </a>
-              <a
-                href="/comparar"
-                className="text-[13px] text-zinc-600 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors w-fit"
-              >
+              </Link>
+              <Link href="/comparar" className={INTERNAL_LINK_CLASS}>
                 Comparar dos sitios
-              </a>
+              </Link>
+              <Link href="/historial" className={INTERNAL_LINK_CLASS}>
+                Historial de análisis
+              </Link>
               <a
                 href={GITHUB_REPO_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[13px] text-zinc-600 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors w-fit"
+                className={INTERNAL_LINK_CLASS}
               >
                 Repositorio del proyecto
               </a>
@@ -86,30 +67,18 @@ export function Footer() {
               Información
             </span>
             <nav className="flex flex-col gap-2">
-              <a
-                href="/acerca-de"
-                className="text-[13px] text-zinc-600 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors w-fit"
-              >
+              <Link href="/acerca-de" className={INTERNAL_LINK_CLASS}>
                 Acerca de Entiscore
-              </a>
-              <a
-                href="/equipo"
-                className="text-[13px] text-zinc-600 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors w-fit"
-              >
+              </Link>
+              <Link href="/equipo" className={INTERNAL_LINK_CLASS}>
                 Equipo
-              </a>
-              <a
-                href="/derechos-de-autor"
-                className="text-[13px] text-zinc-600 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors w-fit"
-              >
+              </Link>
+              <Link href="/derechos-de-autor" className={INTERNAL_LINK_CLASS}>
                 Derechos de autor
-              </a>
-              <a
-                href="/terminos-de-uso"
-                className="text-[13px] text-zinc-600 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors w-fit"
-              >
+              </Link>
+              <Link href="/terminos-de-uso" className={INTERNAL_LINK_CLASS}>
                 Términos de uso
-              </a>
+              </Link>
             </nav>
           </div>
         </div>
