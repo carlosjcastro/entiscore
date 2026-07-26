@@ -1,5 +1,12 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { HiArrowLeft } from "react-icons/hi2";
+
+export const metadata: Metadata = {
+  title: "Términos de uso",
+  description: "Condiciones de uso del servicio Entiscore: disponibilidad, naturaleza orientativa de los resultados y responsabilidad del usuario.",
+  alternates: { canonical: "https://entiscore.vercel.app/terminos-de-uso" },
+};
 
 export default function TerminosDeUsoPage() {
   return (

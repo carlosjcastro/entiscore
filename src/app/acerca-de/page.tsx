@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import {
   HiArrowLeft,
   HiCodeBracketSquare,
@@ -8,6 +9,12 @@ import {
   HiLightBulb,
   HiMagnifyingGlass,
 } from "react-icons/hi2";
+
+export const metadata: Metadata = {
+  title: "Acerca de Entiscore",
+  description: "Qué es Entiscore, a quién está dirigido, qué problema resuelve y el propósito detrás del proyecto.",
+  alternates: { canonical: "https://entiscore.vercel.app/acerca-de" },
+};
 
 interface AxisFeatureProps {
   icon: typeof HiCodeBracketSquare;

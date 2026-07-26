@@ -14,10 +14,36 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const BASE_URL = "https://entiscore.vercel.app";
+
 export const metadata: Metadata = {
-  title: "Entiscore: Auditor de Entidad Digital",
+  metadataBase: new URL(BASE_URL),
+  title: {
+    default: "Entiscore: Auditor de Entidad Digital",
+    template: "%s | Entiscore",
+  },
   description:
-    "Analiza tu presencia digital y descubre qué tan reconocible eres para buscadores e inteligencia artificial.",
+    "Analiza tu presencia digital y descubre qué tan reconocible eres para buscadores e inteligencia artificial. Reporte con puntaje, hallazgos y plan de acción.",
+  openGraph: {
+    type: "website",
+    siteName: "Entiscore",
+    locale: "es_AR",
+    url: BASE_URL,
+    title: "Entiscore: Auditor de Entidad Digital",
+    description:
+      "Analiza tu presencia digital y descubre qué tan reconocible eres para buscadores e inteligencia artificial.",
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Entiscore, auditor de entidad digital" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Entiscore: Auditor de Entidad Digital",
+    description:
+      "Analiza tu presencia digital y descubre qué tan reconocible eres para buscadores e inteligencia artificial.",
+    images: ["/og-image.png"],
+  },
+  alternates: {
+    canonical: BASE_URL,
+  },
 };
 
 const themeInitScript = `
@@ -28,6 +54,33 @@ const themeInitScript = `
   }
 })();
 `;
+
+const jsonLdSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: "Entiscore",
+  url: BASE_URL,
+  description:
+    "Auditor de entidad digital que analiza la presencia online de profesionales y proyectos, evaluando su reconocimiento ante buscadores e inteligencia artificial.",
+  applicationCategory: "SEO Tool",
+  operatingSystem: "Web",
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "USD",
+  },
+  creator: [
+    {
+      "@type": "Person",
+      name: "Carlos José Castro Galante",
+      url: "https://github.com/carlosjcastro",
+    },
+    {
+      "@type": "Person",
+      name: "Matías Edgardo Tula Sarquis",
+    },
+  ],
+};
 
 export default function RootLayout({
   children,
@@ -42,6 +95,10 @@ export default function RootLayout({
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdSchema) }}
+        />
       </head>
       <body className="min-h-full flex flex-col">
         <Navbar />

@@ -1,5 +1,12 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { HiArrowLeft } from "react-icons/hi2";
+
+export const metadata: Metadata = {
+  title: "Derechos de autor",
+  description: "Aviso de propiedad intelectual sobre el nombre, diseño, identidad de marca y código fuente de Entiscore.",
+  alternates: { canonical: "https://entiscore.vercel.app/derechos-de-autor" },
+};
 
 export default function DerechosDeAutorPage() {
   const currentYear = new Date().getFullYear();

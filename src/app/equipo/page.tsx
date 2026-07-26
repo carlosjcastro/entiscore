@@ -1,6 +1,13 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { HiArrowLeft } from "react-icons/hi2";
 import { FaGithub } from "react-icons/fa";
+
+export const metadata: Metadata = {
+  title: "Equipo",
+  description: "Conoce al equipo detrás de Entiscore: Carlos José Castro Galante y Matías Edgardo Tula Sarquis.",
+  alternates: { canonical: "https://entiscore.vercel.app/equipo" },
+};
 
 interface TeamMemberProps {
   name: string;
