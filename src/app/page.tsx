@@ -13,6 +13,7 @@ import { AxisSection } from "./components/AxisSection";
 import { ActionPlan } from "./components/ActionPlan";
 import { ScoreBadge } from "./components/ScoreBadge";
 import { ShareMenu } from "./components/ShareMenu";
+import { ChatPanel } from "./components/ChatPanel";
 import { ThemeToggle } from "./components/ThemeToggle";
 import { FeaturesSection } from "./components/FeaturesSection";
 import { AnalysisProgress } from "./components/AnalysisProgress";
@@ -261,6 +262,7 @@ export default function HomePage() {
 
       <Footer />
       <CookieBanner />
+      {shareCode && <ChatPanel code={shareCode} />}
     </>
   );
 }

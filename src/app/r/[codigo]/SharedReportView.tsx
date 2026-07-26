@@ -9,6 +9,7 @@ import { AxisSection } from "@/app/components/AxisSection";
 import { ActionPlan } from "@/app/components/ActionPlan";
 import { ThemeToggle } from "@/app/components/ThemeToggle";
 import { ShareMenu } from "@/app/components/ShareMenu";
+import { ChatPanel } from "@/app/components/ChatPanel";
 
 interface SharedReportViewProps {
   report: AuditResponse;
@@ -95,6 +96,7 @@ export function SharedReportView({ report, siteName, faviconUrl, code }: SharedR
           </div>
         </div>
       </div>
+      <ChatPanel code={code} />
     </main>
   );
 }

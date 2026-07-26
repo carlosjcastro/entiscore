@@ -8,6 +8,7 @@ import { AxisSection } from "@/app/components/AxisSection";
 import { ActionPlan } from "@/app/components/ActionPlan";
 import { ThemeToggle } from "@/app/components/ThemeToggle";
 import { ShareMenu } from "@/app/components/ShareMenu";
+import { ChatPanel } from "@/app/components/ChatPanel";
 
 interface SharedComparisonViewProps {
   reportA: AuditResponse;
@@ -83,6 +84,7 @@ export function SharedComparisonView({ reportA, reportB, siteNameA, siteNameB, c
           <ReportColumn report={reportB} label="Sitio B" />
         </div>
       </div>
+      <ChatPanel code={code} />
     </main>
   );
 }

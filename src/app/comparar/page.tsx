@@ -10,6 +10,7 @@ import { ActionPlan } from "@/app/components/ActionPlan";
 import { ThemeToggle } from "@/app/components/ThemeToggle";
 import { AnalysisProgress } from "@/app/components/AnalysisProgress";
 import { ShareMenu } from "@/app/components/ShareMenu";
+import { ChatPanel } from "@/app/components/ChatPanel";
 
 interface CompareResult {
   reportA: AuditResponse;
@@ -346,6 +347,9 @@ export default function CompararPage() {
           </div>
         )}
       </div>
+      {state.phase === "result" && state.result.code && (
+        <ChatPanel code={state.result.code} />
+      )}
     </main>
   );
 }
