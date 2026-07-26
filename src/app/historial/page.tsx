@@ -85,7 +85,7 @@ export default function HistorialPage() {
   function handleExportPdf(entry: HistoryEntry) {
     const report = getFullReport(entry.id);
     if (!report) return;
-    generateAuditPdf(report);
+    void generateAuditPdf(report);
   }
 
   function handleRepeatAnalysis(url: string) {
