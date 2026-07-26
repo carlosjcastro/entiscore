@@ -126,7 +126,8 @@ Evalúa si el sitio es técnicamente accesible para crawlers: código de respues
 - Pantalla de carga inicial con animación secuencial de puntos.
 - Sección explicativa con los cuatro ejes y chips de URL de ejemplo para prueba rápida.
 - Narración en vivo del progreso del análisis con pasos secuenciales tipo Linear.
-- Navegación global con navbar responsive y menú mobile.
+- Navegación global con navbar minimalista, enlace activo con subrayado animado, y menú mobile como overlay sin desplazamiento del contenido, con ícono de hamburguesa animado por CSS.
+- Notificaciones tipo toast al cambiar de tema o idioma, con confirmación del estado resultante.
 - Footer con enlaces a todas las secciones y páginas institucionales.
 - Banner de cookies respetuoso de la privacidad.
 - Diseño editorial minimalista sin exceso de tarjetas ni bordes redondeados.
@@ -193,6 +194,7 @@ Las herramientas de acceso a datos externos (fetchPage, fetchRobotsTxt, checkUrl
 | Iconos | react-icons |
 | Sanitización | DOMPurify |
 | Detección de tipo | file-type |
+| Testing | vitest |
 | Deploy | Vercel |
 
 ---
@@ -218,16 +220,21 @@ src/
 │   ├── components/        Componentes React del reporte y UI
 │   ├── comparar/          Página de comparación
 │   ├── historial/         Página de historial
+│   ├── api-docs/          Documentación pública de la API
 │   ├── r/[codigo]/        Ruta pública para reportes compartidos
 │   ├── acerca-de/         Página institucional
 │   ├── equipo/            Página institucional
 │   ├── derechos-de-autor/ Página institucional
 │   ├── terminos-de-uso/   Página institucional
-│   └── lib/               Utilidades del cliente (historial, PDF)
+│   ├── lib/               Utilidades del cliente (historial, PDF)
+│   ├── sitemap.ts         Generador de sitemap.xml
+│   └── robots.ts          Generador de robots.txt
 ├── agent/                 Lógica del agente
 │   ├── orchestrator.ts    Coordinación del análisis
 │   ├── scoring.ts         Cálculo de puntaje ponderado
+│   ├── scoring.test.ts    Tests unitarios de scoring
 │   ├── action-plan.ts     Plan de acción basado en reglas
+│   ├── action-plan.test.ts Tests unitarios del plan de acción
 │   ├── action-plan-ai.ts  Plan de acción generado por Claude
 │   ├── executive-summary.ts  Resumen ejecutivo generado por Claude
 │   ├── shared-platforms.ts   Dominios reconocidos compartidos
@@ -235,13 +242,22 @@ src/
 ├── mcp-server/            MCP tools (funciones de I/O de red)
 │   ├── index.ts           Servidor MCP de referencia
 │   └── tools/             fetchPage, fetchRobotsTxt, checkUrlAccessibility
+├── i18n/                  Internacionalización
+│   ├── types.ts           Tipos del diccionario
+│   ├── es.ts             Diccionario español
+│   ├── en.ts             Diccionario inglés
+│   ├── context.tsx        Provider y hooks de React
+│   ├── findings.ts        Traducciones de findings por clave
+│   └── server.ts          Lectura de locale desde cookies del servidor
 ├── lib/                   Utilidades del servidor
 │   ├── supabase.ts        Cliente público (lectura)
 │   ├── supabase-server.ts Cliente privado (escritura, service role)
 │   ├── persistence.ts     Guardado y recuperación de análisis
 │   ├── code-generator.ts  Generación de códigos únicos
 │   ├── site-metadata.ts   Extracción de favicon y nombre del sitio
-│   └── file-validation.ts Validación estricta de archivos
+│   ├── file-validation.ts Validación estricta de archivos
+│   ├── url-validation.ts  Validación estricta de URLs
+│   └── rate-limiter.ts    Rate limiting por IP en memoria
 └── types/                 Interfaces TypeScript compartidas
 ```
 
@@ -310,6 +326,42 @@ El endpoint /api/audit valida cada URL contra rangos de IP privados (127.0.0.0/8
 
 ---
 
+## Internacionalización
+
+El sitio funciona completo en español e inglés. Un selector de idioma en la navbar permite cambiar entre ambos idiomas con persistencia en localStorage y cookie para el servidor. La traducción abarca toda la interfaz (navbar, footer, formularios, páginas institucionales, historial, comparación), los mensajes de error del servidor, los findings generados por los cuatro analizadores (resueltos dinámicamente según el idioma recibido en la request), y el contenido generado por Claude (plan de acción, resumen ejecutivo, respuestas del asistente), que recibe una instrucción explícita de idioma en cada prompt.
+
+![Selector de idioma](docs/screenshots/selector-idioma.png)
+
+---
+
+## Calidad y confiabilidad
+
+### Tests unitarios
+
+El proyecto incluye tests unitarios con vitest cubriendo la lógica de scoring (cálculo de promedio ponderado, exclusión de ejes con status failed o partial, redistribución de pesos, mapeo correcto a cada nivel de maturityLevel) y la generación del plan de acción por reglas (priorización de critical sobre warning, orden por peso de eje, garantía de mínimo 3 recomendaciones).
+
+```bash
+npm test
+```
+
+### Rate limiting
+
+Los endpoints /api/audit y /api/compare implementan un límite básico de 5 requests por minuto por IP. Al superar el límite se devuelve un código 429 con el mensaje correspondiente. La implementación es in-memory, lo cual es una limitación conocida: el conteo no se comparte entre instancias serverless distintas en Vercel, pero es suficiente para prevenir abuso desde una misma instancia.
+
+---
+
+## Accesibilidad
+
+El sitio es navegable completamente por teclado, incluyendo la apertura y cierre del menú mobile y la interacción completa con el panel de chat (escribir, enviar, adjuntar archivo). Todos los botones que solo muestran un ícono sin texto visible tienen atributos aria-label descriptivos. El foco del teclado es visible en ambos modos de color con un outline indigo de 2px aplicado globalmente via focus-visible. El contraste de color entre texto y fondo fue revisado en ambos modos para mantener legibilidad en todas las combinaciones.
+
+---
+
+## Documentación para desarrolladores
+
+La ruta /api-docs documenta el uso del endpoint POST /api/audit para integraciones externas, con el formato de request, la estructura completa de respuesta, los códigos de error posibles, y ejemplos ejecutables con curl y fetch de JavaScript. El endpoint no requiere autenticación en esta versión.
+
+---
+
 ## Cómo correr el proyecto en local
 
 ```bash
@@ -340,10 +392,10 @@ El proyecto levanta en `http://localhost:3000`.
 
 ## Equipo
 
-| Integrante | Rol |
-|---|---|
-| Carlos José Castro Galante | Lógica del agente, integración con IA, arquitectura, integración con Kiro |
-| Matías Edgardo Tula Sarquis | Diseño de interfaz y experiencia de usuario |
+| Integrante | Rol | Enlaces |
+|---|---|---|
+| Carlos José Castro Galante | Lógica del agente, integración con IA, arquitectura, integración con Kiro | [GitHub](https://github.com/carlosjcastro) · [LinkedIn](https://www.linkedin.com/in/carlosjcastrog) |
+| Matías Edgardo Tula Sarquis | Diseño de interfaz y experiencia de usuario | [LinkedIn](https://www.linkedin.com/in/mat%C3%ADas-edgardo-tula-sarquis/) |
 
 Ver más en https://entiscore.vercel.app/equipo
 
