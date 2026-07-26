@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { HiArrowLeft, HiCodeBracketSquare, HiUser, HiShieldCheck, HiGlobeAlt, HiLightBulb, HiMagnifyingGlass } from "react-icons/hi2";
 import { useI18n } from "@/i18n";
@@ -64,6 +65,49 @@ export default function AcercaDePage() {
               <h2 className="text-lg font-semibold text-zinc-800 dark:text-zinc-200 mb-3">{t.pages.about.purpose}</h2>
               <p className="text-[14px] leading-relaxed text-zinc-600 dark:text-zinc-400">{t.pages.about.purposeDescription}</p>
             </section>
+          </div>
+        </div>
+
+        <div className="mt-16 pt-8 border-t border-zinc-100 dark:border-zinc-800 flex flex-col items-center gap-4">
+          <p className="text-[13px] text-zinc-500 dark:text-zinc-400">{t.pages.about.builtWith}</p>
+          <div className="flex items-center gap-8">
+            <a
+              href="https://github.com/carlosjcastro/entiscore"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative flex items-center justify-center"
+            >
+              <Image
+                src="/logo/entiscore.png"
+                alt="Entiscore"
+                width={40}
+                height={40}
+                className="transition-transform duration-200 group-hover:scale-110"
+              />
+              <span className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-zinc-800 dark:bg-zinc-700 px-2 py-1 text-[11px] text-zinc-100 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                {t.pages.about.viewRepo}
+              </span>
+            </a>
+
+            <span className="text-zinc-300 dark:text-zinc-700">·</span>
+
+            <a
+              href="https://kiro.dev"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative flex items-center justify-center"
+            >
+              <Image
+                src="/logo/kiro.png"
+                alt="Kiro"
+                width={40}
+                height={40}
+                className="transition-transform duration-200 group-hover:scale-110"
+              />
+              <span className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-zinc-800 dark:bg-zinc-700 px-2 py-1 text-[11px] text-zinc-100 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                Kiro
+              </span>
+            </a>
           </div>
         </div>
       </div>

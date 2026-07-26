@@ -155,6 +155,8 @@ export interface PageAbout {
   problemDescription: string;
   purpose: string;
   purposeDescription: string;
+  builtWith: string;
+  viewRepo: string;
 }
 
 export interface PageTeam {

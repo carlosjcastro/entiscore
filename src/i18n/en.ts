@@ -154,6 +154,8 @@ export const en: Dictionary = {
       problemDescription: "Today there is no simple and free tool to audit this. Information about schema markup and technical SEO is scattered, highly technical, and not designed for someone without deep knowledge to understand what their own digital presence is missing or why it matters.",
       purpose: "Project purpose",
       purposeDescription: "Entiscore was born as part of the Kiro powered by AWS hackathon organized by Código Facilito, but it is designed to continue existing beyond that instance, as a real and continuous use tool.",
+      builtWith: "Built with",
+      viewRepo: "View repository",
     },
     team: {
       title: "Team",
