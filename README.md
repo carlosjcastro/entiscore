@@ -4,7 +4,7 @@ Auditor de entidad digital. Analiza tu presencia online y genera un reporte acci
 
 **Demo en producción:** https://entiscore.vercel.app
 
-![Vista general de Entiscore](docs/screenshots/hero-general.png)
+![Vista general de Entiscore](public/docs/screenshots/hero-general.png)
 
 ---
 
@@ -34,25 +34,25 @@ Entiscore evalúa cada sitio a través de cuatro dimensiones complementarias que
 
 Verifica la presencia y calidad de schema markup en el sitio analizado. Detecta JSON-LD, Microdata y RDFa, identifica los tipos declarados (Person, Organization, WebSite, ProfilePage), y evalúa la completitud de los campos obligatorios y recomendados según las especificaciones de schema.org.
 
-![Ejemplo de hallazgos de datos estructurados](docs/screenshots/eje-datos-estructurados.png)
+![Ejemplo de hallazgos de datos estructurados](public/docs/screenshots/eje-datos-estructurados.png)
 
 ### Consistencia de identidad
 
 Compara el nombre y la información del titular entre las distintas fuentes disponibles: el campo name del schema markup, el og:title, la etiqueta title del HTML, y los perfiles externos declarados en el array sameAs del JSON-LD o enlazados como anclas en el cuerpo. Verifica la accesibilidad real de cada perfil externo detectado.
 
-![Ejemplo de hallazgos de consistencia de identidad](docs/screenshots/eje-consistencia-identidad.png)
+![Ejemplo de hallazgos de consistencia de identidad](public/docs/screenshots/eje-consistencia-identidad.png)
 
 ### Señales de autoridad
 
 Detecta enlaces salientes hacia plataformas de autoridad reconocidas (GitHub, LinkedIn, Medium, Dev.to, Speaker Deck, YouTube, entre otras), evalúa la presencia de metadata de autoría, fechas de publicación, y busca en el contenido textual menciones explícitas de logros, certificaciones, conferencias o contribuciones open source.
 
-![Ejemplo de hallazgos de señales de autoridad](docs/screenshots/eje-senales-autoridad.png)
+![Ejemplo de hallazgos de señales de autoridad](public/docs/screenshots/eje-senales-autoridad.png)
 
 ### Accesibilidad técnica
 
 Evalúa si el sitio es técnicamente accesible para crawlers: código de respuesta HTTP, tiempo de respuesta, presencia de metadatos esenciales (title, meta description, Open Graph tags), análisis del robots.txt, y detección de sitios SPA que dependen exclusivamente de JavaScript del lado del cliente.
 
-![Ejemplo de hallazgos de accesibilidad técnica](docs/screenshots/eje-accesibilidad-tecnica.png)
+![Ejemplo de hallazgos de accesibilidad técnica](public/docs/screenshots/eje-accesibilidad-tecnica.png)
 
 ---
 
@@ -68,7 +68,7 @@ Evalúa si el sitio es técnicamente accesible para crawlers: código de respues
 - Captura automática del favicon y nombre del sitio analizado.
 - Score animado con indicador circular de progreso.
 
-![Reporte individual completo](docs/screenshots/reporte-individual.png)
+![Reporte individual completo](public/docs/screenshots/reporte-individual.png)
 
 ### Comparación entre dos URLs
 
@@ -77,7 +77,7 @@ Evalúa si el sitio es técnicamente accesible para crawlers: código de respues
 - Vista lado a lado en desktop con los reportes completos de ambos sitios.
 - Narración en vivo del progreso de ambos análisis identificados por hostname.
 
-![Vista de comparación](docs/screenshots/comparacion-dos-urls.png)
+![Vista de comparación](public/docs/screenshots/comparacion-dos-urls.png)
 
 ### Historial de análisis
 
@@ -88,7 +88,7 @@ Evalúa si el sitio es técnicamente accesible para crawlers: código de respues
 - Eliminación individual o vaciado completo del historial.
 - Comparación de scores entre análisis consecutivos de la misma URL con indicadores de cambio.
 
-![Página de historial](docs/screenshots/historial.png)
+![Página de historial](public/docs/screenshots/historial.png)
 
 ### Sistema de códigos únicos y compartibles
 
@@ -105,7 +105,7 @@ Evalúa si el sitio es técnicamente accesible para crawlers: código de respues
 - Insignia descargable como imagen PNG con score, dominio, fecha y marca.
 - Snippet de Markdown copiable para incrustar la insignia en un README.
 
-![Botón de compartir y insignia](docs/screenshots/compartir-insignia.png)
+![Botón de compartir y insignia](public/docs/screenshots/compartir-insignia.png)
 
 ### Asistente conversacional
 
@@ -117,7 +117,7 @@ Evalúa si el sitio es técnicamente accesible para crawlers: código de respues
 - Procesamiento en memoria sin persistencia del contenido del archivo.
 - Reglas estrictas del system prompt: solo responde sobre el análisis, no inventa datos, rechaza temas ajenos, resiste inyección de prompts, no usa emojis.
 
-![Panel del asistente](docs/screenshots/asistente-chat.png)
+![Panel del asistente](public/docs/screenshots/asistente-chat.png)
 
 ### Interfaz y experiencia
 
@@ -153,7 +153,7 @@ Se generaron tres documentos formales antes de escribir cualquier línea de cód
 - `.kiro/specs/design.md`: arquitectura general, contrato completo del endpoint /api/audit con interfaces TypeScript, diseño de la integración de herramientas siguiendo el contrato MCP, separación de capas, manejo de errores, y plan de despliegue.
 - `.kiro/specs/tasks.md`: desglose de tareas ejecutables con dependencias entre sí, estimaciones de tiempo, y criterios de completitud por tarea.
 
-![Panel de Specs en Kiro](docs/screenshots/kiro-specs.png)
+![Panel de Specs en Kiro](public/docs/screenshots/kiro-specs.png)
 
 ### Steering
 
@@ -209,7 +209,7 @@ El hackathon permite y valora AWS como plus opcional. Este proyecto decidió pri
 
 El sistema está organizado en capas con responsabilidades claramente separadas. La capa de presentación (Next.js App Router) maneja la interfaz web y los route handlers HTTP. La capa de API expone tres endpoints: /api/audit para análisis individuales, /api/compare para ejecutar dos análisis en paralelo y guardar la comparativa con su código único en Supabase desde el servidor, y /api/chat para el asistente conversacional con streaming. El agente orquestador coordina la ejecución de los cuatro analizadores en paralelo (datos estructurados, consistencia de identidad, señales de autoridad, accesibilidad técnica), calcula el puntaje ponderado y genera el plan de acción. Las herramientas de acceso a datos externos (fetchPage, fetchRobotsTxt, checkUrlAccessibility) encapsulan toda operación de red siguiendo el contrato de MCP. Supabase provee la persistencia para análisis y comparativas compartibles. Claude API genera el plan de acción con código de solución, el resumen ejecutivo, y las respuestas del asistente conversacional.
 
-![Diagrama de arquitectura de Entiscore](docs/architecture-diagram.svg)
+![Diagrama de arquitectura de Entiscore](public/docs/architecture-diagram.svg)
 
 ```
 src/
@@ -330,7 +330,7 @@ El endpoint /api/audit valida cada URL contra rangos de IP privados (127.0.0.0/8
 
 El sitio funciona completo en español e inglés. Un selector de idioma en la navbar permite cambiar entre ambos idiomas con persistencia en localStorage y cookie para el servidor. La traducción abarca toda la interfaz (navbar, footer, formularios, páginas institucionales, historial, comparación), los mensajes de error del servidor, los findings generados por los cuatro analizadores (resueltos dinámicamente según el idioma recibido en la request), y el contenido generado por Claude (plan de acción, resumen ejecutivo, respuestas del asistente), que recibe una instrucción explícita de idioma en cada prompt.
 
-![Selector de idioma](docs/screenshots/selector-idioma.png)
+![Selector de idioma](public/docs/screenshots/selector-idioma.png)
 
 ---
 
