@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { HiSun, HiMoon } from "react-icons/hi2";
+import { useToast } from "./Toast";
+import { useI18n } from "@/i18n";
 
 type Theme = "light" | "dark";
 
@@ -33,6 +35,8 @@ interface ThemeToggleProps {
 
 export function ThemeToggle({ variant = "default" }: ThemeToggleProps) {
   const [theme, setTheme] = useState<Theme>("dark");
+  const { showToast } = useToast();
+  const t = useI18n();
 
   useEffect(() => {
     const storedTheme = getStoredTheme();
@@ -46,17 +50,18 @@ export function ThemeToggle({ variant = "default" }: ThemeToggleProps) {
     setTheme(newTheme);
     localStorage.setItem(THEME_STORAGE_KEY, newTheme);
     applyThemeToDocument(newTheme);
+    showToast(newTheme === "dark" ? t.theme.dark : t.theme.light);
   }
 
   const buttonClass = variant === "hero"
-    ? "flex h-8 w-8 items-center justify-center rounded-lg border border-white/20 bg-white/10 text-white/80 backdrop-blur-sm transition-colors hover:bg-white/20"
-    : "flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-700";
+    ? "flex h-8 w-8 items-center justify-center border border-white/20 bg-white/10 text-white/80 backdrop-blur-sm transition-colors hover:bg-white/20"
+    : "flex h-8 w-8 items-center justify-center text-zinc-500 dark:text-zinc-400 transition-colors hover:text-zinc-900 dark:hover:text-zinc-100";
 
   return (
     <button
       onClick={toggleTheme}
       className={buttonClass}
-      aria-label={theme === "dark" ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}
+      aria-label={theme === "dark" ? t.theme.light : t.theme.dark}
     >
       {theme === "dark" ? (
         <HiSun className="h-4 w-4" />

@@ -3,10 +3,9 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { HiBars3, HiXMark } from "react-icons/hi2";
+import { useI18n } from "@/i18n";
 import { ThemeToggle } from "./ThemeToggle";
 import { LocaleSelector } from "./LocaleSelector";
-import { useI18n } from "@/i18n";
 
 interface NavLink {
   labelKey: "analyze" | "compare" | "history" | "about";
@@ -48,65 +47,78 @@ export function Navbar() {
   }, [isMobileMenuOpen]);
 
   return (
-    <nav className="sticky top-0 z-30 border-b border-zinc-200 dark:border-zinc-800 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-sm">
+    <nav className="sticky top-0 z-30 border-b border-zinc-100 dark:border-zinc-800/60 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-12 items-center justify-between">
+        <div className="flex h-14 items-center justify-between">
           <Link
             href="/"
-            className="text-sm font-bold text-zinc-800 dark:text-zinc-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+            className="text-[15px] font-bold tracking-tight text-zinc-900 dark:text-zinc-100"
           >
             Entiscore
           </Link>
 
-          <div className="hidden sm:flex items-center gap-1">
+          <div className="hidden sm:flex items-center gap-6">
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`px-3 py-1.5 text-[13px] font-medium rounded transition-colors ${
+                className={`relative text-[13px] font-medium transition-colors py-1 ${
                   isActiveLink(pathname, link.href)
-                    ? "text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/30"
-                    : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                    ? "text-indigo-600 dark:text-indigo-400"
+                    : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
                 }`}
               >
                 {t.nav[link.labelKey]}
+                {isActiveLink(pathname, link.href) && (
+                  <span className="absolute -bottom-0.5 left-0 right-0 h-px bg-indigo-600 dark:bg-indigo-400" />
+                )}
               </Link>
             ))}
-            <div className="ml-2 flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 ml-2 pl-4 border-l border-zinc-200 dark:border-zinc-700">
               <LocaleSelector />
               <ThemeToggle />
             </div>
           </div>
 
-          <div className="flex sm:hidden items-center gap-1.5">
+          <div className="flex sm:hidden items-center gap-2">
             <LocaleSelector />
             <ThemeToggle />
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="flex h-8 w-8 items-center justify-center rounded border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-700"
-              aria-label={isMobileMenuOpen ? "Cerrar menú" : "Abrir menú"}
+              className="relative flex h-8 w-8 items-center justify-center text-zinc-600 dark:text-zinc-300"
+              aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
             >
-              {isMobileMenuOpen ? (
-                <HiXMark className="h-4 w-4" />
-              ) : (
-                <HiBars3 className="h-4 w-4" />
-              )}
+              <span className={`absolute h-px w-4 bg-current transition-all duration-300 ease-out ${isMobileMenuOpen ? "rotate-45 translate-y-0" : "-translate-y-1.5"}`} />
+              <span className={`absolute h-px w-4 bg-current transition-all duration-300 ease-out ${isMobileMenuOpen ? "opacity-0 scale-x-0" : "opacity-100"}`} />
+              <span className={`absolute h-px w-4 bg-current transition-all duration-300 ease-out ${isMobileMenuOpen ? "-rotate-45 translate-y-0" : "translate-y-1.5"}`} />
             </button>
           </div>
         </div>
       </div>
 
-      {isMobileMenuOpen && (
-        <div ref={menuRef} className="sm:hidden border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
-          <div className="flex flex-col py-2 px-4">
+      <div
+        ref={menuRef}
+        className={`fixed inset-0 top-14 z-40 sm:hidden transition-all duration-300 ease-out ${
+          isMobileMenuOpen
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none"
+        }`}
+      >
+        <div className="absolute inset-0 bg-black/20 dark:bg-black/40" onClick={() => setIsMobileMenuOpen(false)} />
+        <div
+          className={`relative bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 px-6 py-4 transition-transform duration-300 ease-out ${
+            isMobileMenuOpen ? "translate-y-0" : "-translate-y-4"
+          }`}
+        >
+          <div className="flex flex-col gap-1">
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`py-2.5 px-3 text-[13px] font-medium rounded transition-colors ${
+                className={`py-2.5 text-[15px] font-medium transition-colors ${
                   isActiveLink(pathname, link.href)
-                    ? "text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/30"
-                    : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200"
+                    ? "text-indigo-600 dark:text-indigo-400"
+                    : "text-zinc-600 dark:text-zinc-400"
                 }`}
               >
                 {t.nav[link.labelKey]}
@@ -114,7 +126,7 @@ export function Navbar() {
             ))}
           </div>
         </div>
-      )}
+      </div>
     </nav>
   );
 }

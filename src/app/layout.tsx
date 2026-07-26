@@ -4,6 +4,7 @@ import "./globals.css";
 import { Navbar } from "./components/Navbar";
 import { Footer } from "./components/Footer";
 import { I18nProvider } from "@/i18n";
+import { ToastProvider } from "./components/Toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -103,9 +104,11 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col">
         <I18nProvider>
-          <Navbar />
-          <div className="flex-1 flex flex-col">{children}</div>
-          <Footer />
+          <ToastProvider>
+            <Navbar />
+            <div className="flex-1 flex flex-col">{children}</div>
+            <Footer />
+          </ToastProvider>
         </I18nProvider>
       </body>
     </html>
