@@ -112,7 +112,7 @@ export default function AcercaDePage() {
           <p className="text-[13px] text-zinc-500 dark:text-zinc-400">{t.pages.about.builtWith}</p>
           <div className="flex items-center gap-8">
             <a
-              href="https://github.com/carlosjcastro/entiscore"
+              href="https://github.com/carlosjcastro"
               target="_blank"
               rel="noopener noreferrer"
               className="group relative flex items-center justify-center"

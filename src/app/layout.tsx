@@ -17,6 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 const BASE_URL = "https://entiscore.vercel.app";
+const OG_IMAGE_PATH = "/docs/og-cover.png";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
@@ -26,6 +27,10 @@ export const metadata: Metadata = {
   },
   description:
     "Analiza tu presencia digital y descubre qué tan reconocible eres para buscadores e inteligencia artificial. Reporte con puntaje, hallazgos y plan de acción.",
+  authors: [
+    { name: "Carlos José Castro Galante" },
+    { name: "Matías Edgardo Tula Sarquis" },
+  ],
   openGraph: {
     type: "website",
     siteName: "Entiscore",
@@ -34,17 +39,20 @@ export const metadata: Metadata = {
     title: "Entiscore: Auditor de Entidad Digital",
     description:
       "Analiza tu presencia digital y descubre qué tan reconocible eres para buscadores e inteligencia artificial.",
-    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Entiscore, auditor de entidad digital" }],
+    images: [{ url: OG_IMAGE_PATH, width: 1200, height: 630, alt: "Entiscore, auditor de entidad digital" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Entiscore: Auditor de Entidad Digital",
     description:
       "Analiza tu presencia digital y descubre qué tan reconocible eres para buscadores e inteligencia artificial.",
-    images: ["/og-image.png"],
+    images: [{ url: OG_IMAGE_PATH, width: 1200, height: 630, alt: "Entiscore, auditor de entidad digital" }],
   },
   alternates: {
     canonical: BASE_URL,
+  },
+  other: {
+    "author": "Carlos José Castro Galante, Matías Edgardo Tula Sarquis",
   },
 };
 
@@ -59,27 +67,49 @@ const themeInitScript = `
 
 const jsonLdSchema = {
   "@context": "https://schema.org",
-  "@type": "WebApplication",
-  name: "Entiscore",
-  url: BASE_URL,
-  description:
-    "Auditor de entidad digital que analiza la presencia online de profesionales y proyectos, evaluando su reconocimiento ante buscadores e inteligencia artificial.",
-  applicationCategory: "SEO Tool",
-  operatingSystem: "Web",
-  offers: {
-    "@type": "Offer",
-    price: "0",
-    priceCurrency: "USD",
-  },
-  creator: [
+  "@graph": [
     {
-      "@type": "Person",
-      name: "Carlos José Castro Galante",
-      url: "https://github.com/carlosjcastro",
+      "@type": "Organization",
+      "@id": `${BASE_URL}/#organization`,
+      name: "Entiscore",
+      url: BASE_URL,
+      logo: `${BASE_URL}/logo/entiscore.png`,
+      description:
+        "Plataforma de auditoría de entidad digital que evalúa el reconocimiento de profesionales y proyectos ante buscadores e inteligencia artificial.",
+      founder: [
+        {
+          "@type": "Person",
+          name: "Carlos José Castro Galante",
+          url: "https://github.com/carlosjcastro",
+        },
+        {
+          "@type": "Person",
+          name: "Matías Edgardo Tula Sarquis",
+        },
+      ],
+      sameAs: [
+        "https://github.com/carlosjcastro",
+      ],
     },
     {
-      "@type": "Person",
-      name: "Matías Edgardo Tula Sarquis",
+      "@type": "SoftwareApplication",
+      "@id": `${BASE_URL}/#application`,
+      name: "Entiscore",
+      url: BASE_URL,
+      description:
+        "Auditor de entidad digital que analiza la presencia online de profesionales y proyectos, evaluando su reconocimiento ante buscadores e inteligencia artificial.",
+      applicationCategory: "BusinessApplication",
+      operatingSystem: "Web",
+      datePublished: "2025-07-01",
+      dateModified: new Date().toISOString().slice(0, 10),
+      offers: {
+        "@type": "Offer",
+        price: "0",
+        priceCurrency: "USD",
+      },
+      creator: {
+        "@id": `${BASE_URL}/#organization`,
+      },
     },
   ],
 };

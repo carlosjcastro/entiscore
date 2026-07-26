@@ -6,7 +6,7 @@ import { FaGithub } from "react-icons/fa";
 import { useI18n } from "@/i18n";
 import Image from "next/image";
 
-const GITHUB_REPO_URL = "https://github.com/carlosjcastro/entiscore";
+const GITHUB_REPO_URL = "https://github.com/carlosjcastro";
 
 const INTERNAL_LINK_CLASS = "text-[13px] text-zinc-600 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors w-fit";
 
