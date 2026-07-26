@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="public/logo/entiscore.png" alt="Entiscore" width="120" />
+</div>
+
 # Entiscore
 
 Auditor de entidad digital. Analiza tu presencia online y genera un reporte accionable sobre qué tan reconocible eres para buscadores e inteligencia artificial.
