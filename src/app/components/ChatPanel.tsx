@@ -1,28 +1,52 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { HiChatBubbleLeftRight, HiXMark, HiPaperAirplane } from "react-icons/hi2";
+import { HiChatBubbleLeftRight, HiXMark, HiPaperAirplane, HiPaperClip, HiDocumentText } from "react-icons/hi2";
 import ReactMarkdown from "react-markdown";
+import DOMPurify from "dompurify";
 
 interface ChatMessage {
   role: "user" | "assistant";
   content: string;
+  attachedFileName?: string;
 }
 
 interface ChatPanelProps {
   code: string;
 }
 
+const MAX_CLIENT_FILE_SIZE_BYTES = 2 * 1024 * 1024;
+const ALLOWED_EXTENSIONS = [".txt", ".html", ".htm", ".md", ".markdown"];
+const BLOCKED_EXTENSIONS = [".zip", ".rar", ".7z", ".gz", ".tar", ".bz2"];
+
+function getFileExtension(filename: string): string {
+  const lastDot = filename.lastIndexOf(".");
+  if (lastDot === -1) return "";
+  return filename.slice(lastDot).toLowerCase();
+}
+
+function sanitizeDisplayText(text: string): string {
+  return DOMPurify.sanitize(text, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
+}
+
 async function streamChatResponse(
   code: string,
   message: string,
-  history: ChatMessage[],
-  onChunk: (text: string) => void
+  history: { role: "user" | "assistant"; content: string }[],
+  onChunk: (text: string) => void,
+  fileName?: string,
+  fileContentBase64?: string
 ): Promise<string> {
+  const requestBody: Record<string, unknown> = { code, message, history };
+  if (fileName && fileContentBase64) {
+    requestBody["fileName"] = fileName;
+    requestBody["fileContentBase64"] = fileContentBase64;
+  }
+
   const response = await fetch("/api/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ code, message, history }),
+    body: JSON.stringify(requestBody),
   });
 
   if (!response.ok) {
@@ -54,11 +78,60 @@ export function ChatPanel({ code }: ChatPanelProps) {
   const [isStreaming, setIsStreaming] = useState(false);
   const [streamingContent, setStreamingContent] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [attachedFile, setAttachedFile] = useState<{ name: string; base64: string } | null>(null);
+  const [isProcessingFile, setIsProcessingFile] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, streamingContent]);
+
+  function handleFileSelect(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    event.target.value = "";
+
+    const extension = getFileExtension(file.name);
+
+    if (BLOCKED_EXTENSIONS.includes(extension)) {
+      setError("Los archivos comprimidos no están permitidos");
+      return;
+    }
+
+    if (!ALLOWED_EXTENSIONS.includes(extension)) {
+      setError("Solo se permiten archivos de texto plano (.txt), HTML (.html) o Markdown (.md)");
+      return;
+    }
+
+    if (file.size > MAX_CLIENT_FILE_SIZE_BYTES) {
+      setError(`El archivo supera el límite de 2 MB (tamaño: ${(file.size / 1024 / 1024).toFixed(1)} MB)`);
+      return;
+    }
+
+    setError(null);
+    setIsProcessingFile(true);
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result;
+      if (typeof result === "string") {
+        const base64 = result.split(",")[1] ?? "";
+        setAttachedFile({ name: file.name, base64 });
+      }
+      setIsProcessingFile(false);
+    };
+    reader.onerror = () => {
+      setError("No se pudo leer el archivo correctamente");
+      setIsProcessingFile(false);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function handleRemoveFile() {
+    setAttachedFile(null);
+  }
 
   async function handleSendMessage() {
     const trimmedMessage = inputValue.trim();
@@ -67,18 +140,32 @@ export function ChatPanel({ code }: ChatPanelProps) {
     setError(null);
     setInputValue("");
 
-    const userMessage: ChatMessage = { role: "user", content: trimmedMessage };
+    const currentFile = attachedFile;
+    setAttachedFile(null);
+
+    const userMessage: ChatMessage = {
+      role: "user",
+      content: trimmedMessage,
+      attachedFileName: currentFile?.name,
+    };
     const updatedMessages = [...messages, userMessage];
     setMessages(updatedMessages);
     setIsStreaming(true);
     setStreamingContent("");
 
+    const historyForApi = messages.map((msg) => ({
+      role: msg.role,
+      content: msg.content,
+    }));
+
     try {
       const fullResponse = await streamChatResponse(
         code,
         trimmedMessage,
-        messages,
-        (partialText) => setStreamingContent(partialText)
+        historyForApi,
+        (partialText) => setStreamingContent(partialText),
+        currentFile?.name,
+        currentFile?.base64
       );
 
       const assistantMessage: ChatMessage = { role: "assistant", content: fullResponse };
@@ -112,7 +199,7 @@ export function ChatPanel({ code }: ChatPanelProps) {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-40 flex h-[500px] w-[380px] max-w-[calc(100vw-2rem)] flex-col rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 shadow-2xl">
+    <div className="fixed bottom-6 right-6 z-40 flex h-[520px] w-[390px] max-w-[calc(100vw-2rem)] flex-col rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 shadow-2xl">
       <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-700 px-4 py-3">
         <div className="flex items-center gap-2">
           <HiChatBubbleLeftRight className="h-4 w-4 text-indigo-500" />
@@ -133,7 +220,7 @@ export function ChatPanel({ code }: ChatPanelProps) {
           <div className="flex flex-col items-center justify-center h-full gap-2 text-center">
             <HiChatBubbleLeftRight className="h-8 w-8 text-zinc-200 dark:text-zinc-700" />
             <p className="text-[13px] text-zinc-400 dark:text-zinc-500 max-w-[240px]">
-              Preguntame sobre tu análisis, cómo mejorar tu score, o qué significa cada hallazgo.
+              Preguntame sobre tu análisis, cómo mejorar tu score, o adjunta un archivo para que lo analice.
             </p>
           </div>
         )}
@@ -166,7 +253,44 @@ export function ChatPanel({ code }: ChatPanelProps) {
       </div>
 
       <div className="border-t border-zinc-200 dark:border-zinc-700 px-3 py-3">
+        {attachedFile && (
+          <div className="flex items-center gap-2 mb-2 rounded-lg bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800/50 px-2.5 py-1.5">
+            <HiDocumentText className="h-3.5 w-3.5 text-indigo-500 shrink-0" />
+            <span className="text-[11px] font-medium text-indigo-700 dark:text-indigo-300 truncate flex-1">
+              {sanitizeDisplayText(attachedFile.name)}
+            </span>
+            <button
+              onClick={handleRemoveFile}
+              className="flex h-4 w-4 items-center justify-center rounded text-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-200"
+            >
+              <HiXMark className="h-3 w-3" />
+            </button>
+          </div>
+        )}
+
+        {isProcessingFile && (
+          <div className="flex items-center gap-2 mb-2 px-2.5 py-1.5">
+            <div className="h-3 w-3 animate-spin rounded-full border border-indigo-300 border-t-indigo-600" />
+            <span className="text-[11px] text-zinc-500">Procesando archivo...</span>
+          </div>
+        )}
+
         <div className="flex items-center gap-2">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".txt,.html,.htm,.md,.markdown"
+            onChange={handleFileSelect}
+            className="hidden"
+          />
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isStreaming || isProcessingFile}
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-zinc-200 dark:border-zinc-700 text-zinc-400 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-600 dark:hover:text-zinc-200 disabled:opacity-40"
+            aria-label="Adjuntar archivo"
+          >
+            <HiPaperClip className="h-3.5 w-3.5" />
+          </button>
           <input
             type="text"
             value={inputValue}
@@ -201,6 +325,14 @@ function MessageBubble({ message }: { message: ChatMessage }) {
             : "bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200"
         }`}
       >
+        {message.attachedFileName && (
+          <div className={`flex items-center gap-1.5 mb-1.5 pb-1.5 border-b ${isUser ? "border-indigo-500/30" : "border-zinc-200 dark:border-zinc-700"}`}>
+            <HiDocumentText className="h-3 w-3 shrink-0" />
+            <span className="text-[11px] font-medium truncate">
+              {sanitizeDisplayText(message.attachedFileName)}
+            </span>
+          </div>
+        )}
         {isUser ? (
           <p>{message.content}</p>
         ) : (
