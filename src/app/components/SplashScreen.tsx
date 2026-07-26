@@ -9,11 +9,11 @@ export function SplashScreen() {
   useEffect(() => {
     const fadeTimer = setTimeout(() => {
       setIsFadingOut(true);
-    }, 800);
+    }, 1000);
 
     const removeTimer = setTimeout(() => {
       setIsVisible(false);
-    }, 1300);
+    }, 1500);
 
     return () => {
       clearTimeout(fadeTimer);
@@ -29,11 +29,41 @@ export function SplashScreen() {
         isFadingOut ? "opacity-0" : "opacity-100"
       }`}
     >
-      <div className="flex flex-col items-center gap-3">
-        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white animate-pulse">
-          Entiscore
-        </h1>
-        <div className="h-0.5 w-16 rounded-full bg-indigo-500/60 animate-pulse" />
+      <div className="relative h-24 w-24">
+        <svg viewBox="0 0 100 100" className="h-full w-full">
+          <polygon
+            points="50,5 95,27.5 95,72.5 50,95 5,72.5 5,27.5"
+            fill="none"
+            stroke="#6366f1"
+            strokeWidth="1.5"
+            className="animate-[spin_8s_linear_infinite]"
+            opacity="0.6"
+          />
+          <polygon
+            points="50,20 80,35 80,65 50,80 20,65 20,35"
+            fill="none"
+            stroke="#818cf8"
+            strokeWidth="1"
+            className="animate-[spin_6s_linear_infinite_reverse]"
+            opacity="0.4"
+          />
+          <line
+            x1="10"
+            y1="50"
+            x2="90"
+            y2="50"
+            stroke="#a5b4fc"
+            strokeWidth="0.8"
+            opacity="0.8"
+            className="animate-[scanPulse_1.5s_ease-in-out_infinite]"
+          />
+        </svg>
+        <style dangerouslySetInnerHTML={{ __html: `
+          @keyframes scanPulse {
+            0%, 100% { opacity: 0.3; transform: translateY(-15px); }
+            50% { opacity: 0.9; transform: translateY(15px); }
+          }
+        `}} />
       </div>
     </div>
   );
