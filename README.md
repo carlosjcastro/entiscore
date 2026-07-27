@@ -103,6 +103,7 @@ Evalúa si el sitio es técnicamente accesible para crawlers: código de respues
 - Cada análisis y cada comparativa genera automáticamente un código corto legible (formato adjetivo-sustantivo-numero, por ejemplo "bold-key-742").
 - Ruta pública /r/[codigo] que permite acceder al reporte completo o comparativa sin necesidad de volver a ejecutar el análisis.
 - Persistencia en Supabase con Row Level Security (lectura pública por código, escritura solo desde el servidor con service role key).
+- Pagina /buscar para consultar un resultado ingresando el codigo manualmente, con normalizacion automatica del formato (acepta con o sin guiones) y redireccion al reporte si el codigo existe.
 
 ### Compartir resultados
 
