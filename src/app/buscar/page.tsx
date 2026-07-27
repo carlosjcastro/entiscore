@@ -25,21 +25,31 @@ function normalizeCode(rawInput: string): string {
   const withoutNumber = cleaned.slice(0, -3);
   const number = numberMatch[1];
 
-  if (withoutNumber.length >= 4) {
-    const possibleBreakpoints = [3, 4, 5];
-    for (const bp of possibleBreakpoints) {
-      if (withoutNumber.length > bp) {
-        const firstPart = withoutNumber.slice(0, bp);
-        const secondPart = withoutNumber.slice(bp);
-        if (firstPart.length >= 3 && secondPart.length >= 2) {
-          return `${firstPart}-${secondPart}-${number}`;
-        }
+  for (const adjective of KNOWN_ADJECTIVES) {
+    if (withoutNumber.startsWith(adjective)) {
+      const remainder = withoutNumber.slice(adjective.length);
+      if (KNOWN_NOUNS.has(remainder)) {
+        return `${adjective}-${remainder}-${number}`;
       }
     }
   }
 
   return cleaned;
 }
+
+const KNOWN_ADJECTIVES = [
+  "blue", "calm", "fast", "bold", "cool", "deep", "fair", "gold",
+  "keen", "lite", "neat", "pure", "safe", "soft", "warm", "wise",
+  "dark", "free", "good", "high", "kind", "nice", "open", "rich",
+  "true", "vast", "wild", "zero", "grey", "mint", "ruby", "jade",
+];
+
+const KNOWN_NOUNS = new Set([
+  "arc", "bay", "cap", "dew", "elm", "fox", "gem", "hub",
+  "ivy", "jet", "key", "log", "map", "net", "oak", "pin",
+  "ray", "sky", "sun", "top", "vue", "web", "zen", "bit",
+  "dot", "fig", "ink", "lab", "nod", "orb", "rip", "tag",
+]);
 
 async function checkCodeExists(code: string): Promise<boolean> {
   try {
