@@ -4,6 +4,7 @@ import "./globals.css";
 import { Navbar } from "./components/Navbar";
 import { Footer } from "./components/Footer";
 import { ScrollToTop } from "./components/ScrollToTop";
+import { CommandPalette } from "./components/CommandPalette";
 import { I18nProvider } from "@/i18n";
 import { ToastProvider } from "./components/Toast";
 
@@ -135,6 +136,7 @@ export default function RootLayout({
             <Navbar />
             <div className="flex-1 flex flex-col">{children}</div>
             <ScrollToTop />
+            <CommandPalette />
             <Footer />
           </ToastProvider>
         </I18nProvider>

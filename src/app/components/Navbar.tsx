@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useI18n } from "@/i18n";
 import { ThemeToggle } from "./ThemeToggle";
 import { LocaleSelector } from "./LocaleSelector";
+import { CommandPaletteTrigger } from "./CommandPalette";
 import Image from "next/image";
 
 interface NavLink {
@@ -79,6 +80,7 @@ export function Navbar() {
               </Link>
             ))}
             <div className="flex items-center gap-1.5 ml-2 pl-4 border-l border-zinc-200 dark:border-zinc-700">
+              <CommandPaletteTrigger />
               <LocaleSelector />
               <ThemeToggle />
             </div>
