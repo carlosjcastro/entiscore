@@ -5,7 +5,7 @@ import Image from "next/image";
 import { FaGithub, FaLinkedinIn } from "react-icons/fa6";
 import { useI18n } from "@/i18n";
 
-const GITHUB_URL = "https://github.com/carlosjcastro";
+const GITHUB_URL = "https://github.com/carlosjcastro/entiscore";
 
 const SOCIAL_LINKS = [
   { icon: FaGithub, href: GITHUB_URL, label: "GitHub" },

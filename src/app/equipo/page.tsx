@@ -49,7 +49,7 @@ export default function EquipoPage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div className="border-b sm:border-b-0 sm:border-r border-zinc-200 dark:border-zinc-700">
-            <TeamMember name="Carlos José Castro Galante" initials="CC" role={t.pages.team.roleCarlos} githubUrl="https://github.com/carlosjcastro" />
+            <TeamMember name="Carlos José Castro Galante" initials="CC" role={t.pages.team.roleCarlos} githubUrl="https://github.com/carlosjcastro/entiscore" />
           </div>
           <div>
             <TeamMember name="Matías Edgardo Tula Sarquis" initials="MT" role={t.pages.team.roleMatias} />
