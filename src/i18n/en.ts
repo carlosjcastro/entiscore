@@ -5,6 +5,7 @@ export const en: Dictionary = {
     analyze: "Analyze",
     compare: "Compare",
     history: "History",
+    search: "Search",
     about: "About",
   },
   hero: {

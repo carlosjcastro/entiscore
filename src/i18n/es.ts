@@ -5,6 +5,7 @@ export const es: Dictionary = {
     analyze: "Analizar",
     compare: "Comparar",
     history: "Historial",
+    search: "Buscar",
     about: "Acerca de",
   },
   hero: {

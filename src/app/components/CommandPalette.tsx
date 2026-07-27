@@ -54,6 +54,7 @@ export function CommandPalette() {
     { id: "analyze", label: t.nav.analyze, action: () => router.push("/"), icon: <HiMagnifyingGlass className="h-4 w-4" /> },
     { id: "compare", label: t.nav.compare, action: () => router.push("/comparar"), icon: <HiGlobeAlt className="h-4 w-4" /> },
     { id: "history", label: t.nav.history, action: () => router.push("/historial") },
+    { id: "search", label: t.nav.search, action: () => router.push("/buscar"), icon: <HiMagnifyingGlass className="h-4 w-4" /> },
     { id: "about", label: t.nav.about, action: () => router.push("/acerca-de") },
     { id: "locale", label: locale === "es" ? "Switch to English" : "Cambiar a Español", action: toggleLocale, icon: <HiGlobeAlt className="h-4 w-4" /> },
     { id: "theme-toggle", label: t.theme.dark, action: toggleTheme, icon: <HiMoon className="h-4 w-4" /> },

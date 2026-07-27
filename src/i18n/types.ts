@@ -5,6 +5,7 @@ export interface Dictionary {
     analyze: string;
     compare: string;
     history: string;
+    search: string;
     about: string;
   };
   hero: {

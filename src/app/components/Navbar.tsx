@@ -10,7 +10,7 @@ import { CommandPaletteTrigger } from "./CommandPalette";
 import Image from "next/image";
 
 interface NavLink {
-  labelKey: "analyze" | "compare" | "history" | "about";
+  labelKey: "analyze" | "compare" | "history" | "search" | "about";
   href: string;
 }
 
@@ -18,6 +18,7 @@ const NAV_LINKS: NavLink[] = [
   { labelKey: "analyze", href: "/" },
   { labelKey: "compare", href: "/comparar" },
   { labelKey: "history", href: "/historial" },
+  { labelKey: "search", href: "/buscar" },
   { labelKey: "about", href: "/acerca-de" },
 ];
 
