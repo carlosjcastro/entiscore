@@ -56,11 +56,13 @@ export function FeaturesSection({ onQuickAudit, isLoading }: FeaturesSectionProp
     return () => cancelAnimationFrame(timer);
   }, []);
 
+  const FEATURE_KEYS = ["structuredData", "identityConsistency", "authoritySignals", "technicalAccessibility"] as const;
+
   const features = [
-    { icon: HiCodeBracketSquare, ...t.features.structuredData },
-    { icon: HiUser, ...t.features.identityConsistency },
-    { icon: HiShieldCheck, ...t.features.authoritySignals },
-    { icon: HiGlobeAlt, ...t.features.technicalAccessibility },
+    { key: FEATURE_KEYS[0], icon: HiCodeBracketSquare, ...t.features.structuredData },
+    { key: FEATURE_KEYS[1], icon: HiUser, ...t.features.identityConsistency },
+    { key: FEATURE_KEYS[2], icon: HiShieldCheck, ...t.features.authoritySignals },
+    { key: FEATURE_KEYS[3], icon: HiGlobeAlt, ...t.features.technicalAccessibility },
   ];
 
   return (
@@ -68,7 +70,7 @@ export function FeaturesSection({ onQuickAudit, isLoading }: FeaturesSectionProp
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0 sm:gap-6">
         {features.map((feature, index) => (
           <FeatureCard
-            key={feature.title}
+            key={feature.key}
             icon={feature.icon}
             title={feature.title}
             description={feature.description}

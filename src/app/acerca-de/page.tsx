@@ -23,10 +23,10 @@ export default function AcercaDePage() {
   const motionSafe = useMotionSafe();
 
   const axes = [
-    { icon: HiCodeBracketSquare, ...t.features.structuredData },
-    { icon: HiUser, ...t.features.identityConsistency },
-    { icon: HiShieldCheck, ...t.features.authoritySignals },
-    { icon: HiGlobeAlt, ...t.features.technicalAccessibility },
+    { key: "structuredData", icon: HiCodeBracketSquare, ...t.features.structuredData },
+    { key: "identityConsistency", icon: HiUser, ...t.features.identityConsistency },
+    { key: "authoritySignals", icon: HiShieldCheck, ...t.features.authoritySignals },
+    { key: "technicalAccessibility", icon: HiGlobeAlt, ...t.features.technicalAccessibility },
   ];
 
   return (
@@ -61,14 +61,13 @@ export default function AcercaDePage() {
               className="mt-8"
               variants={getStaggerVariants(motionSafe, staggerContainer)}
               initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-40px" }}
+              animate="visible"
             >
               {axes.map((axis) => {
                 const Icon = axis.icon;
                 return (
                   <motion.div
-                    key={axis.title}
+                    key={axis.key}
                     variants={getVariants(motionSafe, listItemReveal)}
                     className="flex gap-3 py-4 border-b border-zinc-100 dark:border-zinc-800 last:border-b-0"
                   >

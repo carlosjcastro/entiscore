@@ -9,8 +9,8 @@ const GITHUB_URL = "https://github.com/carlosjcastro";
 
 const SOCIAL_LINKS = [
   { icon: FaGithub, href: GITHUB_URL, label: "GitHub" },
-  { icon: FaLinkedinIn, href: "https://www.linkedin.com/in/carlosjcastro", label: "Carlos Castro" },
-  { icon: FaLinkedinIn, href: "https://www.linkedin.com/in/matiastulasarquis", label: "Matias Tula Sarquis" },
+  { icon: FaLinkedinIn, href: "https://www.linkedin.com/in/carlosjcastro", label: "Carlos José Castro Galante" },
+  { icon: FaLinkedinIn, href: "https://www.linkedin.com/in/matías-edgardo-tula-sarquis/", label: "Matias Edgardo Tula Sarquis" },
 ];
 
 const LINK_CLASS = "text-[13px] text-zinc-400 hover:text-indigo-400 transition-colors w-fit";
