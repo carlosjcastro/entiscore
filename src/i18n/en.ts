@@ -105,6 +105,7 @@ export const en: Dictionary = {
   footer: {
     product: "Product",
     info: "Information",
+    social: "Social",
     analyzeLink: "Analyze a site",
     compareLink: "Compare two sites",
     historyLink: "Analysis history",

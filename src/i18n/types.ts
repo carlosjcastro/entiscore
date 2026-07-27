@@ -98,6 +98,7 @@ export interface Dictionary {
   footer: {
     product: string;
     info: string;
+    social: string;
     analyzeLink: string;
     compareLink: string;
     historyLink: string;
