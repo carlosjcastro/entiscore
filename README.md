@@ -103,7 +103,7 @@ Evalúa si el sitio es técnicamente accesible para crawlers: código de respues
 - Cada análisis y cada comparativa genera automáticamente un código corto legible (formato adjetivo-sustantivo-numero, por ejemplo "bold-key-742").
 - Ruta pública /r/[codigo] que permite acceder al reporte completo o comparativa sin necesidad de volver a ejecutar el análisis.
 - Persistencia en Supabase con Row Level Security (lectura pública por código, escritura solo desde el servidor con service role key).
-- Pagina /buscar para consultar un resultado ingresando el codigo manualmente, con normalizacion automatica del formato (acepta con o sin guiones) y redireccion al reporte si el codigo existe.
+- Pagina /buscar para consultar un resultado ingresando el codigo manualmente, con o sin guiones, con pantalla de carga propia mientras se resuelve la busqueda y redireccion automatica al reporte si el codigo existe.
 
 ### Compartir resultados
 
@@ -241,6 +241,7 @@ src/
 │   ├── api/chat/          Endpoint POST /api/chat (streaming)
 │   ├── components/        Componentes React del reporte y UI
 │   ├── comparar/          Página de comparación
+│   ├── buscar/            Búsqueda de resultado por código
 │   ├── historial/         Página de historial
 │   ├── api-docs/          Documentación pública de la API
 │   ├── r/[codigo]/        Ruta pública para reportes compartidos
@@ -350,7 +351,7 @@ El endpoint /api/audit valida cada URL contra rangos de IP privados (127.0.0.0/8
 
 ## Internacionalización
 
-El sitio funciona completo en español e inglés. Un selector de idioma en la navbar permite cambiar entre ambos idiomas con persistencia en localStorage y cookie para el servidor. La traducción abarca toda la interfaz (navbar, footer, formularios, páginas institucionales, historial, comparación), los mensajes de error del servidor, los findings generados por los cuatro analizadores (resueltos dinámicamente según el idioma recibido en la request), y el contenido generado por Claude (plan de acción, resumen ejecutivo, respuestas del asistente), que recibe una instrucción explícita de idioma en cada prompt.
+El sitio funciona completo en español e inglés. Un selector de idioma en la navbar permite cambiar entre ambos idiomas con persistencia en localStorage y cookie para el servidor. La traducción abarca toda la interfaz (navbar, footer, formularios, páginas institucionales, historial, comparación, búsqueda por código), los mensajes de error del servidor, los findings generados por los cuatro analizadores (resueltos dinámicamente según el idioma recibido en la request), y el contenido generado por Claude (plan de acción, resumen ejecutivo, respuestas del asistente), que recibe una instrucción explícita de idioma en cada prompt.
 
 ![Selector de idioma](public/docs/screenshots/selector-idioma.png)
 
