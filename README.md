@@ -147,6 +147,8 @@ Evalúa si el sitio es técnicamente accesible para crawlers: código de respues
 - Command palette accesible con Ctrl+K o Cmd+K, con navegacion completa por teclado para saltar a cualquier seccion o cambiar idioma y tema sin usar el mouse.
 - Diseño editorial minimalista sin exceso de tarjetas ni bordes redondeados.
 
+![Command Palette](public/docs/screenshots/command-palette.png)
+
 ### Páginas institucionales
 
 - /acerca-de: qué es, a quién va dirigido, qué problema resuelve, propósito.
