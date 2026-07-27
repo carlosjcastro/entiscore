@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { HiArrowLeft, HiArrowTrendingUp, HiArrowTrendingDown } from "react-icons/hi2";
+import { HiArrowLeft, HiArrowTrendingUp, HiArrowTrendingDown, HiGlobeAlt } from "react-icons/hi2";
 import type { AuditResponse, AxisName } from "@/types";
 import { ScoreDisplay } from "@/app/components/ScoreDisplay";
 import { AxisSection } from "@/app/components/AxisSection";
@@ -27,6 +27,8 @@ interface CompareResult {
   reportB: AuditResponse;
   siteNameA: string;
   siteNameB: string;
+  faviconUrlA: string | null;
+  faviconUrlB: string | null;
   code: string | null;
 }
 
@@ -68,6 +70,8 @@ async function requestComparison(urlA: string, urlB: string, locale: string): Pr
     reportB: body.reportB,
     siteNameA: body.siteNameA,
     siteNameB: body.siteNameB,
+    faviconUrlA: body.faviconUrlA ?? null,
+    faviconUrlB: body.faviconUrlB ?? null,
     code: body.code ?? null,
   };
 }
@@ -241,16 +245,34 @@ function CompareForm({ onSubmit, isLoading }: { onSubmit: (urlA: string, urlB: s
   );
 }
 
-function ReportColumn({ report, label }: { report: AuditResponse; label: string }) {
+function ReportColumn({ report, label, faviconUrl }: { report: AuditResponse; label: string; faviconUrl: string | null }) {
+  const [faviconError, setFaviconError] = useState(false);
+
   return (
     <div className="flex flex-col gap-4">
       <div className="rounded-xl border border-zinc-200 dark:border-zinc-700/60 bg-white dark:bg-zinc-800/30 p-4 shadow-sm">
         <p className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 mb-1">
           {label}
         </p>
-        <p className="text-sm font-medium text-zinc-800 dark:text-zinc-200 truncate mb-4">
-          {report.url}
-        </p>
+        <div className="flex items-center gap-2 mb-4">
+          {faviconUrl && !faviconError ? (
+            <img
+              src={faviconUrl}
+              alt=""
+              width={20}
+              height={20}
+              className="h-5 w-5 rounded-sm shrink-0"
+              onError={() => setFaviconError(true)}
+            />
+          ) : (
+            <div className="h-5 w-5 rounded-sm bg-zinc-200 dark:bg-zinc-700 flex items-center justify-center shrink-0">
+              <HiGlobeAlt className="h-3 w-3 text-zinc-400 dark:text-zinc-500" />
+            </div>
+          )}
+          <p className="text-sm font-medium text-zinc-800 dark:text-zinc-200 truncate">
+            {report.url}
+          </p>
+        </div>
         <div className="flex justify-center">
           <ScoreDisplay overallScore={report.overallScore} maturityLevel={report.maturityLevel} />
         </div>
@@ -383,10 +405,10 @@ function ComparisonResult({ result }: { result: CompareResult }) {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <motion.div variants={slideInFromLeft}>
-          <ReportColumn report={result.reportA} label="Sitio A" />
+          <ReportColumn report={result.reportA} label="Sitio A" faviconUrl={result.faviconUrlA} />
         </motion.div>
         <motion.div variants={slideInFromRight}>
-          <ReportColumn report={result.reportB} label="Sitio B" />
+          <ReportColumn report={result.reportB} label="Sitio B" faviconUrl={result.faviconUrlB} />
         </motion.div>
       </div>
     </motion.div>
