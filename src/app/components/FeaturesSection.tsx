@@ -1,16 +1,42 @@
 "use client";
 
 import { motion } from "framer-motion";
+import type { Variants } from "framer-motion";
 import { HiCodeBracketSquare, HiUser, HiShieldCheck, HiGlobeAlt } from "react-icons/hi2";
 import { useI18n } from "@/i18n";
-import {
-  blurReveal,
-  fadeInUp,
-  staggerContainer,
-  getVariants,
-  getStaggerVariants,
-  useMotionSafe,
-} from "@/lib/motion";
+import { useMotionSafe } from "@/lib/motion";
+
+const FEATURE_CARD_VARIANTS: Variants = {
+  hidden: { opacity: 0, y: 20, filter: "blur(6px)" },
+  visible: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: { duration: 0.5, ease: [0.4, 0, 0.2, 1] },
+  },
+};
+
+const FEATURE_GRID_VARIANTS: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.08, delayChildren: 0.1 },
+  },
+};
+
+const REDUCED_MOTION_VARIANTS: Variants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.2 } },
+};
+
+const QUICK_TEST_VARIANTS: Variants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] },
+  },
+};
 
 interface FeatureCardProps {
   icon: typeof HiCodeBracketSquare;
@@ -23,7 +49,7 @@ function FeatureCard({ icon: Icon, title, description }: FeatureCardProps) {
 
   return (
     <motion.div
-      variants={getVariants(motionSafe, blurReveal)}
+      variants={motionSafe ? FEATURE_CARD_VARIANTS : REDUCED_MOTION_VARIANTS}
       className="flex flex-col gap-2 py-4 border-b border-zinc-100 dark:border-zinc-800 sm:border-b-0 sm:border-r sm:border-zinc-100 sm:dark:border-zinc-800 last:border-0 sm:pr-6 sm:last:pr-0"
     >
       <Icon className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
@@ -59,10 +85,10 @@ export function FeaturesSection({ onQuickAudit, isLoading }: FeaturesSectionProp
     <div id="features" className="flex flex-col gap-10 py-10">
       <motion.div
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0 sm:gap-6"
-        variants={getStaggerVariants(motionSafe, staggerContainer)}
+        variants={motionSafe ? FEATURE_GRID_VARIANTS : REDUCED_MOTION_VARIANTS}
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, margin: "-40px" }}
+        viewport={{ once: true, amount: 0.2 }}
       >
         {features.map((feature) => (
           <FeatureCard key={feature.title} icon={feature.icon} title={feature.title} description={feature.description} />
@@ -71,10 +97,10 @@ export function FeaturesSection({ onQuickAudit, isLoading }: FeaturesSectionProp
 
       <motion.div
         className="flex flex-col items-center gap-3"
-        variants={getVariants(motionSafe, fadeInUp)}
+        variants={motionSafe ? QUICK_TEST_VARIANTS : REDUCED_MOTION_VARIANTS}
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, margin: "-20px" }}
+        viewport={{ once: true, amount: 0.3 }}
       >
         <p className="text-[13px] text-zinc-500 dark:text-zinc-400">
           {t.features.quickTest}
