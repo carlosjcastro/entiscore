@@ -2,7 +2,11 @@
   <img src="public/logo/entiscore.png" alt="Entiscore" width="120" />
 </div>
 
-![Vista previa al compartir Entiscore](public/og-cover.png)
+<br />
+
+<div align="center">
+  <img src="public/og-cover.png" alt="Vista previa al compartir Entiscore" width="600" />
+</div>
 
 # Entiscore
 
@@ -445,5 +449,6 @@ Detalle completo en https://entiscore.vercel.app/derechos-de-autor
 
 
 <div align="center">
-  <img src="public/logo/kiro.png" alt="Entiscore" width="60" />
+  <p>Construido con Kiro</p>
+  <img src="public/logo/kiro.png" alt="Kiro" width="60" />
 </div>
