@@ -103,6 +103,7 @@ export interface Dictionary {
     compareLink: string;
     historyLink: string;
     apiDocs: string;
+    searchLink: string;
     aboutLink: string;
     teamLink: string;
     copyrightLink: string;
@@ -143,6 +144,7 @@ export interface Dictionary {
     copyright: PageCopyright;
     terms: PageTerms;
     history: PageHistory;
+    search: PageSearch;
   };
 }
 
@@ -200,4 +202,13 @@ export interface PageHistory {
   exportJson: string;
   exportPdf: string;
   delete: string;
+}
+
+export interface PageSearch {
+  title: string;
+  placeholder: string;
+  button: string;
+  searching: string;
+  notFound: string;
+  notFoundDescription: string;
 }

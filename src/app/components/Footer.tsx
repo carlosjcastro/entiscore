@@ -58,6 +58,9 @@ export function Footer() {
               <Link href="/api-docs" className={LINK_CLASS}>
                 {t.footer.apiDocs}
               </Link>
+              <Link href="/buscar" className={LINK_CLASS}>
+                {t.footer.searchLink}
+              </Link>
             </nav>
           </div>
 

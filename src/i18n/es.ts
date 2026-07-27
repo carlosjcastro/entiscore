@@ -110,6 +110,7 @@ export const es: Dictionary = {
     compareLink: "Comparar dos sitios",
     historyLink: "Historial de análisis",
     apiDocs: "API para desarrolladores",
+    searchLink: "Buscar por codigo",
     aboutLink: "Acerca de Entiscore",
     teamLink: "Equipo",
     copyrightLink: "Derechos de autor",
@@ -195,6 +196,14 @@ export const es: Dictionary = {
       exportJson: "JSON",
       exportPdf: "PDF",
       delete: "Eliminar",
+    },
+    search: {
+      title: "Buscar resultado",
+      placeholder: "Ingresa el codigo, por ejemplo bold-key-742",
+      button: "Buscar",
+      searching: "Buscando resultado...",
+      notFound: "Codigo no encontrado",
+      notFoundDescription: "No existe ningun analisis ni comparativa con ese codigo. Revisa que lo hayas ingresado correctamente.",
     },
   },
 };

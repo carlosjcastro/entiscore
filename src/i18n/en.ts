@@ -110,6 +110,7 @@ export const en: Dictionary = {
     compareLink: "Compare two sites",
     historyLink: "Analysis history",
     apiDocs: "API for developers",
+    searchLink: "Search by code",
     aboutLink: "About Entiscore",
     teamLink: "Team",
     copyrightLink: "Copyright",
@@ -195,6 +196,14 @@ export const en: Dictionary = {
       exportJson: "JSON",
       exportPdf: "PDF",
       delete: "Delete",
+    },
+    search: {
+      title: "Search result",
+      placeholder: "Enter the code, for example bold-key-742",
+      button: "Search",
+      searching: "Searching result...",
+      notFound: "Code not found",
+      notFoundDescription: "No analysis or comparison exists with that code. Check that you entered it correctly.",
     },
   },
 };
