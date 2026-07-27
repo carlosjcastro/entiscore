@@ -144,6 +144,7 @@ Evalúa si el sitio es técnicamente accesible para crawlers: código de respues
 - Notificaciones tipo toast al cambiar de tema o idioma, con confirmación del estado resultante.
 - Footer con enlaces a todas las secciones y páginas institucionales.
 - Banner de cookies respetuoso de la privacidad.
+- Command palette accesible con Ctrl+K o Cmd+K, con navegacion completa por teclado para saltar a cualquier seccion o cambiar idioma y tema sin usar el mouse.
 - Diseño editorial minimalista sin exceso de tarjetas ni bordes redondeados.
 
 ### Páginas institucionales
