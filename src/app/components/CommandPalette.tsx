@@ -55,7 +55,7 @@ export function CommandPalette() {
     { id: "compare", label: t.nav.compare, action: () => router.push("/comparar"), icon: <HiGlobeAlt className="h-4 w-4" /> },
     { id: "history", label: t.nav.history, action: () => router.push("/historial") },
     { id: "about", label: t.nav.about, action: () => router.push("/acerca-de") },
-    { id: "locale", label: locale === "es" ? "Switch to English" : "Cambiar a Espanol", action: toggleLocale, icon: <HiGlobeAlt className="h-4 w-4" /> },
+    { id: "locale", label: locale === "es" ? "Switch to English" : "Cambiar a Español", action: toggleLocale, icon: <HiGlobeAlt className="h-4 w-4" /> },
     { id: "theme-toggle", label: t.theme.dark, action: toggleTheme, icon: <HiMoon className="h-4 w-4" /> },
   ];
 
