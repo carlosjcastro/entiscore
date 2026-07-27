@@ -12,15 +12,11 @@ import {
   listItemReveal,
   staggerContainer,
   staggerContainerSlow,
-  getVariants,
-  getStaggerVariants,
-  useMotionSafe,
 } from "@/lib/motion";
 import { ScrollReveal } from "@/app/components/ScrollReveal";
 
 export default function AcercaDePage() {
   const t = useI18n();
-  const motionSafe = useMotionSafe();
 
   const axes = [
     { key: "structuredData", icon: HiCodeBracketSquare, ...t.features.structuredData },
@@ -34,7 +30,7 @@ export default function AcercaDePage() {
       <div className="mx-auto w-full max-w-4xl">
         <motion.div
           className="flex items-center gap-3 mb-12"
-          variants={getVariants(motionSafe, fadeInUp)}
+          variants={fadeInUp}
           initial="hidden"
           animate="visible"
         >
@@ -46,7 +42,7 @@ export default function AcercaDePage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
           <motion.section
-            variants={getVariants(motionSafe, slideInFromLeft)}
+            variants={slideInFromLeft}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-60px" }}
@@ -59,7 +55,7 @@ export default function AcercaDePage() {
 
             <motion.div
               className="mt-8"
-              variants={getStaggerVariants(motionSafe, staggerContainer)}
+              variants={staggerContainer}
               initial="hidden"
               animate="visible"
             >
@@ -68,7 +64,7 @@ export default function AcercaDePage() {
                 return (
                   <motion.div
                     key={axis.key}
-                    variants={getVariants(motionSafe, listItemReveal)}
+                    variants={listItemReveal}
                     className="flex gap-3 py-4 border-b border-zinc-100 dark:border-zinc-800 last:border-b-0"
                   >
                     <Icon className="h-5 w-5 text-indigo-600 dark:text-indigo-400 shrink-0 mt-0.5" />
@@ -84,23 +80,23 @@ export default function AcercaDePage() {
 
           <motion.div
             className="flex flex-col gap-10"
-            variants={getStaggerVariants(motionSafe, staggerContainerSlow)}
+            variants={staggerContainerSlow}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-60px" }}
           >
-            <motion.section variants={getVariants(motionSafe, slideInFromRight)}>
+            <motion.section variants={slideInFromRight}>
               <h2 className="text-lg font-semibold text-zinc-800 dark:text-zinc-200 mb-3">{t.pages.about.audience}</h2>
               <p className="text-[14px] leading-relaxed text-zinc-600 dark:text-zinc-400">{t.pages.about.audienceDescription}</p>
             </motion.section>
-            <motion.section variants={getVariants(motionSafe, slideInFromRight)}>
+            <motion.section variants={slideInFromRight}>
               <div className="flex items-center gap-3 mb-3">
                 <HiLightBulb className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
                 <h2 className="text-lg font-semibold text-zinc-800 dark:text-zinc-200">{t.pages.about.problem}</h2>
               </div>
               <p className="text-[14px] leading-relaxed text-zinc-600 dark:text-zinc-400">{t.pages.about.problemDescription}</p>
             </motion.section>
-            <motion.section variants={getVariants(motionSafe, slideInFromRight)}>
+            <motion.section variants={slideInFromRight}>
               <h2 className="text-lg font-semibold text-zinc-800 dark:text-zinc-200 mb-3">{t.pages.about.purpose}</h2>
               <p className="text-[14px] leading-relaxed text-zinc-600 dark:text-zinc-400">{t.pages.about.purposeDescription}</p>
             </motion.section>

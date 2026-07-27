@@ -19,9 +19,6 @@ import {
   fadeInScale,
   cardReveal,
   staggerContainer,
-  getVariants,
-  getStaggerVariants,
-  useMotionSafe,
 } from "@/lib/motion";
 
 const MATURITY_COLOR_MAP: Record<MaturityLevel, string> = {
@@ -51,7 +48,6 @@ function formatDate(isoDate: string): string {
 export default function HistorialPage() {
   const [entries, setEntries] = useState<HistoryEntry[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
-  const motionSafe = useMotionSafe();
   const t = useI18n();
 
   useEffect(() => {
@@ -99,7 +95,7 @@ export default function HistorialPage() {
       <div className="mx-auto w-full max-w-4xl">
         <motion.div
           className="flex items-center justify-between mb-8"
-          variants={getVariants(motionSafe, fadeInUp)}
+          variants={fadeInUp}
           initial="hidden"
           animate="visible"
         >
@@ -130,7 +126,7 @@ export default function HistorialPage() {
         {entries.length === 0 ? (
           <motion.div
             className="flex flex-col items-center gap-5 py-24 text-center"
-            variants={getVariants(motionSafe, fadeInScale)}
+            variants={fadeInScale}
             initial="hidden"
             animate="visible"
           >
@@ -155,14 +151,14 @@ export default function HistorialPage() {
         ) : (
           <motion.div
             className="flex flex-col gap-3"
-            variants={getStaggerVariants(motionSafe, staggerContainer)}
+            variants={staggerContainer}
             initial="hidden"
             animate="visible"
           >
             {entries.map((entry) => (
               <motion.div
                 key={entry.id}
-                variants={getVariants(motionSafe, cardReveal)}
+                variants={cardReveal}
                 className="rounded-xl border border-zinc-200 dark:border-zinc-700/60 bg-white dark:bg-zinc-800/30 p-4 sm:p-5 transition-shadow hover:shadow-sm"
               >
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">

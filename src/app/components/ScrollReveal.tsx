@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import type { Variants, HTMLMotionProps } from "framer-motion";
-import { fadeInUp, getVariants, useMotionSafe } from "@/lib/motion";
+import { fadeInUp } from "@/lib/motion";
 
 interface ScrollRevealProps extends Omit<HTMLMotionProps<"div">, "variants"> {
   children: React.ReactNode;
@@ -20,15 +20,12 @@ export function ScrollReveal({
   viewportOnce = true,
   ...motionProps
 }: ScrollRevealProps) {
-  const motionSafe = useMotionSafe();
-  const activeVariants = getVariants(motionSafe, variants);
-
   return (
     <motion.div
       initial="hidden"
       whileInView="visible"
       viewport={{ once: viewportOnce, margin: viewportMargin }}
-      variants={activeVariants}
+      variants={variants}
       className={className}
       {...motionProps}
     >

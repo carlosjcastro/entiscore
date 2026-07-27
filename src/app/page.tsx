@@ -13,9 +13,6 @@ import {
   staggerContainer,
   blurReveal,
   scaleIn,
-  getVariants,
-  getStaggerVariants,
-  useMotionSafe,
 } from "@/lib/motion";
 import { ScrollReveal } from "./components/ScrollReveal";
 import { AuditForm } from "./components/AuditForm";
@@ -233,13 +230,12 @@ interface ResultSectionProps {
 }
 
 function ResultSection({ data, previousReport, shareCode, siteName, onCopyReport, isCopied }: ResultSectionProps) {
-  const motionSafe = useMotionSafe();
   const t = useI18n();
 
   return (
     <div className="flex flex-col gap-10">
       <motion.div
-        variants={getVariants(motionSafe, fadeInScale)}
+        variants={fadeInScale}
         initial="hidden"
         animate="visible"
         className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 pb-6 border-b border-zinc-200 dark:border-zinc-700"
@@ -271,12 +267,12 @@ function ResultSection({ data, previousReport, shareCode, siteName, onCopyReport
         </h2>
         <motion.div
           className="grid grid-cols-1 lg:grid-cols-2 gap-6"
-          variants={getStaggerVariants(motionSafe, staggerContainer)}
+          variants={staggerContainer}
           initial="hidden"
           animate="visible"
         >
           {AXIS_ORDER.map((axisName) => (
-            <motion.div key={axisName} variants={getVariants(motionSafe, blurReveal)}>
+            <motion.div key={axisName} variants={blurReveal}>
               <AxisSection
                 axisName={axisName}
                 result={data.axes[axisName]}

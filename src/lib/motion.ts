@@ -146,16 +146,3 @@ export const reducedMotionVariants: Variants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { duration: 0.2 } },
 };
-
-export function getVariants(motionSafe: boolean, fullVariants: Variants): Variants {
-  if (motionSafe) return fullVariants;
-  return reducedMotionVariants;
-}
-
-export function getStaggerVariants(motionSafe: boolean, fullVariants: Variants): Variants {
-  if (motionSafe) return fullVariants;
-  return {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { duration: 0.15, staggerChildren: 0 } },
-  };
-}

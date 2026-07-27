@@ -19,9 +19,6 @@ import {
   slideInFromLeft,
   slideInFromRight,
   staggerContainerSlow,
-  getVariants,
-  getStaggerVariants,
-  useMotionSafe,
 } from "@/lib/motion";
 import { ScrollReveal } from "@/app/components/ScrollReveal";
 
@@ -361,21 +358,19 @@ export default function CompararPage() {
 }
 
 function ComparisonResult({ result }: { result: CompareResult }) {
-  const motionSafe = useMotionSafe();
-
   return (
     <motion.div
       className="flex flex-col gap-6"
-      variants={getStaggerVariants(motionSafe, staggerContainerSlow)}
+      variants={staggerContainerSlow}
       initial="hidden"
       animate="visible"
     >
-      <motion.div variants={getVariants(motionSafe, fadeInScale)}>
+      <motion.div variants={fadeInScale}>
         <ComparisonSummary reportA={result.reportA} reportB={result.reportB} />
       </motion.div>
 
       {result.code && (
-        <motion.div variants={getVariants(motionSafe, fadeInUp)} className="flex justify-center">
+        <motion.div variants={fadeInUp} className="flex justify-center">
           <ShareMenu
             code={result.code}
             siteName={result.siteNameA}
@@ -387,10 +382,10 @@ function ComparisonResult({ result }: { result: CompareResult }) {
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <motion.div variants={getVariants(motionSafe, slideInFromLeft)}>
+        <motion.div variants={slideInFromLeft}>
           <ReportColumn report={result.reportA} label="Sitio A" />
         </motion.div>
-        <motion.div variants={getVariants(motionSafe, slideInFromRight)}>
+        <motion.div variants={slideInFromRight}>
           <ReportColumn report={result.reportB} label="Sitio B" />
         </motion.div>
       </div>
