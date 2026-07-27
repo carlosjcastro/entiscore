@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useSpring } from "framer-motion";
 import { useMotionSafe } from "@/lib/motion";
 
 interface GlowButtonProps {
@@ -13,6 +13,8 @@ interface GlowButtonProps {
 
 const PRESS_SCALE = 0.96;
 const PRESS_TRANSITION = { type: "spring" as const, stiffness: 400, damping: 17 };
+const MAGNETIC_STRENGTH = 0.15;
+const MAGNETIC_SPRING = { stiffness: 200, damping: 15, mass: 0.5 };
 
 export function GlowButton({
   children,
@@ -25,13 +27,29 @@ export function GlowButton({
   const [isHovered, setIsHovered] = useState(false);
   const motionSafe = useMotionSafe();
 
+  const magneticX = useMotionValue(0);
+  const magneticY = useMotionValue(0);
+  const springX = useSpring(magneticX, MAGNETIC_SPRING);
+  const springY = useSpring(magneticY, MAGNETIC_SPRING);
+
   function handleMouseMove(event: React.MouseEvent<HTMLButtonElement>) {
     if (!containerRef.current || !motionSafe) return;
     const rect = containerRef.current.getBoundingClientRect();
-    setGlowPosition({
-      x: event.clientX - rect.left,
-      y: event.clientY - rect.top,
-    });
+    const relativeX = event.clientX - rect.left;
+    const relativeY = event.clientY - rect.top;
+
+    setGlowPosition({ x: relativeX, y: relativeY });
+
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    magneticX.set((relativeX - centerX) * MAGNETIC_STRENGTH);
+    magneticY.set((relativeY - centerY) * MAGNETIC_STRENGTH);
+  }
+
+  function handleMouseLeave() {
+    setIsHovered(false);
+    magneticX.set(0);
+    magneticY.set(0);
   }
 
   if (!motionSafe) {
@@ -48,9 +66,10 @@ export function GlowButton({
       type={type}
       disabled={disabled}
       className={`relative overflow-hidden ${className}`}
+      style={{ x: springX, y: springY }}
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseLeave={handleMouseLeave}
       whileTap={disabled ? undefined : { scale: PRESS_SCALE }}
       transition={PRESS_TRANSITION}
     >
