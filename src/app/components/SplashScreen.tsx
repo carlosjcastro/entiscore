@@ -11,17 +11,21 @@ export function SplashScreen() {
   const [isFadingOut, setIsFadingOut] = useState(false);
 
   useEffect(() => {
+    document.documentElement.style.overflow = "hidden";
+
     const fadeTimer = setTimeout(() => {
       setIsFadingOut(true);
     }, 1200);
 
     const removeTimer = setTimeout(() => {
       setIsVisible(false);
+      document.documentElement.style.overflow = "";
     }, 1700);
 
     return () => {
       clearTimeout(fadeTimer);
       clearTimeout(removeTimer);
+      document.documentElement.style.overflow = "";
     };
   }, []);
 
