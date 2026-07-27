@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import { HiChatBubbleLeftRight, HiXMark, HiPaperAirplane, HiPaperClip, HiDocumentText } from "react-icons/hi2";
 import ReactMarkdown from "react-markdown";
 import DOMPurify from "dompurify";
-import { useMotionSafe } from "@/lib/motion";
 
 interface ChatMessage {
   role: "user" | "assistant";
@@ -73,16 +72,6 @@ async function streamChatResponse(
   return fullResponse;
 }
 
-const PANEL_ANIMATION = {
-  hidden: { opacity: 0, scale: 0.92, y: 20 },
-  visible: { opacity: 1, scale: 1, y: 0, transition: { type: "spring" as const, stiffness: 300, damping: 25 } },
-};
-
-const BUTTON_ANIMATION = {
-  hidden: { scale: 0, opacity: 0 },
-  visible: { scale: 1, opacity: 1, transition: { type: "spring" as const, stiffness: 260, damping: 20 } },
-};
-
 export function ChatPanel({ code }: ChatPanelProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -94,7 +83,6 @@ export function ChatPanel({ code }: ChatPanelProps) {
   const [isProcessingFile, setIsProcessingFile] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const motionSafe = useMotionSafe();
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -205,9 +193,9 @@ export function ChatPanel({ code }: ChatPanelProps) {
         onClick={() => setIsOpen(true)}
         className="fixed bottom-6 right-6 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-indigo-600 text-white shadow-lg transition-all hover:bg-indigo-700 hover:shadow-xl active:scale-95"
         aria-label="Abrir asistente"
-        variants={motionSafe ? BUTTON_ANIMATION : undefined}
-        initial={motionSafe ? "hidden" : undefined}
-        animate={motionSafe ? "visible" : undefined}
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 260, damping: 20 }}
       >
         <HiChatBubbleLeftRight className="h-5 w-5" />
       </motion.button>
@@ -217,9 +205,9 @@ export function ChatPanel({ code }: ChatPanelProps) {
   return (
     <motion.div
       className="fixed bottom-6 right-6 z-40 flex h-[520px] w-[390px] max-w-[calc(100vw-2rem)] flex-col rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 shadow-2xl"
-      variants={motionSafe ? PANEL_ANIMATION : undefined}
-      initial={motionSafe ? "hidden" : undefined}
-      animate={motionSafe ? "visible" : undefined}
+      initial={{ opacity: 0, scale: 0.92, y: 20 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      transition={{ type: "spring", stiffness: 300, damping: 25 }}
     >
       <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-700 px-4 py-3">
         <div className="flex items-center gap-2">
