@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import Lenis from "lenis";
+import "lenis/dist/lenis.css";
 import { useMotionSafe } from "@/lib/motion";
 
 export function SmoothScroll({ children }: { children: React.ReactNode }) {
