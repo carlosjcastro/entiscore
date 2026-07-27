@@ -105,6 +105,8 @@ Evalúa si el sitio es técnicamente accesible para crawlers: código de respues
 - Persistencia en Supabase con Row Level Security (lectura pública por código, escritura solo desde el servidor con service role key).
 - Pagina /buscar para consultar un resultado ingresando el codigo manualmente, con o sin guiones, con pantalla de carga propia mientras se resuelve la busqueda y redireccion automatica al reporte si el codigo existe.
 
+![Página para buscar análisis mediante códigos únicos](public/docs/screenshots/buscar-por-codigo.png)
+
 ### Compartir resultados
 
 - Botón de compartir con menú desplegable para múltiples canales.
