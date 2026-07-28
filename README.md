@@ -154,6 +154,7 @@ Evalúa si el sitio es técnicamente accesible para crawlers: código de respues
 - Command palette accesible con Ctrl+K o Cmd+K, con navegacion completa por teclado para saltar a cualquier seccion o cambiar idioma y tema sin usar el mouse.
 - Diseño editorial minimalista sin exceso de tarjetas ni bordes redondeados.
 - Botón principal con efecto magnético que sigue el cursor y micro interacción de presión al hacer click.
+- Botón flotante de volver arriba, y reseteo automático del scroll al inicio de la página en cada navegación entre secciones.
 
 ![Command Palette](public/docs/screenshots/command-palette.png)
 
