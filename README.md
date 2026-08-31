@@ -454,3 +454,5 @@ Detalle completo en https://entiscore.vercel.app/derechos-de-autor
   <p>Construido con Kiro</p>
   <img src="public/logo/kiro.png" alt="Kiro" width="60" />
 </div>
+
+
